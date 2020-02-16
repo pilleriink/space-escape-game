@@ -5,29 +5,22 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Rectangle;
 
 public class GameScreen implements Screen {
     final SpaceEscape game;
+    final Player player;
 
     private OrthographicCamera camera;
-    private Texture characterImage;
-    private Rectangle character;
 
     public GameScreen(final SpaceEscape game) {
         this.game = game;
-
-        character = new Rectangle();
-        characterImage = new Texture("badlogic.jpg");
+        this.player = new Player(Gdx.files.internal("badlogic.jpg"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
 
-        character.x = 800 / 2 - 64 / 2;
-        character.y = 20;
-        character.width = 20;
-        character.height = 20;
+        player.setCharacterSize();
+        player.setCharacterStartingPoint();
     }
 
     @Override
@@ -37,12 +30,12 @@ public class GameScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(characterImage, character.x, character.y);
+        game.batch.draw(player.getCharacterImage(), player.getObject().x, player.getObject().y);
         game.batch.end();
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) character.x -= 200 * Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) character.x += 200 * Gdx.graphics.getDeltaTime();
-        if(character.x < 0) character.x = 0;
-        if(character.x > 800 - 64) character.x = 800 - 64;
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.getObject().x -= 200 * Gdx.graphics.getDeltaTime();
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.getObject().x += 200 * Gdx.graphics.getDeltaTime();
+        if(player.getObject().x < 0) player.getObject().x = 0;
+        if(player.getObject().x > 800 - 64) player.getObject().x = 800 - 64;
     }
 
     @Override
@@ -67,6 +60,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        characterImage.dispose();
+        player.getCharacterImage().dispose();
     }
 }
