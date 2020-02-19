@@ -14,13 +14,10 @@ public class GameScreen implements Screen {
 
     public GameScreen(final SpaceEscape game) {
         this.game = game;
-        this.player = new Player(Gdx.files.internal("badlogic.jpg"));
+        this.player = new Player(Gdx.files.internal(null), 5, 5);
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
-
-        player.setCharacterSize();
-        player.setCharacterStartingPoint();
+        camera.setToOrtho(false, 2400, 1200);
     }
 
     @Override
@@ -30,12 +27,14 @@ public class GameScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(player.getCharacterImage(), player.getObject().x, player.getObject().y);
+        game.batch.draw(player.getCharacterImage(), player.getObject().getX(), player.getObject().getY());
         game.batch.end();
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.getObject().x -= 200 * Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.getObject().x += 200 * Gdx.graphics.getDeltaTime();
-        if(player.getObject().x < 0) player.getObject().x = 0;
-        if(player.getObject().x > 800 - 64) player.getObject().x = 800 - 64;
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.getObject().setX(player.getObject().getX() - 200 * Gdx.graphics.getDeltaTime());
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.getObject().setX(player.getObject().getX() + 200 * Gdx.graphics.getDeltaTime());
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) player.getObject().setY(player.getObject().getY() + 200 * Gdx.graphics.getDeltaTime());
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.getObject().setY(player.getObject().getY() - 200 * Gdx.graphics.getDeltaTime());
+        if(player.getObject().getX() < 0) player.getObject().setX(0);
+        if(player.getObject().getX() > 800 - 64) player.getObject().setX(800 - 64);
     }
 
     @Override
