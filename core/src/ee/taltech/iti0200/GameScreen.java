@@ -9,15 +9,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 public class GameScreen implements Screen {
     final SpaceEscape game;
     final Player player;
+    final Physics physics;
 
     private OrthographicCamera camera;
 
-    public GameScreen(final SpaceEscape game) {
+    public GameScreen(SpaceEscape game) {
         this.game = game;
-        this.player = new Player(Gdx.files.internal("black.jpg"), 5, 5);
+        this.physics = new Physics();
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 2400, 1200);
+        this.player = new Player(Gdx.files.internal("box.jpg"), 50, 50);
+        this.camera = new OrthographicCamera();
+        this.camera.setToOrtho(false, 1800, 900);
     }
 
     @Override
@@ -29,12 +31,10 @@ public class GameScreen implements Screen {
         game.batch.begin();
         game.batch.draw(player.getCharacterImage(), player.getObject().getX(), player.getObject().getY());
         game.batch.end();
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.getObject().setX(player.getObject().getX() - 200 * Gdx.graphics.getDeltaTime());
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.getObject().setX(player.getObject().getX() + 200 * Gdx.graphics.getDeltaTime());
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) player.getObject().setY(player.getObject().getY() + 200 * Gdx.graphics.getDeltaTime());
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.getObject().setY(player.getObject().getY() - 200 * Gdx.graphics.getDeltaTime());
-        if(player.getObject().getX() < 0) player.getObject().setX(0);
-        if(player.getObject().getX() > 800 - 64) player.getObject().setX(800 - 64);
+        physics.moveLeftAndRight(player);
+        physics.moveUpAndDown(player);
+        player.boundsLeftAndRight(camera);
+        player.boundsUpAndDown(camera);
     }
 
     @Override

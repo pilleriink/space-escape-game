@@ -1,6 +1,7 @@
 package ee.taltech.iti0200;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -25,11 +26,15 @@ public class Player extends Actor {
         return characterImage;
     }
 
-    public float getXPosition() {
-        return this.object.getX();
+    public void boundsLeftAndRight(OrthographicCamera camera) {
+        if(getObject().getX() < 0) getObject().setX(0);
+        if(getObject().getX() >= (int) camera.viewportWidth - (int) getObject().getWidth()) getObject().setX((int)
+                camera.viewportWidth - (int) getObject().getWidth());
     }
 
-    public float getYPosition() {
-        return this.object.getY();
+    public void boundsUpAndDown(OrthographicCamera camera) {
+        if(getObject().getY() < 0) getObject().setY(0);
+        if(getObject().getX() >= (int) camera.viewportHeight - (int) getObject().getHeight()) getObject().setY((int)
+                camera.viewportHeight - (int) getObject().getHeight());
     }
 }
