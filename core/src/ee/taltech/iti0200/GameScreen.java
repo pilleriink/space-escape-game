@@ -14,7 +14,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(final SpaceEscape game) {
         this.game = game;
-        this.player = new Player(Gdx.files.internal(null), 5, 5);
+        this.player = new Player(Gdx.files.internal("black.jpg"), 5, 5);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 2400, 1200);
