@@ -10,17 +10,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class SpaceEscape extends Game {
 	public SpriteBatch batch;
 	public BitmapFont font;
-	
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		this.setScreen(new MainMenuScreen(this));
-
 	}
 
 	@Override
