@@ -3,6 +3,7 @@ package ee.taltech.iti0200;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Player extends Actor {
@@ -14,8 +15,8 @@ public class Player extends Actor {
         this.characterImage = new Texture(characterImage);
         this.object.setHeight(height);
         this.object.setWidth(width);
-        this.object.setX(20);
-        this.object.setY(20);
+        this.object.setX(0);
+        this.object.setY(0);
     }
 
     public Actor getObject() {
