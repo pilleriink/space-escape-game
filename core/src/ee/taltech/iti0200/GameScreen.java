@@ -4,15 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 
 public class GameScreen implements Screen {
     private SpaceEscape game;
     private Player player;
     private Physics physics;
-    private World world;
 
     private OrthographicCamera camera;
 
@@ -37,7 +33,6 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
         game.batch.draw(player.getCharacterImage(), player.getObject().getX(), player.getObject().getY());
-        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         game.batch.end();
     }
 
