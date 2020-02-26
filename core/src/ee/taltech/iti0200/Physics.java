@@ -22,7 +22,6 @@ public class Physics extends ApplicationAdapter {
         return time;
     }
 
-
     public void move(Player player) {
         setTime(getTime() + Gdx.graphics.getDeltaTime());
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
