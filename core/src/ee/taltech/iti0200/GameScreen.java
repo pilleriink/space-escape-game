@@ -41,6 +41,7 @@ public class GameScreen implements Screen {
             player1.boundsLeftAndRight(camera);
             player1.boundsUpAndDown(camera);
         }
+        enemy.move();
         enemy.boundsLeftAndRight(camera);
         enemy.boundsUpAndDown(camera);
         Gdx.gl.glClearColor(1, 1, 1, 1);
