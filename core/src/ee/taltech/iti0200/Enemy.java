@@ -53,4 +53,13 @@ public class Enemy {
         return time;
     }
 
+    public void move() {
+        setTime(getTime() + Gdx.graphics.getDeltaTime());
+        if ((int) getTime() % 2 == 0) {
+            getObject().setX(getObject().getX() + OBJECT_SPEED * Gdx.graphics.getDeltaTime());
+        }else {
+            getObject().setX(getObject().getX() - OBJECT_SPEED * Gdx.graphics.getDeltaTime());
+        }
+    }
+
 }
