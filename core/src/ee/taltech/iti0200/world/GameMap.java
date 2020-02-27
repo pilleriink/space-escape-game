@@ -2,6 +2,7 @@ package ee.taltech.iti0200.world;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ee.taltech.iti0200.entities.Enemy;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.entities.Player;
 
@@ -14,6 +15,9 @@ public abstract class GameMap {
     public GameMap() {
         entities = new ArrayList<>();
         entities.add(new Player(40, 300, this));
+        entities.add(new Enemy(500, 200, this));
+        entities.add(new Enemy(1000, 200, this));
+
     }
 
     public  void render (OrthographicCamera camera, SpriteBatch batch) {
