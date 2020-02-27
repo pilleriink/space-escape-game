@@ -22,7 +22,6 @@ public class SpaceEscape extends Game {
 	public BitmapFont font;
 	GameMap gameMap;
 
-
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
