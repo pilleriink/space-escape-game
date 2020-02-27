@@ -27,11 +27,11 @@ public class Player1 extends Actor {
         return characterImage;
     }
 
-//    public void boundsLeftAndRight(OrthographicCamera camera) {
-//        if (getObject().getX() < 0) getObject().setX(0);
-//        if (getObject().getX() >= (int) camera.viewportWidth - (int) getObject().getWidth()) getObject().setX((int)
-//                camera.viewportWidth - (int) getObject().getWidth());
-//    }
+    public void boundsLeftAndRight(OrthographicCamera camera) {
+        if (getObject().getX() < 0) getObject().setX(0);
+        if (getObject().getX() >= (int) camera.viewportWidth - (int) getObject().getWidth()) getObject().setX((int)
+                camera.viewportWidth - (int) getObject().getWidth());
+    }
 
     public void boundsUpAndDown(OrthographicCamera camera) {
         if(getObject().getY() < 0) getObject().setY(0);
