@@ -6,17 +6,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Player extends Actor {
+public class Player1 extends Actor {
     private Texture characterImage;
     private Actor object;
 
-    public Player(FileHandle characterImage, long height, long width) {
+    public Player1(FileHandle characterImage, long height, long width) {
         this.object = new Actor();
         this.characterImage = new Texture(characterImage);
         this.object.setHeight(height);
         this.object.setWidth(width);
         this.object.setX(0);
-        this.object.setY(0);
+        this.object.setY(300);
     }
 
     public Actor getObject() {
@@ -27,11 +27,11 @@ public class Player extends Actor {
         return characterImage;
     }
 
-    public void boundsLeftAndRight(OrthographicCamera camera) {
-        if (getObject().getX() < 0) getObject().setX(0);
-        if (getObject().getX() >= (int) camera.viewportWidth - (int) getObject().getWidth()) getObject().setX((int)
-                camera.viewportWidth - (int) getObject().getWidth());
-    }
+//    public void boundsLeftAndRight(OrthographicCamera camera) {
+//        if (getObject().getX() < 0) getObject().setX(0);
+//        if (getObject().getX() >= (int) camera.viewportWidth - (int) getObject().getWidth()) getObject().setX((int)
+//                camera.viewportWidth - (int) getObject().getWidth());
+//    }
 
     public void boundsUpAndDown(OrthographicCamera camera) {
         if(getObject().getY() < 0) getObject().setY(0);

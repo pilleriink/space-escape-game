@@ -14,15 +14,22 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import ee.taltech.iti0200.world.GameMap;
+import ee.taltech.iti0200.world.TiledGameMap;
 
 public class SpaceEscape extends Game {
 	public SpriteBatch batch;
 	public BitmapFont font;
+	GameMap gameMap;
+
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
+
+		gameMap = new TiledGameMap();
+
 		this.setScreen(new MainMenuScreen(this));
 	}
 
@@ -35,5 +42,6 @@ public class SpaceEscape extends Game {
 	public void dispose () {
 		batch.dispose();
 		font.dispose();
+		gameMap.dispose();
 	}
 }

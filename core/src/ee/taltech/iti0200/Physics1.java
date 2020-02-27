@@ -4,12 +4,12 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-public class Physics extends ApplicationAdapter {
+public class Physics1 extends ApplicationAdapter {
 
     private Boolean isJumping;
     private float time;
 
-    public Physics() {
+    public Physics1() {
         time = 1;
         isJumping = false;
     }
@@ -22,7 +22,7 @@ public class Physics extends ApplicationAdapter {
         return time;
     }
 
-    public void move(Player player) {
+    public void move(Player1 player) {
         setTime(getTime() + Gdx.graphics.getDeltaTime());
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.getObject().setX(player.getObject().getX() - 200 * Gdx.graphics.getDeltaTime());
