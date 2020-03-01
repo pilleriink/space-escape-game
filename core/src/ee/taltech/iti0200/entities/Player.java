@@ -35,12 +35,21 @@ public class Player extends Entity {
         }
         super.update(deltaTime, gravity); // applies the gravity
 
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            moveX(-SPEED * deltaTime);
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                moveX(-SPEED * 2 * deltaTime);
+            } else {
+                moveX(-SPEED * deltaTime);
+            }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            moveX(SPEED * deltaTime);
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                moveX(SPEED * 2 * deltaTime);
+            } else {
+                moveX(SPEED * deltaTime);
+            }
         }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.X) && this.lives > 0) {
             this.lives -= 1;
             System.out.println(this.lives);
