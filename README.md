@@ -3,6 +3,11 @@ Kristjan üritab põgeneda laevas lahti pääsenud tulnukate eest.
 Platformer shooter game.
 Tehnoloogia poolest kasutatakse ainult Javat.
 AI on vastased, kes peategelast ründavad.
+AI otsib mängijate asukohti ja üritab nende poole liikuda/neid rünnata, olenevalt
+vastase tüübist.
+Olenevalt raskustasemest AI on kas agressiivsen/kiirem kui tavaliselt.
+Kuna pole veel üritanud AI-d teha, siis on ka raske otsustada ette ära mida me
+jõuame/oskame teha.
 Max punktid, sest implementeerime reaalaja komponenti. Mäng muutub aja kulgedes 
 aina keerulisemaks. Mäng toimub reaalajas.
 
