@@ -1,7 +1,9 @@
 package ee.taltech.iti0200.world;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.entities.Enemy;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.entities.Player;
@@ -14,9 +16,9 @@ public abstract class GameMap {
 
     public GameMap() {
         entities = new ArrayList<>();
-        entities.add(new Player(40, 300, this));
-        entities.add(new Enemy(500, 200, this));
-        entities.add(new Enemy(1000, 200, this));
+        entities.add(new Player(40, 300, this, new Texture("player.png"), 50));
+        entities.add(new Enemy(500, 200, this, new Texture("character.gif"), 10));
+        entities.add(new Enemy(1000, 200, this, new Texture("character.gif"), 10));
 
     }
 
