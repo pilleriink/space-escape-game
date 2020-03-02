@@ -20,18 +20,16 @@ public class Player extends Entity {
 
     Texture image;
     NinePatch health;
-    float lives, totalHealth, shootingRange;
+    float totalHealth, shootingRange;
     boolean isRight;
 
     public Player(float x, float y, GameMap map, Texture image, float lives, float shootingRange, ArrayList<Entity> entities) {
-        super(x, y, EntityType.PLAYER, map);
+        super(x, y, EntityType.PLAYER, map, lives);
         this.image = image;
-        setLives(lives);
-        this.lives = getLives();
-        this.totalHealth = getLives();
         this.entities = entities;
         this.isRight = true;
         this.shootingRange = shootingRange;
+        this.totalHealth = getLives();
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     }
 
@@ -39,6 +37,7 @@ public class Player extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
+        System.out.println(getLives());
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && grounded) {
             this.velocityY += JUMP_VELOCITY * getWeight();
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !grounded && this.velocityY > 0) {
