@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.world.GameMap;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 
 public class Enemy extends Entity {
 
@@ -18,16 +21,19 @@ public class Enemy extends Entity {
     private float time;
 
     Texture image;
-    float lives, totalHealth;
+    float totalHealth, shootingRange;
     NinePatch health;
+    ArrayList<Entity> entities;
+    boolean isRight;
 
-    public Enemy(float x, float y, GameMap map, Texture image, float lives) {
-        super(x, y, EntityType.PLAYER, map);
+    public Enemy(float x, float y, GameMap map, Texture image, float lives, float shootingRange, ArrayList<Entity> entities) {
+        super(x, y, EntityType.PLAYER, map, lives);
         this.image = image;
         this.time = 0;
-        setLives(lives);
+        this.shootingRange = shootingRange;
+        this.entities = entities;
         this.totalHealth = getLives();
-        this.lives = getLives();
+        this.isRight = true;
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     }
 
@@ -45,8 +51,20 @@ public class Enemy extends Entity {
         super.update(deltaTime, gravity); // applies the gravity
         if ((int) getTime() % 2 == 0) {
             moveX(SPEED * deltaTime);
+            this.isRight = true;
         }else {
             moveX(-SPEED * deltaTime);
+            this.isRight = false;
+        }
+
+        for (Entity entity : entities) {
+            if (entity.getLives() > 0) {
+                if (isRight && entity.getX() <= getX() + shootingRange && entity.getX() > getX()) {
+                    entity.setLives(entity.getLives() - 1);
+                } else if (!isRight && entity.getX() >= getX() + shootingRange && entity.getX() < getX()) {
+                    entity.setLives(entity.getLives() - 1);
+                }
+            }
         }
     }
 

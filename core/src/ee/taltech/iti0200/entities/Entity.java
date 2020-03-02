@@ -13,10 +13,11 @@ public abstract class Entity {
     protected boolean grounded = false;
     protected float lives;
 
-    public Entity(float x, float y, EntityType type, GameMap map) {
+    public Entity(float x, float y, EntityType type, GameMap map, float lives) {
         this.pos = new Vector2(x, y);
         this.type = type;
         this.map = map;
+        this.lives = lives;
     }
 
     public void update(float deltaTime, float gravity) {
