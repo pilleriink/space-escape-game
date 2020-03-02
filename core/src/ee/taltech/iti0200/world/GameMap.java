@@ -16,7 +16,7 @@ public abstract class GameMap {
 
     public GameMap() {
         entities = new ArrayList<>();
-        entities.add(new Player(40, 300, this, new Texture("player.png"), 50));
+        entities.add(new Player(40, 300, this, new Texture("player.png"), 50, 75, entities));
         entities.add(new Enemy(500, 200, this, new Texture("character.gif"), 10));
         entities.add(new Enemy(1000, 200, this, new Texture("character.gif"), 10));
 
@@ -85,6 +85,10 @@ public abstract class GameMap {
 
     public Player getPlayer() {
         return (Player) entities.get(0);
+    }
+
+    public ArrayList<Entity> getEntities() {
+        return entities;
     }
 
     public abstract int getWidth();

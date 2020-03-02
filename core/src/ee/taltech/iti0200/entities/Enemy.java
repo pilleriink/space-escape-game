@@ -25,8 +25,9 @@ public class Enemy extends Entity {
         super(x, y, EntityType.PLAYER, map);
         this.image = image;
         this.time = 0;
-        this.totalHealth = lives;
-        this.lives = lives;
+        setLives(lives);
+        this.totalHealth = getLives();
+        this.lives = getLives();
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     }
 
@@ -47,16 +48,12 @@ public class Enemy extends Entity {
         }else {
             moveX(-SPEED * deltaTime);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X) && this.lives > 0) {
-            this.lives -= 1;
-            System.out.println(this.lives);
-        }
     }
 
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(image, pos.x, pos.y, getWidth(), getHeight());
-        health.draw(batch, pos.x, pos.y + 40, (this.lives / this.totalHealth) * getWidth(), 3);
+        health.draw(batch, pos.x, pos.y + 40, (getLives() / this.totalHealth) * getWidth(), 3);
     }
 
 }
