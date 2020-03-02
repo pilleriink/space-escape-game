@@ -8,23 +8,34 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.taltech.iti0200.world.GameMap;
 
+import java.util.ArrayList;
+
 
 public class Player extends Entity {
 
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
 
+    private ArrayList<Entity> entities;
+
     Texture image;
     NinePatch health;
-    float lives, totalHealth;
+    float lives, totalHealth, shootingRange;
+    boolean isRight;
 
-    public Player(float x, float y, GameMap map, Texture image, float lives) {
+    public Player(float x, float y, GameMap map, Texture image, float lives, float shootingRange, ArrayList<Entity> entities) {
         super(x, y, EntityType.PLAYER, map);
         this.image = image;
-        this.lives = lives;
-        this.totalHealth = lives;
+        setLives(lives);
+        this.lives = getLives();
+        this.totalHealth = getLives();
+        this.entities = entities;
+        this.isRight = true;
+        this.shootingRange = shootingRange;
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     }
+
+    public float getLives() {return this.lives;}
 
     @Override
     public void update(float deltaTime, float gravity) {
@@ -41,6 +52,7 @@ public class Player extends Entity {
             } else {
                 moveX(-SPEED * deltaTime);
             }
+            isRight = false;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
@@ -48,18 +60,24 @@ public class Player extends Entity {
             } else {
                 moveX(SPEED * deltaTime);
             }
+            isRight = true;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X) && this.lives > 0) {
-            this.lives -= 1;
-            System.out.println(this.lives);
+        for (Entity entity : entities) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.X) && entity.getLives() > 0) {
+                if (isRight && entity.getX() <= getX() + shootingRange && entity.getX() > getX()) {
+                    entity.setLives(entity.getLives() - 1);
+                } else if (!isRight && entity.getX() >= getX() + shootingRange && entity.getX() < getX()) {
+                    entity.setLives(entity.getLives() - 1);
+                }
+            }
         }
     }
 
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(image, pos.x, pos.y, getWidth(), getHeight());
-        health.draw(batch, pos.x, pos.y + 40, (this.lives / this.totalHealth) * getWidth(), 3);
+        health.draw(batch, pos.x, pos.y + 40, (getLives() / this.totalHealth) * getWidth(), 3);
     }
 
 }
