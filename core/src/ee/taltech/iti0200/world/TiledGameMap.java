@@ -1,6 +1,10 @@
 package ee.taltech.iti0200.world;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -12,22 +16,25 @@ public class TiledGameMap extends GameMap {
 
     TiledMap tiledMap;
     OrthogonalTiledMapRenderer tiledMapRenderer;
+//    Texture mapBackground;
+//    Sprite backgroundSprite;
 
     public TiledGameMap() {
-        tiledMap = new TmxMapLoader().load("map.tmx");
+        tiledMap = new TmxMapLoader().load("testMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
 
     @Override
     public void render(OrthographicCamera camera, SpriteBatch batch) {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
         batch.setProjectionMatrix(camera.combined);
+
         batch.begin();
         super.render(camera, batch);
         batch.end();
-
     }
 
     @Override
