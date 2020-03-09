@@ -42,8 +42,8 @@ public class GameScreen implements Screen {
         camera.update();
         gameMap.update(Gdx.graphics.getDeltaTime());
         gameMap.render(camera, game.batch);
-        camera.position.x = gameMap.getPlayer().getX();
-        camera.position.y = gameMap.getPlayer().getY();
+        camera.position.x = Math.round(gameMap.getPlayer().getX());
+        camera.position.y = Math.round(gameMap.getPlayer().getY());
         camera.update();
 
     }

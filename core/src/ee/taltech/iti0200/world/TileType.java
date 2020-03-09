@@ -5,11 +5,11 @@ import java.util.HashSet;
 
 public enum TileType {
 
-    UPLEFT_BLUE_TERRAIN(1, true, "Up left blue terrain"),
-    UP_BLUE_TERRAIN(2, true, "Upper blue terrain"),
-    UP_RIGHT_BLUE_TERRAIN(3, true, "Up right blue terrain"),
-    BOTTOM_RIGHT_BLUE_TERRAIN_BITS(4, true, "Bottom right blue terrain bits"),
-    BOTTOM_LEFT_BLUE_TERRAIN_BITS(5, true, "Bottom left blue terrain bits"),
+    UPLEFT_BLUE_TERRAIN(1, false, "Up left blue terrain"),
+    UP_BLUE_TERRAIN(2, false, "Upper blue terrain"),
+    UP_RIGHT_BLUE_TERRAIN(3, false, "Up right blue terrain"),
+    BOTTOM_RIGHT_BLUE_TERRAIN_BITS(4, false, "Bottom right blue terrain bits"),
+    BOTTOM_LEFT_BLUE_TERRAIN_BITS(5, false, "Bottom left blue terrain bits"),
     EMPTY1(6, false, "empty1"),
     SMALL_PLATFORM(7, true, "Small platform"),
     EMPTY2(8, false, "empty2"),
@@ -17,11 +17,11 @@ public enum TileType {
     UP_PLATFORMDRIP(10, false, "Upper platform drip"),
     EMPTY4(11, false, "empty4"),
     BLUE_BACKGROUND(12, false, "Blue background"),
-    LEFT_BLUE_TERRAIN(13, true, "Left blue terrain"),
+    LEFT_BLUE_TERRAIN(13, false, "Left blue terrain"),
     empty5(14, false, "empty5"),
-    RIGHT_BLUE_TERRAIN(15, true, "Right blue terrain"),
-    UPPER_RIGHT_BLUE_TERRAIN_BITS(16, true, "Upper right blue terrain bits"),
-    UPPER_LEFT_BLUE_TERRAIN_BITS(17, true, "Upper left blue terrain bits"),
+    RIGHT_BLUE_TERRAIN(15, false, "Right blue terrain"),
+    UPPER_RIGHT_BLUE_TERRAIN_BITS(16, false, "Upper right blue terrain bits"),
+    UPPER_LEFT_BLUE_TERRAIN_BITS(17, false, "Upper left blue terrain bits"),
     PLATFORM_BLUE_MIDDLE(18, true, "Platform blue middle"),
     PLATFORM_BLUE_LEFT(19, true, "platform blue left"),
     PLATFORM_BLUE_RIGHT(20, true, "platform blue right"),
@@ -29,9 +29,9 @@ public enum TileType {
     PLATFORM_DRIPS_MIDDLE(22, false, ""),
     PLATFORM_DRIPS_RIGHT(23, false, ""),
     EMPTY6(24, false, ""),
-    BOTTOM_LEFT_BLUE_TERRAIN(25, true, ""),
-    BOTTOM_BLUE_TERRAIN(26, true, ""),
-    BOTTOM_RIGHT_BLUE_TERRAIN(27, true, ""),
+    BOTTOM_LEFT_BLUE_TERRAIN(25, false, ""),
+    BOTTOM_BLUE_TERRAIN(26, false, ""),
+    BOTTOM_RIGHT_BLUE_TERRAIN(27, false, ""),
     BLUE_CEILING_DRIPS_SMALL(28, false, ""),
     BLUE_CEILING_DRIPS_MEDIUM_ONE(29, false, ""),
     BLUE_CEILING_DRIPS_MEDIUM_TWO(30, false, ""),
@@ -125,7 +125,7 @@ public enum TileType {
     EMPTY48(108, false, ""),
     EMPTY49(109, false, ""),
     EMPTY50(110, false, ""),
-    BLACK_BACKGROUND(111, false, ""),
+    BLACK_BACKGROUND(121, true, ""),
     EMPTY51(112, false, ""),
     EMPTY52(113, false, ""),
     EMPTY53(114, false, ""),
@@ -135,8 +135,9 @@ public enum TileType {
     EMPTY57(118, false, ""),
     EMPTY58(119, false, ""),
     EMPTY59(120, false, ""),
-    EMPTY60(121, false, ""),
-    EMPTY61(122, false, "");
+//    EMPTY60(121, false, ""),
+    EMPTY61(122, false, ""),
+    EMPTY_COLLISION(132, true, "");
 
 
 

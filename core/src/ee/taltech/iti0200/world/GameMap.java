@@ -16,9 +16,9 @@ public abstract class GameMap {
 
     public GameMap() {
         entities = new ArrayList<>();
-        entities.add(new Player(600, 600, this, new Texture("player.png"), 50, 75, entities));
-        entities.add(new Enemy(600, 600, this, new Texture("character.gif"), 10, 50, entities));
-        entities.add(new Enemy(600, 550, this, new Texture("character.gif"), 10, 50, entities));
+        entities.add(new Player(800, 600, this, new Texture("player.png"), 50, 75, entities));
+        entities.add(new Enemy(800, 600, this, new Texture("character.gif"), 10, 50, entities));
+        entities.add(new Enemy(800, 550, this, new Texture("character.gif"), 10, 50, entities));
 
     }
 
