@@ -12,13 +12,14 @@ import java.util.ArrayList;
 
 public abstract class GameMap {
 
-    protected ArrayList<Entity> entities;
+    protected ArrayList<Entity> entities, bullets;
 
     public GameMap() {
         entities = new ArrayList<>();
-        entities.add(new Player(40, 300, this, new Texture("player.png"), 50, 75, entities));
-        entities.add(new Enemy(500, 200, this, new Texture("character.gif"), 10, 50, entities));
-        entities.add(new Enemy(1000, 200, this, new Texture("character.gif"), 10, 50, entities));
+        bullets = new ArrayList<>();
+        entities.add(new Player(800, 600, this, new Texture("character1.png"), 500, 150, entities));
+        entities.add(new Enemy(800, 600, this, new Texture("enemy1.png"), 10, 100, entities));
+        entities.add(new Enemy(800, 550, this, new Texture("enemy1.png"), 10, 100, entities));
 
     }
 
