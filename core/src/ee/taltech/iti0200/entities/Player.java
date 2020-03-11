@@ -43,16 +43,16 @@ public class Player extends Entity {
         return this.lives;
     }
 
-    @Override
-    public void update(float deltaTime, float gravity) {
-        time += 1;
+    public void jump(float deltaTime, float gravity) {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && grounded) {
             this.velocityY += JUMP_VELOCITY * getWeight();
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !grounded && this.velocityY > 0) {
             this.velocityY += JUMP_VELOCITY * getWeight() * deltaTime;
         }
         super.update(deltaTime, gravity); // applies the gravity
+    }
 
+    public void moveLeft(float deltaTime) {
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 moveX(-SPEED * 2 * deltaTime);
@@ -61,6 +61,9 @@ public class Player extends Entity {
             }
             isRight = false;
         }
+    }
+
+    public void moveRight(float deltaTime) {
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 moveX(SPEED * 2 * deltaTime);
@@ -69,6 +72,9 @@ public class Player extends Entity {
             }
             isRight = true;
         }
+    }
+
+    public void shoot() {
         for (Entity entity : entities) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
                 shoot = true;
@@ -84,9 +90,16 @@ public class Player extends Entity {
                 }
             }
         }
-        if (time > 5) {
-            shoot = false;
-        }
+    }
+
+    @Override
+    public void update(float deltaTime, float gravity) {
+        time += 1;
+        jump(deltaTime, gravity);
+        moveLeft(deltaTime);
+        moveRight(deltaTime);
+        shoot();
+        if (time > 5) { shoot = false; }
     }
 
     @Override

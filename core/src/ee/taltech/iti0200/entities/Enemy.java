@@ -42,20 +42,17 @@ public class Enemy extends Entity {
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     }
 
-    @Override
-    public void update(float deltaTime, float gravity) {
-        movementTime += Gdx.graphics.getDeltaTime();
-        System.out.println(movementTime);
-        time += 1;
-        super.update(deltaTime, gravity); // applies the gravity
+    public void move(float deltaTime) {
         if ((int) movementTime % 2 == 0) {
             moveX(SPEED * deltaTime);
             this.isRight = true;
-        }else {
+        } else {
             moveX(-SPEED * deltaTime);
             this.isRight = false;
         }
+    }
 
+    public void shoot() {
         for (Entity entity : entities) {
             if (entity.getLives() > 0) {
                 shoot = true;
@@ -72,9 +69,16 @@ public class Enemy extends Entity {
                 }
             }
         }
-        if (time > 5) {
-            shoot = false;
-        }
+    }
+
+    @Override
+    public void update(float deltaTime, float gravity) {
+        movementTime += Gdx.graphics.getDeltaTime();
+        time += 1;
+        super.update(deltaTime, gravity); // applies the gravity
+        move(deltaTime);
+        shoot();
+        if (time > 5) { shoot = false; }
 
     }
 
