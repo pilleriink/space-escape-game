@@ -1,7 +1,9 @@
 package ee.taltech.iti0200.world;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.entities.Enemy;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.entities.Player;
@@ -10,13 +12,14 @@ import java.util.ArrayList;
 
 public abstract class GameMap {
 
-    protected ArrayList<Entity> entities;
+    protected ArrayList<Entity> entities, bullets;
 
     public GameMap() {
         entities = new ArrayList<>();
-        entities.add(new Player(40, 300, this));
-        entities.add(new Enemy(500, 200, this));
-        entities.add(new Enemy(1000, 200, this));
+        bullets = new ArrayList<>();
+        entities.add(new Player(800, 600, this, new Texture("character1.png"), 500, 150, entities));
+        entities.add(new Enemy(800, 600, this, new Texture("enemy1.png"), 10, 100, entities));
+        entities.add(new Enemy(800, 550, this, new Texture("enemy1.png"), 10, 100, entities));
 
     }
 
@@ -83,6 +86,10 @@ public abstract class GameMap {
 
     public Player getPlayer() {
         return (Player) entities.get(0);
+    }
+
+    public ArrayList<Entity> getEntities() {
+        return entities;
     }
 
     public abstract int getWidth();

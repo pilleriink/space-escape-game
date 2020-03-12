@@ -11,11 +11,13 @@ public abstract class Entity {
     protected float velocityY = 0;
     protected GameMap map;
     protected boolean grounded = false;
+    protected float lives;
 
-    public Entity(float x, float y, EntityType type, GameMap map) {
+    public Entity(float x, float y, EntityType type, GameMap map, float lives) {
         this.pos = new Vector2(x, y);
         this.type = type;
         this.map = map;
+        this.lives = lives;
     }
 
     public void update(float deltaTime, float gravity) {
@@ -49,6 +51,10 @@ public abstract class Entity {
     public Vector2 getPos() {
         return pos;
     }
+
+    public float getLives() {return this.lives;}
+
+    public void setLives(float lives) {this.lives = lives;}
 
 
     public float getX() {
