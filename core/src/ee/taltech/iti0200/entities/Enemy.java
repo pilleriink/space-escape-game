@@ -20,15 +20,14 @@ public class Enemy extends Entity {
     private static final int JUMP_VELOCITY = 5;
     private int time;
     private float movementTime;
-
-    Texture image, gunLeft, gunRight;
-    float totalHealth, shootingRange;
-    NinePatch health;
-    ArrayList<Entity> entities;
-    boolean isRight, shoot;
+    private Texture image, gunLeft, gunRight;
+    private float totalHealth, shootingRange;
+    private NinePatch health;
+    private ArrayList<Entity> entities;
+    private boolean isRight, shoot;
 
     public Enemy(float x, float y, GameMap map, Texture image, float lives, float shootingRange, ArrayList<Entity> entities) {
-        super(x, y, EntityType.PLAYER, map, lives);
+        super(x, y, EntityType.ENEMY, map, lives);
         this.image = image;
         this.time = 0;
         this.movementTime = 0;
