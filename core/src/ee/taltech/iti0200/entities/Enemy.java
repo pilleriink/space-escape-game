@@ -54,16 +54,18 @@ public class Enemy extends Entity {
 
     public void shoot() {
         for (Entity entity : entities) {
-            if (entity.getLives() > 0) {
+            if (entity.getLives() > 0 && entity.getClass() == Player.class) {
                 shoot = true;
-                if (isRight && entity.getX() <= getX() + shootingRange && entity.getX() > getX()
-                        && getY() >= entity.getY() && getY() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
+                if (isRight
+                        && entity.getX() <= getX() + getWidth() + shootingRange
+                        && getY() + 0.5 * getHeight() >= entity.getY()
+                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()) {
                     time = 0;
                     entity.setLives(entity.getLives() - 1);
-                } else if (!isRight && entity.getX() >= getX() + shootingRange && entity.getX() < getX()
-                        && getY() >= entity.getY() && getY() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
+                } else if (!isRight
+                        && entity.getX() + entity.getWidth() >= getX() - shootingRange
+                        && getY() + 0.5 * getHeight() >= entity.getY()
+                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()) {
                     time = 0;
                     entity.setLives(entity.getLives() - 1);
                 }
@@ -78,7 +80,7 @@ public class Enemy extends Entity {
         super.update(deltaTime, gravity); // applies the gravity
         move(deltaTime);
         shoot();
-        if (time > 5) { shoot = false; }
+        if (time > 2) { shoot = false; }
 
     }
 
