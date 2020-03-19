@@ -79,12 +79,16 @@ public class Player extends Entity {
             if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
                 shoot = true;
                 time = 0;
-                if (isRight && entity.getX() <= getX() + shootingRange && entity.getX() > getX()
-                        && getY() >= entity.getY() && getY() <= entity.getY() + entity.getHeight()
+                if (isRight
+                        && entity.getX() <= getX() + getWidth() + shootingRange
+                        && getY() + 0.5 * getHeight() >= entity.getY()
+                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                } else if (!isRight && entity.getX() >= getX() + shootingRange && entity.getX() < getX()
-                        && getY() >= entity.getY() && getY() <= entity.getY() + entity.getHeight()
+                } else if (!isRight
+                        && entity.getX() + entity.getWidth() >= getX() - shootingRange
+                        && getY() + 0.5 * getHeight() >= entity.getY()
+                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
                 }
@@ -108,9 +112,9 @@ public class Player extends Entity {
         health.draw(batch, pos.x, pos.y + 40, (getLives() / this.totalHealth) * getWidth(), 3);
         if (shoot) {
             if (isRight) {
-                batch.draw(gunRight, pos.x + getWidth() + 2, pos.y + getHeight() / 3, 10, 10);
+                batch.draw(gunRight, pos.x + getWidth() + 2, pos.y + getHeight() / 2, 10, 10);
             } else {
-                batch.draw(gunLeft, pos.x - 12, pos.y + getHeight() / 3, 10, 10);
+                batch.draw(gunLeft, pos.x - 12, pos.y + getHeight() / 2, 10, 10);
             }
         }
     }
