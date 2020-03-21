@@ -2,7 +2,7 @@ package ee.taltech.iti0200.entities;
 
 public enum EntityType {
 
-    PLAYER("player", 10, 22, 50),
+    PLAYER("player", 14, 24, 40),
     ENEMY("enemy", 14, 32, 40);
 
     private String id;
