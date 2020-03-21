@@ -4,11 +4,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.taltech.iti0200.SpaceEscape;
-import ee.taltech.iti0200.entities.Enemy;
-import ee.taltech.iti0200.entities.Entity;
-import ee.taltech.iti0200.entities.Player;
+import ee.taltech.iti0200.entities.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class GameMap {
 
@@ -17,8 +16,8 @@ public abstract class GameMap {
     public GameMap() {
         entities = new ArrayList<>();
         bullets = new ArrayList<>();
-        entities.add(new Player(800, 600, this, new Texture("character1.png"), 500, 150, entities));
-        entities.add(new Enemy(800, 600, this, new Texture("enemy1.png"), 10, 100, entities));
+        entities.add(new Player(800, 600, this, 500, 150, entities, PlayerType.PLAYER1));
+        entities.add(new Enemy(800, 600, this, 10, 100, entities, EnemyType.ENEMY1));
 
     }
 
