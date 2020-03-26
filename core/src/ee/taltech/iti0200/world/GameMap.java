@@ -11,22 +11,20 @@ import java.util.Arrays;
 
 public abstract class GameMap {
 
-    protected ArrayList<Entity> entities, bullets;
+    protected ArrayList<Entity> entities;
 
     public GameMap() {
         entities = new ArrayList<>();
-        bullets = new ArrayList<>();
         entities.add(new Player(800, 600, this, 500, 150, entities, PlayerType.PLAYER1));
-        entities.add(new Enemy(800, 600, this, 10, 100, entities, EnemyType.ENEMY1));
-
+        entities.add(new Enemy(1000, 600, this, 10, 100, entities, EnemyType.ENEMY));
     }
 
     public  void render (OrthographicCamera camera, SpriteBatch batch) {
         for (Entity entity : entities) {
             entity.render(batch);
         }
-
     }
+
     public  void update (float delta) {
         for (Entity entity : entities) {
             entity.update(delta, -9.8f);
