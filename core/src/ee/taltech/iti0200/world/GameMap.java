@@ -4,31 +4,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.taltech.iti0200.SpaceEscape;
-import ee.taltech.iti0200.entities.Enemy;
-import ee.taltech.iti0200.entities.Entity;
-import ee.taltech.iti0200.entities.Player;
+import ee.taltech.iti0200.entities.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class GameMap {
 
-    protected ArrayList<Entity> entities, bullets;
+    protected ArrayList<Entity> entities;
 
     public GameMap() {
         entities = new ArrayList<>();
-        bullets = new ArrayList<>();
-        entities.add(new Player(800, 600, this, new Texture("character1.png"), 500, 150, entities));
-        entities.add(new Enemy(800, 600, this, new Texture("enemy1.png"), 10, 100, entities));
-        entities.add(new Enemy(800, 550, this, new Texture("enemy1.png"), 10, 100, entities));
-
+        entities.add(new Player(800, 600, this, 500, 150, entities, PlayerType.PLAYER1));
+        entities.add(new Enemy(1000, 600, this, 10, 100, entities, EnemyType.ENEMY));
     }
 
     public  void render (OrthographicCamera camera, SpriteBatch batch) {
         for (Entity entity : entities) {
             entity.render(batch);
         }
-
     }
+
     public  void update (float delta) {
         for (Entity entity : entities) {
             entity.update(delta, -9.8f);
