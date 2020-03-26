@@ -5,6 +5,7 @@ public enum EntityType {
     PLAYER("player", 14, 24, 40),
     ENEMY("enemy", 14, 32, 40);
 
+
     private String id;
     private int width, height;
     private float weight;
