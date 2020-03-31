@@ -15,7 +15,7 @@ public abstract class GameMap {
 
     public GameMap() {
         entities = new ArrayList<>();
-        entities.add(new Player(800, 600, this, 500, 150, entities, PlayerType.PLAYER1));
+        entities.add(new Player(800, 600, this, 500, 150, entities, PlayerType.PLAYER2));
         entities.add(new Enemy(1000, 600, this, 10, 100, entities, EnemyType.ENEMY));
     }
 
