@@ -7,7 +7,10 @@ import java.util.List;
 
 public enum PlayerType {
 
-    PLAYER1("character");
+    PLAYER0("character0"),
+    PLAYER1("character1"),
+    PLAYER2("character2"),
+    PLAYER3("character3");
 
     private String id;
     private ArrayList<Texture> runningRight, runningLeft;
@@ -19,8 +22,8 @@ public enum PlayerType {
         this.runningLeft = (ArrayList<Texture>) makeTextureList(id, "running_left");
         this.standingRight = runningRight.get(0);
         this.standingLeft = runningLeft.get(0);
-        this.rightJumpingUp = new Texture("character_jumping_up_right.png");
-        this.leftJumpingUp = new Texture("character_jumping_up_left.png");
+        this.rightJumpingUp = new Texture(id + "/" + id + "_jumping_up_right.png");
+        this.leftJumpingUp = new Texture(id + "/" + id + "_jumping_up_left.png");
     }
 
     public String getId() {
@@ -43,7 +46,7 @@ public enum PlayerType {
         ArrayList<Texture> image = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 8; j++) {
-                image.add(new Texture(id + "_" + movement + "_" + i + ".png"));
+                image.add(new Texture(id + "/" + id + "_" + movement + "_" + i + ".png"));
             }
         }
         return image;
