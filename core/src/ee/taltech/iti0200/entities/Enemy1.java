@@ -74,7 +74,6 @@ public class Enemy1 extends Entity {
                     || !isRight && map.doesRectCollideMap(getX() - 5, getY(), getWidth(), getHeight())) {
                 jump();
             }
-
             if (followed.getX() > getX()) {
                 moveRight(deltaTime);
             } else if (followed.getX() < getX()) {
