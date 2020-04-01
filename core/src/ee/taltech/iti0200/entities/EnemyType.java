@@ -7,11 +7,10 @@ import java.util.List;
 
 public enum EnemyType {
 
-    ENEMY("enemy"),
+    ENEMY0("enemy0"),
     ENEMY1("enemy1");
 
     private String id;
-    private int width, height;
     private ArrayList<Texture> moving;
 
     EnemyType(String id) {
@@ -29,7 +28,7 @@ public enum EnemyType {
         ArrayList<Texture> image = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 8; j++) {
-                image.add(new Texture(id + "_moving_" + i + ".png"));
+                image.add(new Texture(id + "/" + id + "_moving_" + i + ".png"));
             }
         }
         return image;

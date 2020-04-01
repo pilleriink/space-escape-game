@@ -2,6 +2,7 @@ package ee.taltech.iti0200;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -83,16 +84,16 @@ public class GameScreen implements Screen {
         Texture cSkillTexture = new Texture("PlayerAbilities/cSkill.png");
         Texture vSkillTexture = new Texture("PlayerAbilities/vSkill.png");
         xSkill = new Image(xSkillTexture);
-        xSkill.setSize(50, 50);
-        xSkill.setPosition(screenCenterX - 75, screenCenterY - 200);
+        xSkill.setSize(75, 75);
+        xSkill.setPosition(screenCenterX - 150, screenCenterY - 500);
 
         cSkill = new Image(cSkillTexture);
-        cSkill.setSize(50, 50);
-        cSkill.setPosition(screenCenterX - 20, screenCenterY - 200);
+        cSkill.setSize(75, 75);
+        cSkill.setPosition(screenCenterX - 40, screenCenterY - 500);
 
         vSkill = new Image(vSkillTexture);
-        vSkill.setSize(50, 50);
-        vSkill.setPosition(screenCenterX + 35, screenCenterY - 200);
+        vSkill.setSize(75, 75);
+        vSkill.setPosition(screenCenterX + 70, screenCenterY - 500);
 
         stage.addActor(xSkill);
         stage.addActor(cSkill);
@@ -152,6 +153,10 @@ public class GameScreen implements Screen {
                 vSkill.addAction(Actions.fadeIn(5f));
                 vCoolDownPoint = deltaTime;
             }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
         }
 
         stage.draw();

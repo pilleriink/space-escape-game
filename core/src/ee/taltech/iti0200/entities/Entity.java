@@ -52,6 +52,14 @@ public abstract class Entity {
         return pos;
     }
 
+    public void setPosX(float posX) {
+        this.pos.x = posX;
+    }
+
+    public void setPosY(float posY) {
+        this.pos.y = posY;
+    }
+
     public float getLives() {return this.lives;}
 
     public void setLives(float lives) {this.lives = lives;}

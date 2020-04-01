@@ -1,54 +1,39 @@
 package ee.taltech.iti0200.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.world.GameMap;
 
-import java.awt.geom.FlatteningPathIterator;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-
-public class Enemy extends Entity {
+public class Enemy1 extends Entity {
 
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
-    private float movementTime;
-    private Texture gunLeft, gunRight;
-    private float totalHealth, shootingRange;
-    private NinePatch health;
+    private float movementTime, shootingRange, totalHealth;
+    private NinePatch health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     private ArrayList<Entity> entities;
-    private boolean isRight, shoot;
-    private EnemyType enemyType;
+    private boolean isRight;
+    private EnemyType enemyType = EnemyType.ENEMY1;
     private Entity followed;
 
-    public Enemy(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, EnemyType enemyType) {
-        super(x, y, EntityType.ENEMY, map, lives);
+    public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities) {
+        super(x, y, EntityType.ENEMY1, map, lives);
         this.shootingRange = shootingRange;
         this.entities = entities;
         this.totalHealth = getLives();
-        this.gunLeft = new Texture("gunfireleft.png");
-        this.gunRight = new Texture("gunfire.png");
-        this.enemyType = enemyType;
-        health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     }
 
     public void moveRight(float deltaTime) {
-        moveX((float) ((float) SPEED * deltaTime * 0.75));
+        moveX((float) ((float) SPEED * deltaTime));
         isRight = true;
     }
 
     public void moveLeft(float deltaTIme) {
-        moveX((float) (-SPEED * deltaTIme * 0.75));
+        moveX((float) (-SPEED * deltaTIme));
         isRight = false;
     }
 
@@ -59,7 +44,6 @@ public class Enemy extends Entity {
     public void shoot() {
         for (Entity entity : entities) {
             if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
-                shoot = true;
                 if (isRight
                         && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
@@ -70,7 +54,6 @@ public class Enemy extends Entity {
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
-                    time = 0;
                     entity.setLives(entity.getLives() - 1);
                 }
             }
@@ -91,7 +74,6 @@ public class Enemy extends Entity {
                     || !isRight && map.doesRectCollideMap(getX() - 5, getY(), getWidth(), getHeight())) {
                 jump();
             }
-
             if (followed.getX() > getX()) {
                 moveRight(deltaTime);
             } else if (followed.getX() < getX()) {
@@ -111,21 +93,12 @@ public class Enemy extends Entity {
         super.update(deltaTime, gravity); // applies the gravity
         //move(deltaTime);
         shoot();
-        if (time > 2) { shoot = false; }
-
     }
 
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(enemyType.getMoving().get(movingTime), pos.x, pos.y, getWidth(), getHeight());
-        health.draw(batch, pos.x, pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth(), 3);
-        if (shoot) {
-            if (isRight) {
-                batch.draw(gunRight, pos.x + getWidth() + 2, pos.y + getHeight() / 3, 5, 5);
-            } else {
-                batch.draw(gunLeft, pos.x - 7, pos.y + getHeight() / 3, 5, 5);
-            }
-        }
-    }
+        health.draw(batch, (float) (pos.x + 0.25 * getWidth()), pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth() / 2, 3);
 
+    }
 }
