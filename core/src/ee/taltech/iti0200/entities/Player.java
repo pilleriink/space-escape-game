@@ -56,23 +56,25 @@ public class Player extends Entity {
     }
 
     public void moveLeft(float deltaTime) {
-        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                moveX(-SPEED * 2 * deltaTime);
-            } else {
-                moveX(-SPEED * deltaTime);
-            }
+        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE)
+                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            moveX((float) (-SPEED * 1.5 * deltaTime));
+            isRight = false;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
+                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+            moveX(-SPEED * deltaTime);
             isRight = false;
         }
     }
 
     public void moveRight(float deltaTime) {
-        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                moveX(SPEED * 2 * deltaTime);
-            } else {
-                moveX(SPEED * deltaTime);
-            }
+        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE)
+                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            moveX((float) (SPEED * 1.5 * deltaTime));
+            isRight = true;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
+                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+            moveX(SPEED * deltaTime);
             isRight = true;
         }
     }

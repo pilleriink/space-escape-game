@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.world.GameMap;
+import org.w3c.dom.Text;
 
 import java.awt.geom.FlatteningPathIterator;
 import java.lang.reflect.Array;
@@ -17,29 +19,26 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class Enemy extends Entity {
+public class Enemy0 extends Entity {
 
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
-    private float movementTime;
-    private Texture gunLeft, gunRight;
-    private float totalHealth, shootingRange;
-    private NinePatch health;
+    private float movementTime, shootingRange, totalHealth;
+    private Texture gunLeft  = new Texture("gunfireleft.png");
+    private Texture gunRight = new Texture("gunfire.png");
+    private NinePatch health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     private ArrayList<Entity> entities;
     private boolean isRight, shoot;
-    private EnemyType enemyType;
     private Entity followed;
+    private EnemyType enemyType = EnemyType.ENEMY0;
+    private EntityType entityType = EntityType.ENEMY0;
 
-    public Enemy(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, EnemyType enemyType) {
-        super(x, y, EntityType.ENEMY, map, lives);
+    public Enemy0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities) {
+        super(x, y, EntityType.ENEMY0, map, lives);
         this.shootingRange = shootingRange;
         this.entities = entities;
         this.totalHealth = getLives();
-        this.gunLeft = new Texture("gunfireleft.png");
-        this.gunRight = new Texture("gunfire.png");
-        this.enemyType = enemyType;
-        health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
     }
 
     public void moveRight(float deltaTime) {
@@ -112,7 +111,6 @@ public class Enemy extends Entity {
         //move(deltaTime);
         shoot();
         if (time > 2) { shoot = false; }
-
     }
 
     @Override
@@ -127,5 +125,7 @@ public class Enemy extends Entity {
             }
         }
     }
+
+
 
 }
