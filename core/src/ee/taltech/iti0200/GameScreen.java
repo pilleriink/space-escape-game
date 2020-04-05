@@ -19,6 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import ee.taltech.iti0200.entities.Player;
+import ee.taltech.iti0200.entities.PlayerType;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 import org.w3c.dom.Text;
@@ -55,10 +57,11 @@ public class GameScreen implements Screen {
 
     GameMap gameMap;
 
-    public GameScreen(SpaceEscape game) {
+    public GameScreen(SpaceEscape game, PlayerType playerType) {
 
 
         gameMap = new TiledGameMap();
+        gameMap.addPlayer(playerType);
 
 
         this.game = game;
