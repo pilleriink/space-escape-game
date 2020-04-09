@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.entities.*;
+import ee.taltech.iti0200.entities.Player0;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +16,23 @@ public abstract class GameMap {
 
     public GameMap() {
         entities = new ArrayList<>();
-        entities.add(new Player(800, 600, this, 500, 150, entities, PlayerType.PLAYER1));
-        entities.add(new Enemy(1000, 600, this, 10, 100, entities, EnemyType.ENEMY));
+
+        entities.add(new Enemy0(1000, 600, this, 25, 100, entities));
+        entities.add(new Enemy1(3000, 650, this, 25, 1, entities));
+
+
+    }
+
+    public void addPlayer(PlayerType playerType) {
+        if (playerType == PlayerType.PLAYER0) {
+            entities.add(new Player0(800, 600, this, 500, 150, entities, playerType));
+        } else if (playerType == PlayerType.PLAYER1) {
+            entities.add(new Player1(800, 600, this, 500, 150, entities, playerType));
+        } else if (playerType == PlayerType.PLAYER2) {
+            entities.add(new Player2(800, 600, this, 500, 150, entities, playerType));
+        } else if (playerType == PlayerType.PLAYER3) {
+            entities.add(new Player3(800, 600, this, 500, 150, entities, playerType));
+        }
     }
 
     public  void render (OrthographicCamera camera, SpriteBatch batch) {
@@ -80,13 +96,14 @@ public abstract class GameMap {
         return this.getHeight() * TileType.TILE_SIZE;
     }
 
-    public Player getPlayer() {
-        return (Player) entities.get(0);
+    public Entity getPlayer() {
+        return entities.get(entities.size() - 1);
     }
 
     public ArrayList<Entity> getEntities() {
         return entities;
     }
+
 
     public abstract int getWidth();
     public abstract int getHeight();
