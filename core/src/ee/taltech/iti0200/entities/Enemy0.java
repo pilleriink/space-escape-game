@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.world.GameMap;
 import org.w3c.dom.Text;
@@ -24,21 +25,27 @@ public class Enemy0 extends Entity {
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
-    private float movementTime, shootingRange, totalHealth;
-    private Texture gunLeft  = new Texture("gunfireleft.png");
-    private Texture gunRight = new Texture("gunfire.png");
-    private NinePatch health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
+    private float movementTime, shootingRange, totalHealth;;
+
     private ArrayList<Entity> entities;
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY0;
     private EntityType entityType = EntityType.ENEMY0;
+    Client client;
+    String id, texture, gunfire;
 
-    public Enemy0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities) {
-        super(x, y, EntityType.ENEMY0, map, lives);
+    public Enemy0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id) {
+        super(x, y, EntityType.ENEMY0, map, lives, id);
+        this.id = id;
+
         this.shootingRange = shootingRange;
         this.entities = entities;
         this.totalHealth = getLives();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void moveRight(float deltaTime) {
@@ -105,7 +112,7 @@ public class Enemy0 extends Entity {
         follow(deltaTime);
         movementTime += Gdx.graphics.getDeltaTime();
         movingTime += 1;
-        if (movingTime > enemyType.getMoving().size() - 1) { movingTime = 0; }
+        if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
         time += 1;
         super.update(deltaTime, gravity); // applies the gravity
         //move(deltaTime);
@@ -115,13 +122,13 @@ public class Enemy0 extends Entity {
 
     @Override
     public void render(SpriteBatch batch) {
-        batch.draw(enemyType.getMoving().get(movingTime), pos.x, pos.y, getWidth(), getHeight());
-        health.draw(batch, pos.x, pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth(), 3);
+        batch.draw(new Texture(enemyType.getMovingString().get(movingTime)), pos.x, pos.y, getWidth(), getHeight());
+        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, pos.x, pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth(), 3);
         if (shoot) {
             if (isRight) {
-                batch.draw(gunRight, pos.x + getWidth() + 2, pos.y + getHeight() / 3, 5, 5);
+                batch.draw(new Texture("gunfire.png"), pos.x + getWidth() + 2, pos.y + getHeight() / 3, 5, 5);
             } else {
-                batch.draw(gunLeft, pos.x - 7, pos.y + getHeight() / 3, 5, 5);
+                batch.draw(new Texture("gunfireleft.png"), pos.x - 7, pos.y + getHeight() / 3, 5, 5);
             }
         }
     }

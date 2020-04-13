@@ -1,7 +1,8 @@
-package ee.taltech.iti0200.entities;
+package ee.taltech.iti0200.server;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import ee.taltech.iti0200.entities.EntityType;
 import ee.taltech.iti0200.world.GameMap;
 
 public abstract class Entity {
@@ -113,3 +114,4 @@ public abstract class Entity {
         return type.getWeight();
     }
 }
+
