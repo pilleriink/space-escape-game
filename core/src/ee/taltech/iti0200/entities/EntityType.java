@@ -3,6 +3,7 @@ package ee.taltech.iti0200.entities;
 public enum EntityType {
 
     PLAYER("player", 14, 24, 40),
+    PLAYER1("player1", 14, 24, 40),
     ENEMY0("enemy0", 14, 32, 40),
     ENEMY1("enemy1", 60, 54, 40);
 

@@ -1,29 +1,45 @@
-package ee.taltech.iti0200.entities;
+package ee.taltech.iti0200.server;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
+import ee.taltech.iti0200.SpaceEscape;
+import ee.taltech.iti0200.entities.EnemyType;
+import ee.taltech.iti0200.entities.Entity;
+import ee.taltech.iti0200.entities.EntityType;
 import ee.taltech.iti0200.world.GameMap;
+import org.w3c.dom.Text;
 
+import java.awt.geom.FlatteningPathIterator;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class Enemy1 extends Entity {
+
+public class Enemy0 extends Entity {
 
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
-    private float movementTime, shootingRange, totalHealth;
+    private float movementTime, shootingRange, totalHealth;;
+
     private ArrayList<Entity> entities;
-    private boolean isRight;
-    private EnemyType enemyType = EnemyType.ENEMY1;
+    private boolean isRight, shoot;
     private Entity followed;
+    private EnemyType enemyType = EnemyType.ENEMY0;
+    private EntityType entityType = EntityType.ENEMY0;
     Client client;
     String id, texture, gunfire;
 
-    public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id) {
-        super(x, y, EntityType.ENEMY1, map, lives, id);
+    public Enemy0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id) {
+        super(x, y, EntityType.ENEMY0, map, lives, id);
         this.id = id;
 
         this.shootingRange = shootingRange;
@@ -36,12 +52,12 @@ public class Enemy1 extends Entity {
     }
 
     public void moveRight(float deltaTime) {
-        moveX((float) ((float) SPEED * deltaTime));
+        moveX((float) ((float) SPEED * deltaTime * 0.75));
         isRight = true;
     }
 
     public void moveLeft(float deltaTIme) {
-        moveX((float) (-SPEED * deltaTIme));
+        moveX((float) (-SPEED * deltaTIme * 0.75));
         isRight = false;
     }
 
@@ -52,6 +68,7 @@ public class Enemy1 extends Entity {
     public void shoot() {
         for (Entity entity : entities) {
             if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
+                shoot = true;
                 if (isRight
                         && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
@@ -62,6 +79,7 @@ public class Enemy1 extends Entity {
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
+                    time = 0;
                     entity.setLives(entity.getLives() - 1);
                 }
             }
@@ -82,6 +100,7 @@ public class Enemy1 extends Entity {
                     || !isRight && map.doesRectCollideMap(getX() - 5, getY(), getWidth(), getHeight())) {
                 jump();
             }
+
             if (followed.getX() > getX()) {
                 moveRight(deltaTime);
             } else if (followed.getX() < getX()) {
@@ -101,12 +120,23 @@ public class Enemy1 extends Entity {
         super.update(deltaTime, gravity); // applies the gravity
         //move(deltaTime);
         shoot();
+        if (time > 2) { shoot = false; }
     }
 
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(new Texture(enemyType.getMovingString().get(movingTime)), pos.x, pos.y, getWidth(), getHeight());
-        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float) (pos.x + 0.25 * getWidth()), pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth() / 2, 3);
-
+        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, pos.x, pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth(), 3);
+        if (shoot) {
+            if (isRight) {
+                batch.draw(new Texture("gunfire.png"), pos.x + getWidth() + 2, pos.y + getHeight() / 3, 5, 5);
+            } else {
+                batch.draw(new Texture("gunfireleft.png"), pos.x - 7, pos.y + getHeight() / 3, 5, 5);
+            }
+        }
     }
+
+
+
 }
+

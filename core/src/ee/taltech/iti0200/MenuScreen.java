@@ -9,15 +9,19 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 //import ee.taltech.iti0200.entities.Player;
+import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.PlayerType;
+import ee.taltech.iti0200.server.LivesLost;
+import ee.taltech.iti0200.server.Move;
+import ee.taltech.iti0200.server.Player;
+import ee.taltech.iti0200.server.Register;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDateTime;
 
-public class MainMenuScreen implements Screen {
+public class MenuScreen implements Screen {
 
     final SpaceEscape game;
+    Client client;
 
     OrthographicCamera camera;
     SpriteBatch batch;
@@ -25,8 +29,9 @@ public class MainMenuScreen implements Screen {
     int positionX;
     PlayerType playerType;
 
-    public MainMenuScreen(final SpaceEscape game) {
+    public MenuScreen(final SpaceEscape game, Client client) {
         this.game = game;
+        this.client = client;
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -44,7 +49,7 @@ public class MainMenuScreen implements Screen {
 
         chooseCharacter = new Texture("choose_character.png");
         positionX = 0;
-        Gdx.input.setCursorCatched(true);
+        //Gdx.input.setCursorCatched(true);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
@@ -64,7 +69,6 @@ public class MainMenuScreen implements Screen {
             positionX++;
         }
 
-
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -76,24 +80,36 @@ public class MainMenuScreen implements Screen {
         batch.draw(img2, 75, -img2.getHeight() / 2);
         batch.draw(img3, img3.getWidth() + 200, -img3.getHeight() / 2);
 
-        if (positionX == 0) {
-            batch.draw(img0Hover, -img0Hover.getWidth() * 2 - 200, -img0Hover.getHeight() / 2);
-            playerType = PlayerType.PLAYER0;
-        } else if (positionX == 1) {
-            batch.draw(img1Hover, -img1Hover.getWidth() - 75, -img1Hover.getHeight() / 2);
-            playerType = PlayerType.PLAYER1;
-        } else if (positionX == 2) {
-            batch.draw(img2Hover, 75, -img2Hover.getHeight() / 2);
-            playerType = PlayerType.PLAYER2;
-        } else if (positionX == 3) {
-            batch.draw(img3Hover, img3Hover.getWidth() + 200, -img3Hover.getHeight() / 2);
-            playerType = PlayerType.PLAYER3;
+        switch (positionX) {
+            case 0:
+                batch.draw(img0Hover, -img0Hover.getWidth() * 2 - 200, -img0Hover.getHeight() / 2);
+                playerType = PlayerType.PLAYER0;
+                break;
+            case 1:
+                batch.draw(img1Hover, -img1Hover.getWidth() - 75, -img1Hover.getHeight() / 2);
+                playerType = PlayerType.PLAYER1;
+                break;
+            case 2:
+                batch.draw(img2Hover, 75, -img2Hover.getHeight() / 2);
+                playerType = PlayerType.PLAYER2;
+                break;
+            case 3:
+                batch.draw(img3Hover, img3Hover.getWidth() + 200, -img3Hover.getHeight() / 2);
+                playerType = PlayerType.PLAYER3;
+                break;
         }
-
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            game.setScreen(new GameScreen(game, playerType));
+            Register register = new Register();
+            register.id = LocalDateTime.now().toString();
+            register.playerType = playerType.getId();
+
+            game.setScreen(new GameScreen(game, playerType, client, register.id));
+
+            client.sendTCP(register);
+            System.out.println("registered");
+
             dispose();
         }
 

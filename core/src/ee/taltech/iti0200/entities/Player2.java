@@ -5,9 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.entities.EntityType;
 import ee.taltech.iti0200.entities.PlayerType;
+import ee.taltech.iti0200.server.Gun;
+import ee.taltech.iti0200.server.LivesLost;
+import ee.taltech.iti0200.server.Move;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
@@ -26,14 +30,22 @@ public class Player2 extends Entity {
     private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, droneTexture;
     private NinePatch health;
     private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ,
-            xSkillX, xSkillY, droneX, droneY;
+            xSkillX, xSkillY, droneX, droneY, gunX;
     private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
             bombGrounded, explosionTime;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
+    Client client;
+    String id, texture, gunfire;
 
-    public Player2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType) {
-        super(x, y, EntityType.PLAYER, map, lives);
+    public Player2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
+        super(x, y, EntityType.PLAYER, map, lives, id);
+        this.client = client;
+        this.id = id;
+        this.texture = "character0/character0_running_left_0.png";
+        this.gunfire = "no_gun.png";
+        this.gunX = getX();
+
         this.entities = entities;
         this.shootingRange = shootingRange;
         this.totalHealth = getLives();
@@ -52,6 +64,22 @@ public class Player2 extends Entity {
         xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
         xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
         cSkillRange = cSkill1.getWidth();
+    }
+
+    public boolean isRight() {
+        return isRight;
+    }
+
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public boolean isShoot() {
+        return shoot;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public float getLives() {
@@ -109,12 +137,20 @@ public class Player2 extends Entity {
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
+                    LivesLost livesLost = new LivesLost();
+                    livesLost.id = entity.getId();
+                    livesLost.lives = entity.getLives();
+                    client.sendTCP(livesLost);
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.5 * getHeight() >= entity.getY()
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
+                    LivesLost livesLost = new LivesLost();
+                    livesLost.id = entity.getId();
+                    livesLost.lives = entity.getLives();
+                    client.sendTCP(livesLost);
                 }
             }
         }
@@ -228,6 +264,12 @@ public class Player2 extends Entity {
             moving = false;
             movingTime = 0;
         }
+        Move move = new Move();
+        move.id = id;
+        move.x = getX();
+        move.y = getY();
+        move.texture = texture;
+        client.sendTCP(move);
     }
 
     @Override
@@ -237,22 +279,28 @@ public class Player2 extends Entity {
         // draw player
         if (keyPressed) {
             if (isRight) {
+                texture = playerType.getId() + "/" + playerType.getId() + "_jumping_up_right.png";
                 batch.draw(playerType.getRightJumpingUp(), pos.x, pos.y, getWidth(), getHeight());
             } else {
+                texture = playerType.getId() + "/" + playerType.getId() + "_jumping_up_left.png";
                 batch.draw(playerType.getLeftJumpingUp(), pos.x, pos.y, getWidth(), getHeight());
             }
         }
         else {
             if (!moving || !grounded) {
                 if (isRight) {
+                    texture = playerType.getId() + "/" + playerType.getId() + "_running_right_0.png";
                     batch.draw(playerType.getStandingRight(), pos.x, pos.y, getWidth(), getHeight());
                 } else {
+                    texture = playerType.getId() + "/" + playerType.getId() + "_running_left_0.png";
                     batch.draw(playerType.getStandingLeft(), pos.x, pos.y, getWidth(), getHeight());
                 }
             } else {
                 if (isRight) {
+                    texture = playerType.getRight().get(movingTime);
                     batch.draw(playerType.getRunningRight().get(movingTime), pos.x, pos.y, getWidth(), getHeight());
                 } else {
+                    texture = playerType.getLeft().get(movingTime);
                     batch.draw(playerType.getRunningLeft().get(movingTime), pos.x, pos.y, getWidth(), getHeight());
                 }
             }
@@ -264,10 +312,19 @@ public class Player2 extends Entity {
 
         if (shoot) {
             if (isRight) {
+                gunfire = "gunfire.png";
+                gunX = pos.x + getWidth();
                 batch.draw(gunRight, pos.x + getWidth(), pos.y + getHeight() / 4, 5, 5);
             } else {
+                gunfire = "gunfireleft.png";
+                gunX = pos.x - 5;
                 batch.draw(gunLeft, pos.x - 5, pos.y + getHeight() / 4, 5, 5);
             }
+            Gun gun = new Gun();
+            gun.gun = gunfire;
+            gun.x = gunX;
+            gun.id = id;
+            client.sendTCP(gun);
         }
 
         if (xSkill) {

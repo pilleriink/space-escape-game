@@ -1,39 +1,36 @@
 package ee.taltech.iti0200;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import ee.taltech.iti0200.entities.Entity;
-import ee.taltech.iti0200.entities.PlayerType;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import ee.taltech.iti0200.entities.*;
+import ee.taltech.iti0200.server.*;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
-import org.w3c.dom.Text;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class GameScreen implements Screen {
     private SpaceEscape game;
+    Client client;
+    SpriteBatch batch;
 
 
     // stage
@@ -73,15 +70,63 @@ public class GameScreen implements Screen {
     public OrthographicCamera camera;
 
     GameMap gameMap;
+    List<Player> otherPlayers;
+    List<String> playerIds;
 
-    public GameScreen(SpaceEscape game, PlayerType playerType) {
 
+    public GameScreen(SpaceEscape game, PlayerType playerType, Client client, String id) {
+        this.client = client;
+        this.game = game;
+        otherPlayers = new ArrayList<>();
+        playerIds = new ArrayList<>();
 
         gameMap = new TiledGameMap();
-        gameMap.addPlayer(playerType);
+        gameMap.addPlayer(playerType, client, id);
+        playerIds.add(id);
 
+        this.client.addListener(new Listener() {
+            public void received (Connection connection, Object object) {
+                if (object instanceof Player) {
+                    OtherPlayer otherPlayer = new OtherPlayer(((Player) object).x, ((Player) object).y, gameMap, ((Player) object).lives, ((Player) object).id, getPlayerType(((Player) object).playerType));
+                    gameMap.addEntity(otherPlayer);
+                }
 
-        this.game = game;
+                if (object instanceof Move) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Move) object).id)) {
+                            entity.setPosX(((Move) object).x);
+                            entity.setPosY(((Move) object).y);
+                            ((OtherPlayer) entity).setTexture(((Move) object).texture);
+                        }
+                    }
+                }
+
+                if (object instanceof Gun) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Gun) object).id)) {
+                            ((OtherPlayer) entity).setGunfire(((Gun) object).gun);
+                            ((OtherPlayer) entity).setGunPos(((Gun) object).x);
+                        }
+                    }
+                }
+
+                if (object instanceof LivesLost) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity instanceof OtherPlayer && entity.getId().equals(((LivesLost) object).id)) {
+                            entity.setLives(((LivesLost) object).lives);
+                            (entity).setLives(((LivesLost) object).lives);
+                        }
+                    }
+                }
+
+                if (object instanceof Enemy) {
+                    if (((Enemy) object).enemyType.equals("enemy0")) {
+                        gameMap.addEntity(new Enemy0(((Enemy) object).x, ((Enemy) object).y, gameMap, ((Enemy) object).lives, 150, gameMap.getEntities(), ((Enemy) object).id));
+                    }else if (((Enemy) object).enemyType.equals("enemy1")) {
+                        gameMap.addEntity(new Enemy1(((Enemy) object).x, ((Enemy) object).y, gameMap, ((Enemy) object).lives, 150, gameMap.getEntities(), ((Enemy) object).id));
+                    }
+                }
+            }});
 
 
         stage = new Stage(new ScreenViewport());
@@ -209,9 +254,34 @@ public class GameScreen implements Screen {
 
     }
 
+    public EnemyType getEnemyType(String id) {
+        switch (id) {
+            case "enemy0":
+                return EnemyType.ENEMY0;
+            default:
+                return EnemyType.ENEMY1;
+        }
+    }
+
+    public PlayerType getPlayerType(String id) {
+        switch (id) {
+            case "character0":
+                return PlayerType.PLAYER0;
+            case "character1":
+                return PlayerType.PLAYER1;
+            case "character2":
+                return PlayerType.PLAYER2;
+            default:
+                return PlayerType.PLAYER3;
+        }
+    }
+
 
     @Override
     public void render(float delta) {
+
+        camera.update();
+
         Gdx.gl.glClearColor(35 / 255f, 34 / 255f, 47 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -221,10 +291,8 @@ public class GameScreen implements Screen {
         currentTime = System.currentTimeMillis();
 
 
-        camera.update();
         gameMap.update(Gdx.graphics.getDeltaTime());
         gameMap.render(camera, game.batch);
-
 
         // stage
         stage.act(Gdx.graphics.getDeltaTime());

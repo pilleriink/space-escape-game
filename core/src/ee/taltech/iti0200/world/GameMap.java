@@ -3,6 +3,7 @@ package ee.taltech.iti0200.world;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.entities.*;
 import ee.taltech.iti0200.entities.Player0;
@@ -17,34 +18,39 @@ public abstract class GameMap {
     public GameMap() {
         entities = new ArrayList<>();
 
-        entities.add(new Enemy0(1000, 600, this, 25, 100, entities));
-        entities.add(new Enemy1(3000, 650, this, 25, 1, entities));
+        //entities.add(new Enemy0(1000, 600, this, 25, 100, entities));
+        //entities.add(new Enemy1(3000, 650, this, 25, 1, entities));
 
 
     }
 
-    public void addPlayer(PlayerType playerType) {
+    public void addEntity(Entity entity) {
+        entities.add(entity);
+    }
+
+    public void addPlayer(PlayerType playerType, Client client, String id) {
         if (playerType == PlayerType.PLAYER0) {
-            entities.add(new Player0(800, 600, this, 500, 150, entities, playerType));
+            entities.add(new Player0(800, 600, this, 500, 150, entities, playerType, client, id));
         } else if (playerType == PlayerType.PLAYER1) {
-            entities.add(new Player1(800, 600, this, 500, 150, entities, playerType));
+            entities.add(new Player1(800, 600, this, 500, 150, entities, playerType, client, id));
         } else if (playerType == PlayerType.PLAYER2) {
-            entities.add(new Player2(800, 600, this, 500, 150, entities, playerType));
+            entities.add(new Player2(800, 600, this, 500, 150, entities, playerType, client, id));
         } else if (playerType == PlayerType.PLAYER3) {
-            entities.add(new Player3(800, 600, this, 500, 150, entities, playerType));
+            entities.add(new Player3(800, 600, this, 500, 150, entities, playerType, client, id));
         }
     }
 
     public  void render (OrthographicCamera camera, SpriteBatch batch) {
-        for (Entity entity : entities) {
-            entity.render(batch);
+        for (int i = 0; i < entities.size(); i ++) {
+            entities.get(i).render(batch);
         }
     }
 
     public  void update (float delta) {
-        for (Entity entity : entities) {
-            entity.update(delta, -9.8f);
-        }
+        getPlayer().update(delta, -9.8f);
+        //for (Entity entity : entities) {
+          //  entity.update(delta, -9.8f);
+        //}
     }
     public abstract void dispose ();
 
@@ -97,7 +103,7 @@ public abstract class GameMap {
     }
 
     public Entity getPlayer() {
-        return entities.get(entities.size() - 1);
+        return entities.get(0);
     }
 
     public ArrayList<Entity> getEntities() {
