@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
+import ee.taltech.iti0200.server.packets.LivesLost;
+import ee.taltech.iti0200.server.packets.MoveEnemy;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
@@ -22,9 +24,10 @@ public class Enemy1 extends Entity {
     Client client;
     String id, texture, gunfire;
 
-    public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id) {
+    public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {
         super(x, y, EntityType.ENEMY1, map, lives, id);
         this.id = id;
+        this.client = client;
 
         this.shootingRange = shootingRange;
         this.entities = entities;
@@ -51,18 +54,27 @@ public class Enemy1 extends Entity {
 
     public void shoot() {
         for (Entity entity : entities) {
-            if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
+            if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)
+                    || entity.getType().equals(EntityType.PLAYER1)) {
                 if (isRight
                         && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
                     time = 0;
                     entity.setLives(entity.getLives() - 1);
+                    LivesLost livesLost = new LivesLost();
+                    livesLost.lives = entity.getLives();
+                    livesLost.id = entity.getId();
+                    client.sendTCP(livesLost);
                 } else if (!isRight
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
                     entity.setLives(entity.getLives() - 1);
+                    LivesLost livesLost = new LivesLost();
+                    livesLost.lives = entity.getLives();
+                    livesLost.id = entity.getId();
+                    client.sendTCP(livesLost);
                 }
             }
         }
@@ -70,7 +82,7 @@ public class Enemy1 extends Entity {
 
     public void follow(float deltaTime) {
         for (Entity player : entities) {
-            if (player.getType().equals(EntityType.PLAYER)
+            if (player.getType().equals(EntityType.PLAYER) || player.getType().equals(EntityType.PLAYER1)
                     && player.getY() >= getY() && player.getY() <= getY() + getHeight()
                     && player.getX() > getX() && player.getX() < getX() + 100 || player.getX() < getX() && player.getX() > getX() - 100) {
                 followed = player;
@@ -87,6 +99,16 @@ public class Enemy1 extends Entity {
             } else if (followed.getX() < getX()) {
                 moveLeft(deltaTime);
             }
+
+            if (followed.getY() > getY() + 2 * getHeight() || followed.getY() < getY() - 2 * getHeight()) {
+                followed = null;
+            }
+
+            MoveEnemy moveEnemy = new MoveEnemy();
+            moveEnemy.id = id;
+            moveEnemy.x = getX();
+            moveEnemy.y = getY();
+            client.sendTCP(moveEnemy);
 
         }
     }

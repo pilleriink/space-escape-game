@@ -1,4 +1,4 @@
-package ee.taltech.iti0200.server;
+package ee.taltech.iti0200.server.packets;
 
 import ee.taltech.iti0200.entities.PlayerType;
 

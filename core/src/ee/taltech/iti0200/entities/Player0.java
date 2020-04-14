@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.server.Gun;
-import ee.taltech.iti0200.server.LivesLost;
-import ee.taltech.iti0200.server.Move;
+import ee.taltech.iti0200.server.packets.Gun;
+import ee.taltech.iti0200.server.packets.LivesLost;
+import ee.taltech.iti0200.server.packets.Move;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
