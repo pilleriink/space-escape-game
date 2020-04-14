@@ -47,7 +47,9 @@ public abstract class GameMap {
     }
 
     public  void update (float delta) {
-        getPlayer().update(delta, -9.8f);
+        for (int i = 0; i < entities.size(); i ++) {
+            entities.get(i).update(delta, -9.8f);
+        }
         //for (Entity entity : entities) {
           //  entity.update(delta, -9.8f);
         //}

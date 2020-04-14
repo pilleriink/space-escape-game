@@ -1,6 +1,5 @@
 package ee.taltech.iti0200;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -19,7 +18,9 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.server.*;
+import ee.taltech.iti0200.entities.Enemy0;
+import ee.taltech.iti0200.entities.Entity;
+import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 
@@ -29,7 +30,7 @@ import java.util.Random;
 
 public class GameScreen implements Screen {
     private SpaceEscape game;
-    Client client;
+    final Client client;
     SpriteBatch batch;
 
 
@@ -74,6 +75,8 @@ public class GameScreen implements Screen {
     List<String> playerIds;
 
 
+
+
     public GameScreen(SpaceEscape game, PlayerType playerType, Client client, String id) {
         this.client = client;
         this.game = game;
@@ -83,6 +86,12 @@ public class GameScreen implements Screen {
         gameMap = new TiledGameMap();
         gameMap.addPlayer(playerType, client, id);
         playerIds.add(id);
+
+        gameMap.addEntity(new Enemy0(1000, 600, gameMap, 50, 150, gameMap.getEntities(), "0", client));
+        playerIds.add("0");
+
+        //gameMap.addEntity(new Enemy1(2000, 700, gameMap, 50, 150, gameMap.getEntities(), "1", client));
+        //playerIds.add("1");
 
         this.client.addListener(new Listener() {
             public void received (Connection connection, Object object) {
@@ -120,12 +129,24 @@ public class GameScreen implements Screen {
                 }
 
                 if (object instanceof Enemy) {
-                    if (((Enemy) object).enemyType.equals("enemy0")) {
-                        gameMap.addEntity(new Enemy0(((Enemy) object).x, ((Enemy) object).y, gameMap, ((Enemy) object).lives, 150, gameMap.getEntities(), ((Enemy) object).id));
-                    }else if (((Enemy) object).enemyType.equals("enemy1")) {
-                        gameMap.addEntity(new Enemy1(((Enemy) object).x, ((Enemy) object).y, gameMap, ((Enemy) object).lives, 150, gameMap.getEntities(), ((Enemy) object).id));
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity.getId().equals(((Enemy) object).id)) {
+                            entity.setPosX(((Enemy) object).x);
+                            entity.setPosY(((Enemy) object).y);
+                            entity.setLives(((Enemy) object).lives);
+                        }
                     }
                 }
+
+                if (object instanceof MoveEnemy) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity.getId().equals(((MoveEnemy) object).id)) {
+                            entity.setPosX(((MoveEnemy) object).x);
+                            entity.setPosY(((MoveEnemy) object).y);
+                        }
+                    }
+                }
+
             }});
 
 

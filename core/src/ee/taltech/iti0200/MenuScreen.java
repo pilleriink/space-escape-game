@@ -11,10 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 //import ee.taltech.iti0200.entities.Player;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.PlayerType;
-import ee.taltech.iti0200.server.LivesLost;
-import ee.taltech.iti0200.server.Move;
-import ee.taltech.iti0200.server.Player;
-import ee.taltech.iti0200.server.Register;
+import ee.taltech.iti0200.server.packets.Register;
 
 import java.time.LocalDateTime;
 

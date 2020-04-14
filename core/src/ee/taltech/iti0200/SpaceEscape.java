@@ -3,20 +3,14 @@ package ee.taltech.iti0200;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import ee.taltech.iti0200.entities.Entity;
-import ee.taltech.iti0200.entities.PlayerType;
-import ee.taltech.iti0200.server.*;
+import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SpaceEscape extends Game {
 	public SpriteBatch batch;
@@ -39,6 +33,7 @@ public class SpaceEscape extends Game {
 		client.getKryo().register(ArrayList.class);
 		client.getKryo().register(Gun.class);
 		client.getKryo().register(Enemy.class);
+		client.getKryo().register(MoveEnemy.class);
 
 	}
 
