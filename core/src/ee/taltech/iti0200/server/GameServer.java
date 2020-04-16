@@ -11,29 +11,36 @@ import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameServer {
     Server server;
     Map<Connection, Player> players;
     List<Enemy> enemies;
     Connection firstConnection;
+    List<Integer> enemyX = new ArrayList<>(Arrays.asList(1430, 1730, 1470, 2008, 1100, 2743, 2995, 3230));
+    List<Integer> enemyY = new ArrayList<>(Arrays.asList(560, 450, 1040, 770, 1825, 1875, 625, 800));
+    List<Integer> playerX = new ArrayList<>(Arrays.asList(800, 1026, 1400, 1024, 1678, 2337, 2892));
+    List<Integer> playerY = new ArrayList<>(Arrays.asList(450, 580, 465, 865, 945, 1475, 1140));
 
     public GameServer() throws IOException {
         players = new HashMap<>();
         enemies = new ArrayList<>();
 
-        Enemy enemy = new Enemy();
-        enemy.enemyType = "enemy0";
-        enemy.id = "0";
-        enemy.lives = 50;
-        enemy.x = 1000;
-        enemy.y = 600;
+        for (int i = 0; i < 8; i++) {
+            Enemy enemy = new Enemy();
+            enemy.enemyType = "enemy0";
+            enemy.id = "" + i;
+            enemy.lives = 50;
+            int coordinates = (int) (Math.random() * (7 - i));
+            enemy.x = enemyX.get(coordinates);
+            enemy.y = enemyY.get(coordinates);
+            enemyX.remove(enemyX.get(coordinates));
+            enemyY.remove(enemyY.get(coordinates));
+            enemies.add(enemy);
+        }
+        System.out.println(enemies);
 
-        enemies.add(enemy);
 
         //Enemy enemy2 = new Enemy();
         //enemy2.enemyType = "enemy1";
@@ -47,7 +54,7 @@ public class GameServer {
 
         Server server = new Server();
         server.start();
-        server.bind(54556, 54778);
+        server.bind(5200);
         Kryo kryoServer = server.getKryo();
         kryoServer.register(Register.class);
         kryoServer.register(Move.class);
@@ -74,6 +81,7 @@ public class GameServer {
 
                     for (Enemy enemy1 : enemies) {
                         connection.sendTCP(enemy1);
+                        System.out.println(enemy1);
                     }
 
                     Player player = new Player();

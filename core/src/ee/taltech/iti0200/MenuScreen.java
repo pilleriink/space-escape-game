@@ -11,9 +11,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 //import ee.taltech.iti0200.entities.Player;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.PlayerType;
-import ee.taltech.iti0200.server.packets.Register;
+import ee.taltech.iti0200.server.packets.*;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class MenuScreen implements Screen {
 
@@ -22,13 +25,34 @@ public class MenuScreen implements Screen {
 
     OrthographicCamera camera;
     SpriteBatch batch;
-    Texture img0, img1, img2, img3, img0Hover, img1Hover, img2Hover, img3Hover, chooseCharacter;
+    Texture img0, img1, img2, img3, img0Hover, img1Hover, img2Hover, img3Hover, chooseCharacter, chooseBackground;
     int positionX;
     PlayerType playerType;
+    boolean isMP;
 
-    public MenuScreen(final SpaceEscape game, Client client) {
+    public MenuScreen(final SpaceEscape game, boolean isMP) {
         this.game = game;
-        this.client = client;
+        this.isMP = isMP;
+
+        client = new Client();
+        client.start();
+        try {
+            if (isMP) {
+                client.connect(5000, InetAddress.getLocalHost(), 5200);
+            } else {
+                client.connect(5000, InetAddress.getLocalHost(), 5200);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        client.getKryo().register(Register.class);
+        client.getKryo().register(Move.class);
+        client.getKryo().register(LivesLost.class);
+        client.getKryo().register(Player.class);
+        client.getKryo().register(ArrayList.class);
+        client.getKryo().register(Gun.class);
+        client.getKryo().register(Enemy.class);
+        client.getKryo().register(MoveEnemy.class);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -45,6 +69,7 @@ public class MenuScreen implements Screen {
         img3Hover = new Texture("character3_hover.png");
 
         chooseCharacter = new Texture("choose_character.png");
+        chooseBackground = new Texture("choosebackground.png");
         positionX = 0;
         //Gdx.input.setCursorCatched(true);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -66,32 +91,34 @@ public class MenuScreen implements Screen {
             positionX++;
         }
 
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
+        batch.draw(chooseBackground, (float) (-0.5 * chooseBackground.getWidth()), (float) (-0.5 * chooseBackground.getHeight()));
 
-        batch.draw(chooseCharacter, -chooseCharacter.getWidth() / 2, chooseCharacter.getHeight() * 7);
+        batch.draw(chooseCharacter, -chooseCharacter.getWidth() / 2, chooseCharacter.getHeight() * 6);
 
-        batch.draw(img0, -img0.getWidth() * 2 - 200, -img0.getHeight() / 2);
-        batch.draw(img1, -img1.getWidth() - 75, -img1.getHeight() / 2);
-        batch.draw(img2, 75, -img2.getHeight() / 2);
-        batch.draw(img3, img3.getWidth() + 200, -img3.getHeight() / 2);
+        batch.draw(img0, -img0.getWidth() * 2 - 200, (float) (-img0.getHeight() / 1.5));
+        batch.draw(img1, -img1.getWidth() - 75, (float) (-img1.getHeight() / 1.5));
+        batch.draw(img2, 75, (float) (-img2.getHeight() / 1.5));
+        batch.draw(img3, img3.getWidth() + 200, (float) (-img3.getHeight() / 1.5));
 
         switch (positionX) {
             case 0:
-                batch.draw(img0Hover, -img0Hover.getWidth() * 2 - 200, -img0Hover.getHeight() / 2);
+                batch.draw(img0Hover, -img0Hover.getWidth() * 2 - 200, (float) (-img0Hover.getHeight() / 1.5));
                 playerType = PlayerType.PLAYER0;
                 break;
             case 1:
-                batch.draw(img1Hover, -img1Hover.getWidth() - 75, -img1Hover.getHeight() / 2);
+                batch.draw(img1Hover, -img1Hover.getWidth() - 75, (float) (-img1Hover.getHeight() / 1.5));
                 playerType = PlayerType.PLAYER1;
                 break;
             case 2:
-                batch.draw(img2Hover, 75, -img2Hover.getHeight() / 2);
+                batch.draw(img2Hover, 75, (float) (-img2Hover.getHeight() / 1.5));
                 playerType = PlayerType.PLAYER2;
                 break;
             case 3:
-                batch.draw(img3Hover, img3Hover.getWidth() + 200, -img3Hover.getHeight() / 2);
+                batch.draw(img3Hover, img3Hover.getWidth() + 200, (float) (-img3Hover.getHeight() / 1.5));
                 playerType = PlayerType.PLAYER3;
                 break;
         }

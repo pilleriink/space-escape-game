@@ -73,6 +73,7 @@ public class GameScreen implements Screen {
     GameMap gameMap;
     List<Player> otherPlayers;
     List<String> playerIds;
+    Texture background;
 
 
 
@@ -86,6 +87,7 @@ public class GameScreen implements Screen {
         gameMap = new TiledGameMap();
         gameMap.addPlayer(playerType, client, id);
         playerIds.add(id);
+        background = new Texture("menubackground.png");
 
         gameMap.addEntity(new Enemy0(1000, 600, gameMap, 50, 150, gameMap.getEntities(), "0", client));
         playerIds.add("0");

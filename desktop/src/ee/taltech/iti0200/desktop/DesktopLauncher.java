@@ -16,8 +16,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) throws IOException {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Space Escape";
-		config.width = 800;
-		config.height = 480;
+		config.width = 1920;
+		config.height = 1080;
 		config.fullscreen = true;
 		new LwjglApplication(new SpaceEscape(), config);
 
