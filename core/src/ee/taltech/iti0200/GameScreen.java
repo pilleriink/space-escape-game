@@ -74,22 +74,24 @@ public class GameScreen implements Screen {
     List<Player> otherPlayers;
     List<String> playerIds;
     Texture background;
-
-
-
+    String id;
 
     public GameScreen(SpaceEscape game, PlayerType playerType, Client client, String id) {
         this.client = client;
         this.game = game;
+        this.id = id;
         otherPlayers = new ArrayList<>();
         playerIds = new ArrayList<>();
 
         gameMap = new TiledGameMap();
         gameMap.addPlayer(playerType, client, id);
+
         playerIds.add(id);
         background = new Texture("menubackground.png");
 
-        gameMap.addEntity(new Enemy0(1000, 600, gameMap, 50, 150, gameMap.getEntities(), "0", client));
+        for (int i = 0; i < 8; i++) {
+            gameMap.addEntity(new Enemy0(1000, 600, gameMap, 50, 150, gameMap.getEntities(), "" + i, client));
+        }
         playerIds.add("0");
 
         //gameMap.addEntity(new Enemy1(2000, 700, gameMap, 50, 150, gameMap.getEntities(), "1", client));
@@ -98,8 +100,13 @@ public class GameScreen implements Screen {
         this.client.addListener(new Listener() {
             public void received (Connection connection, Object object) {
                 if (object instanceof Player) {
-                    OtherPlayer otherPlayer = new OtherPlayer(((Player) object).x, ((Player) object).y, gameMap, ((Player) object).lives, ((Player) object).id, getPlayerType(((Player) object).playerType));
-                    gameMap.addEntity(otherPlayer);
+                    if (((Player) object).id.equals(gameMap.getPlayer().getId())) {
+                        gameMap.getPlayer().setPosX(((Player) object).x);
+                        gameMap.getPlayer().setPosY(((Player) object).y);
+                    } else {
+                        OtherPlayer otherPlayer = new OtherPlayer(((Player) object).x, ((Player) object).y, gameMap, ((Player) object).lives, ((Player) object).id, getPlayerType(((Player) object).playerType));
+                        gameMap.addEntity(otherPlayer);
+                    }
                 }
 
                 if (object instanceof Move) {

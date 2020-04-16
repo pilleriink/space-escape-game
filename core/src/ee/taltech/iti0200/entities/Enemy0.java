@@ -96,10 +96,11 @@ public class Enemy0 extends Entity {
     }
 
     public void follow(float deltaTime) {
+
         for (Entity player : entities) {
             if (player.getType().equals(EntityType.PLAYER) || player.getType().equals(EntityType.PLAYER1)
                     && player.getY() >= getY() && player.getY() <= getY() + getHeight()
-                    && player.getX() > getX() && player.getX() < getX() + 100 || player.getX() < getX() && player.getX() > getX() - 100) {
+                    && (player.getX() > getX() && player.getX() < getX() + 100 || player.getX() < getX() && player.getX() > getX() - 100)) {
                 followed = player;
             }
         }
@@ -116,9 +117,13 @@ public class Enemy0 extends Entity {
                 moveLeft(deltaTime);
             }
 
-            if (followed.getY() > getY() + 2 * getHeight() || followed.getY() < getY() - 2 * getHeight()) {
+            if (followed.getY() > getY() + 2 * getHeight()
+                    || followed.getY() < getY() - 2 * getHeight()
+                    || followed.getX() > getX() + 300
+                    || followed.getX() < getX() - 300) {
                 followed = null;
             }
+
 
             MoveEnemy moveEnemy = new MoveEnemy();
             moveEnemy.id = id;

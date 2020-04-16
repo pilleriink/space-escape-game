@@ -87,9 +87,14 @@ public class GameServer {
                     Player player = new Player();
                     player.id = ((Register) object).id;
                     player.playerType = ((Register) object).playerType;
-                    player.x = 800;
-                    player.y = 600;
                     player.lives = 500;
+                    int coordinates = (int) (Math.random() * (7));
+                    player.x = playerX.get(coordinates);
+                    player.y = playerY.get(coordinates);
+                    playerX.remove(playerX.get(coordinates));
+                    playerY.remove(playerY.get(coordinates));
+
+                    connection.sendTCP(player);
 
                     for (Connection c : players.keySet()) {
                         c.sendTCP(player);
