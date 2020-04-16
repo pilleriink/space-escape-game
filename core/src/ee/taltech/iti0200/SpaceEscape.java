@@ -16,24 +16,9 @@ public class SpaceEscape extends Game {
 	public SpriteBatch batch;
 	public BitmapFont font;
 	GameMap gameMap;
-	Client client;
 
 	public SpaceEscape() {
-		client = new Client();
-		client.start();
-		try {
-			client.connect(5000, InetAddress.getLocalHost(), 54556, 54778);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		client.getKryo().register(Register.class);
-		client.getKryo().register(Move.class);
-		client.getKryo().register(LivesLost.class);
-		client.getKryo().register(Player.class);
-		client.getKryo().register(ArrayList.class);
-		client.getKryo().register(Gun.class);
-		client.getKryo().register(Enemy.class);
-		client.getKryo().register(MoveEnemy.class);
+
 
 	}
 
@@ -42,7 +27,7 @@ public class SpaceEscape extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		gameMap = new TiledGameMap();
-		this.setScreen(new MenuScreen(this, client));
+		this.setScreen(new ChooseBetweenMPAndSP(this));
 	}
 
 	@Override
