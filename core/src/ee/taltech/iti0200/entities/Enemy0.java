@@ -67,11 +67,12 @@ public class Enemy0 extends Entity {
 
     public void shoot() {
         for (Entity entity : entities) {
-            if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)
-                    || entity.getType().equals(EntityType.PLAYER1)) {
+            if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
                 shoot = true;
-                if (isRight
-                        && entity.getX() <= getX() + getWidth() + shootingRange
+                if (entity.getX() <= getX() + getWidth() + shootingRange
+                        && getY() + 0.3 * getHeight() >= entity.getY()
+                        && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()
+                        || entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
                     time = 0;
@@ -80,16 +81,7 @@ public class Enemy0 extends Entity {
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
                     client.sendTCP(livesLost);
-                } else if (!isRight
-                        && entity.getX() + entity.getWidth() >= getX() - shootingRange
-                        && getY() + 0.3 * getHeight() >= entity.getY()
-                        && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
-                    time = 0;
-                    entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.lives = entity.getLives();
-                    livesLost.id = entity.getId();
-                    client.sendTCP(livesLost);
+                    break;
                 }
             }
         }
@@ -98,9 +90,9 @@ public class Enemy0 extends Entity {
     public void follow(float deltaTime) {
 
         for (Entity player : entities) {
-            if (player.getType().equals(EntityType.PLAYER) || player.getType().equals(EntityType.PLAYER1)
+            if (player.getType().equals(EntityType.PLAYER)
                     && player.getY() >= getY() && player.getY() <= getY() + getHeight()
-                    && (player.getX() > getX() && player.getX() < getX() + 100 || player.getX() < getX() && player.getX() > getX() - 100)) {
+                    && player.getX() > getX()  - 300 && player.getX() < getX() + 300) {
                 followed = player;
             }
         }
@@ -117,13 +109,11 @@ public class Enemy0 extends Entity {
                 moveLeft(deltaTime);
             }
 
-            if (followed.getY() > getY() + 2 * getHeight()
-                    || followed.getY() < getY() - 2 * getHeight()
-                    || followed.getX() > getX() + 300
-                    || followed.getX() < getX() - 300) {
+            if (map.doesRectCollideMap(followed.getX(), followed.getY() - 2, followed.getWidth(), followed.getHeight())
+                    || followed.getY() < getY() - getHeight() * 2
+                    || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500) {
                 followed = null;
             }
-
 
             MoveEnemy moveEnemy = new MoveEnemy();
             moveEnemy.id = id;

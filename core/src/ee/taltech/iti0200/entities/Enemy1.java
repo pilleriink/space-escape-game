@@ -54,8 +54,7 @@ public class Enemy1 extends Entity {
 
     public void shoot() {
         for (Entity entity : entities) {
-            if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)
-                    || entity.getType().equals(EntityType.PLAYER1)) {
+            if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
                 if (isRight
                         && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
@@ -82,7 +81,7 @@ public class Enemy1 extends Entity {
 
     public void follow(float deltaTime) {
         for (Entity player : entities) {
-            if (player.getType().equals(EntityType.PLAYER) || player.getType().equals(EntityType.PLAYER1)
+            if (player.getType().equals(EntityType.PLAYER)
                     && player.getY() >= getY() && player.getY() <= getY() + getHeight()
                     && player.getX() > getX() && player.getX() < getX() + 100 || player.getX() < getX() && player.getX() > getX() - 100) {
                 followed = player;
