@@ -17,7 +17,7 @@ public class OtherPlayer extends Entity {
     boolean keyPressed, isRight;
 
     public OtherPlayer(float x, float y, GameMap map, float lives, String id, PlayerType playerType) {
-        super(x, y, EntityType.PLAYER1, map, lives, id);
+        super(x, y, EntityType.PLAYER, map, lives, id);
         this.map = map;
         this.lives = lives;
         this.id = id;
