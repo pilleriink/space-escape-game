@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
+import ee.taltech.iti0200.server.packets.Death;
 import ee.taltech.iti0200.server.packets.Gun;
 import ee.taltech.iti0200.server.packets.LivesLost;
 import ee.taltech.iti0200.server.packets.Move;
@@ -239,6 +240,11 @@ public class Player2 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
+        if (lives == 0) {
+            Death death = new Death();
+            death.id = id;
+            client.sendTCP(death);
+        }
         shootingTime += 1;
         jump(deltaTime, gravity);
         if (!keyPressed) {

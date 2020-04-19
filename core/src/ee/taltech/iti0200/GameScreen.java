@@ -75,6 +75,7 @@ public class GameScreen implements Screen {
     List<String> playerIds;
     Texture background;
     String id;
+    Entity me;
 
     public GameScreen(SpaceEscape game, PlayerType playerType, Client client, String id) {
         this.client = client;
@@ -85,14 +86,15 @@ public class GameScreen implements Screen {
 
         gameMap = new TiledGameMap();
         gameMap.addPlayer(playerType, client, id);
+        me = gameMap.getPlayer();
 
         playerIds.add(id);
         background = new Texture("menubackground.png");
 
         for (int i = 0; i < 8; i++) {
             gameMap.addEntity(new Enemy0(1000, 600, gameMap, 50, 150, gameMap.getEntities(), "" + i, client));
+            playerIds.add("" + i);
         }
-        playerIds.add("0");
 
         //gameMap.addEntity(new Enemy1(2000, 700, gameMap, 50, 150, gameMap.getEntities(), "1", client));
         //playerIds.add("1");
@@ -152,6 +154,15 @@ public class GameScreen implements Screen {
                         if (entity.getId().equals(((MoveEnemy) object).id)) {
                             entity.setPosX(((MoveEnemy) object).x);
                             entity.setPosY(((MoveEnemy) object).y);
+                        }
+                    }
+                }
+
+                if (object instanceof Death) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity.getId().equals(((Death) object).id) && entity.getType().equals(EntityType.PLAYER)) {
+                            gameMap.getEntities().remove(entity);
+                            break;
                         }
                     }
                 }
@@ -309,6 +320,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (!gameMap.getEntities().contains(me)) {
+            game.setScreen(new StartScreen(game));
+            dispose();
+        }
 
         camera.update();
 
@@ -416,8 +431,8 @@ public class GameScreen implements Screen {
                 System.out.println("STOP IT");
             }
         } else {
-        camera.position.x = Math.round(gameMap.getPlayer().getX());
-        camera.position.y = Math.round(gameMap.getPlayer().getY());
+            camera.position.x = Math.round(gameMap.getPlayer().getX());
+            camera.position.y = Math.round(gameMap.getPlayer().getY());
         }
         camera.update();
 
@@ -459,6 +474,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+
         stage.dispose();
     }
 }
