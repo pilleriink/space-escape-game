@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.SpaceEscape;
+import ee.taltech.iti0200.server.packets.Death;
 import ee.taltech.iti0200.server.packets.LivesLost;
 import ee.taltech.iti0200.server.packets.MoveEnemy;
 import ee.taltech.iti0200.world.GameMap;
@@ -125,6 +126,11 @@ public class Enemy0 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
+        if (lives == 0) {
+            Death death = new Death();
+            death.id = id;
+            client.sendTCP(death);
+        }
         follow(deltaTime);
         movementTime += Gdx.graphics.getDeltaTime();
         movingTime += 1;

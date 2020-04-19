@@ -17,7 +17,7 @@ public class GameServer {
     Server server;
     Map<Connection, Player> players;
     List<Enemy> enemies;
-    Connection firstConnection;
+    List<Connection> firstConnection;
     List<Integer> enemyX = new ArrayList<>(Arrays.asList(1430, 1730, 1470, 2008, 1100, 2743, 2995, 3230));
     List<Integer> enemyY = new ArrayList<>(Arrays.asList(560, 450, 1040, 770, 1825, 1875, 625, 800));
     List<Integer> playerX = new ArrayList<>(Arrays.asList(800, 1026, 1400, 1024, 1678, 2337, 2892));
@@ -26,20 +26,18 @@ public class GameServer {
     public GameServer() throws IOException {
         players = new HashMap<>();
         enemies = new ArrayList<>();
+        firstConnection = new ArrayList<>();
 
         for (int i = 0; i < 8; i++) {
             Enemy enemy = new Enemy();
             enemy.enemyType = "enemy0";
             enemy.id = "" + i;
             enemy.lives = 50;
-            int coordinates = (int) (Math.random() * (7 - i));
+            int coordinates = (int) (Math.random() * (7));
             enemy.x = enemyX.get(coordinates);
             enemy.y = enemyY.get(coordinates);
-            enemyX.remove(enemyX.get(coordinates));
-            enemyY.remove(enemyY.get(coordinates));
             enemies.add(enemy);
         }
-        System.out.println(enemies);
 
 
         //Enemy enemy2 = new Enemy();
@@ -64,16 +62,13 @@ public class GameServer {
         kryoServer.register(Gun.class);
         kryoServer.register(Enemy.class);
         kryoServer.register(MoveEnemy.class);
+        kryoServer.register(Death.class);
 
 
 
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
                 if (object instanceof Register) {
-
-                    if (players.isEmpty()) {
-                        firstConnection = connection;
-                    }
 
                     for (Player value : players.values()) {
                         connection.sendTCP(value);
@@ -91,8 +86,6 @@ public class GameServer {
                     int coordinates = (int) (Math.random() * (7));
                     player.x = playerX.get(coordinates);
                     player.y = playerY.get(coordinates);
-                    playerX.remove(playerX.get(coordinates));
-                    playerY.remove(playerY.get(coordinates));
 
                     connection.sendTCP(player);
 
@@ -100,6 +93,7 @@ public class GameServer {
                         c.sendTCP(player);
                     }
                     players.put(connection, player);
+                    firstConnection.add(connection);
                 }
 
                 if (object instanceof Move) {
@@ -130,7 +124,7 @@ public class GameServer {
                 }
 
                 if (object instanceof MoveEnemy) {
-                    if (connection.equals(firstConnection)) {
+                    if (connection.equals(firstConnection.get(0))) {
                         for (Connection c : players.keySet()) {
                             if (!c.equals(connection)) {
                                 c.sendTCP(object);
@@ -143,6 +137,30 @@ public class GameServer {
                             enemy1.y = ((MoveEnemy) object).y;
                         }
                     }
+                }
+
+                if (object instanceof Death) {
+                    for (Connection c : players.keySet()) {
+                        c.sendTCP(object);
+                    }
+                    for (Enemy enemy : enemies) {
+                        if (enemy.id.equals(((Death) object).id)) {
+                            enemy.lives = 50;
+                            int coordinates = (int) (Math.random() * (7));
+                            enemy.x = enemyX.get(coordinates);
+                            enemy.y = enemyY.get(coordinates);
+                            for (Connection c : players.keySet()) {
+                                c.sendTCP(enemy);
+                            }
+                            break;
+                        }
+                    }
+                    for (Connection connection1 : players.keySet()) {
+                        if (players.get(connection1).id.equals(((Death) object).id)) {
+                            players.remove(connection1);
+                        }
+                    }
+
                 }
 
             }

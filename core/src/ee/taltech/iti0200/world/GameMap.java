@@ -51,7 +51,7 @@ public abstract class GameMap {
             entities.get(i).update(delta, -9.8f);
         }
         //for (Entity entity : entities) {
-          //  entity.update(delta, -9.8f);
+        //  entity.update(delta, -9.8f);
         //}
     }
     public abstract void dispose ();

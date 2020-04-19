@@ -14,7 +14,7 @@ import ee.taltech.iti0200.server.packets.Register;
 import java.time.LocalDateTime;
 
 
-public class ChooseBetweenMPAndSP implements Screen {
+public class StartScreen implements Screen {
 
     final SpaceEscape game;
     Client client;
@@ -26,7 +26,7 @@ public class ChooseBetweenMPAndSP implements Screen {
     PlayerType playerType;
     boolean isMP;
 
-    public ChooseBetweenMPAndSP(final SpaceEscape game) {
+    public StartScreen(final SpaceEscape game) {
         this.game = game;
 
         camera = new OrthographicCamera();
@@ -54,13 +54,6 @@ public class ChooseBetweenMPAndSP implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX > 0) {
-            positionX--;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX < 1) {
-            positionX++;
-        }
-
-
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -68,16 +61,6 @@ public class ChooseBetweenMPAndSP implements Screen {
         batch.draw(background, (float) (-0.5 * background.getWidth()), (float) (-0.5 * background.getHeight()));
         batch.draw(spaceEscape, (float) (-0.5 * spaceEscape.getWidth()), spaceEscape.getHeight() * 4);
 
-
-        if (positionX == 0) {
-            batch.draw(multiPlayer, (float) (-1.5 * multiPlayer.getWidth()), -multiPlayer.getHeight() * 2);
-            batch.draw(SPHover, (float) (0.5 * SPHover.getWidth()), -SPHover.getHeight() * 2);
-            isMP = true;
-        } else {
-            batch.draw(singlePlayer, (float) (0.5 * singlePlayer.getWidth()), -singlePlayer.getHeight() * 2);
-            batch.draw(MPHover, (float) (-1.5 * MPHover.getWidth()), -MPHover.getHeight() * 2);
-            isMP = false;
-        }
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
