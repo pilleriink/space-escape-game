@@ -25,13 +25,15 @@ import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class GameScreen implements Screen {
     private SpaceEscape game;
     final Client client;
-    SpriteBatch batch;
+    SpriteBatch Batch;
 
 
     // stage
@@ -44,10 +46,11 @@ public class GameScreen implements Screen {
     public Image xSkill, cSkill, vSkill, zSkill;
     public Texture xSkillTexture, cSkillTexture, vSkillTexture, zSkillTexture, corpseTexture;
     public int xCooldownTime, cCooldownTime, vCooldownTime, shakeIntensityRange = 30, shakeIntensityBuffer = 15;
-    public boolean shaking, gonnaShake;
+    public boolean shaking, gonnaShake, bombShake, droneShake, removeV, cHasToBeGrounded;
     public Random random;
     public double shakingTime = 0.15;
     public List<Entity> dead;
+
 
 
 
@@ -204,18 +207,18 @@ public class GameScreen implements Screen {
             cLabelText = "";
             vCooldownTime = 5;
             vLabelText = "";
+            bombShake = true;
         } else if (playerType == PlayerType.PLAYER1) {
             xSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
             cSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player1/xSkill05.png");
             zSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
 
             xCooldownTime = 4;
             xLabelText = "";
-            cCooldownTime = 3;
+            cCooldownTime = 8;
             cLabelText = "";
-            vCooldownTime = 5;
-            vLabelText = "";
+            removeV = true;
         } else if (playerType == PlayerType.PLAYER2) {
             xSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
             cSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
@@ -224,10 +227,11 @@ public class GameScreen implements Screen {
 
             xCooldownTime = 4;
             xLabelText = "";
-            cCooldownTime = 3;
+            cCooldownTime = 6;
             cLabelText = "";
             vCooldownTime = 5;
             vLabelText = "";
+            droneShake = true;
         } else {
             xSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
             cSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
@@ -236,10 +240,12 @@ public class GameScreen implements Screen {
 
             xCooldownTime = 4;
             xLabelText = "";
-            cCooldownTime = 3;
+            cCooldownTime = 4;
             cLabelText = "";
             vCooldownTime = 5;
             vLabelText = "";
+            bombShake = true;
+            cHasToBeGrounded = true;
         }
 
 
@@ -268,14 +274,16 @@ public class GameScreen implements Screen {
         cLabel.addAction(Actions.alpha(0));
         cLabel.setFontScale(5f);
 
+
         vSkill = new Image(vSkillTexture);
         vSkill.setSize(75, 75);
         vSkill.setPosition(screenCenterX + 70, screenCenterY - 500);
-        vLabel = new Label(vLabelText, labelStyleTwo);
-        vLabel.setPosition(screenCenterX + 90, screenCenterY - 460);
-        vLabel.addAction(Actions.alpha(0));
-        vLabel.setFontScale(5f);
-
+        if (!removeV) {
+            vLabel = new Label(vLabelText, labelStyleTwo);
+            vLabel.setPosition(screenCenterX + 90, screenCenterY - 460);
+            vLabel.addAction(Actions.alpha(0));
+            vLabel.setFontScale(5f);
+        }
 
         stage.addActor(zSkill);
 //        stage.addActor(zLabel);
@@ -284,7 +292,7 @@ public class GameScreen implements Screen {
         stage.addActor(cSkill);
         stage.addActor(cLabel);
         stage.addActor(vSkill);
-        stage.addActor(vLabel);
+        if (!removeV) stage.addActor(vLabel);
 
 
         // ------------------- FINISHED DRAWING -------------
@@ -343,6 +351,7 @@ public class GameScreen implements Screen {
         gameMap.update(Gdx.graphics.getDeltaTime());
         gameMap.render(camera, game.batch);
 
+
         // stage
         stage.act(Gdx.graphics.getDeltaTime());
 
@@ -375,41 +384,51 @@ public class GameScreen implements Screen {
                 xSkill.addAction(Actions.alpha(0));
                 xSkill.addAction(Actions.fadeIn(4f));
                 xCoolDownPoint = deltaTime;
-                gonnaShake = true;
+                if (bombShake) gonnaShake = true;
             }
         }
-        if (gonnaShake) {
-            if (deltaTime >= xCoolDownPoint + 2) {
-                shaking = true;
-            }
-        }
+
 
         cLabelText = String.valueOf(Math.round(cCoolDownPoint + cCooldownTime - deltaTime));
         cLabel.setText(cLabelText);
         if (Integer.parseInt(cLabelText) < 0) {
             cLabel.addAction(Actions.alpha(0));
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            if (deltaTime > cCoolDownPoint + cCooldownTime) {
-                cLabel.addAction(Actions.alpha(1));
-                cSkill.addAction(Actions.alpha(0));
-                cSkill.addAction(Actions.fadeIn(3f));
-                cCoolDownPoint = deltaTime;
+        if (!cHasToBeGrounded) {
+         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+             if (deltaTime > cCoolDownPoint + cCooldownTime) {
+                 cLabel.addAction(Actions.alpha(1));
+                 cSkill.addAction(Actions.alpha(0));
+                 cSkill.addAction(Actions.fadeIn(3f));
+                 cCoolDownPoint = deltaTime;
+                 if (droneShake) gonnaShake = true;
+               }
+        }
+        } else {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.C) && me.isGrounded()) {
+                if (deltaTime > cCoolDownPoint + cCooldownTime) {
+                    cLabel.addAction(Actions.alpha(1));
+                    cSkill.addAction(Actions.alpha(0));
+                    cSkill.addAction(Actions.fadeIn(3f));
+                    cCoolDownPoint = deltaTime;
+                    if (droneShake) gonnaShake = true;
+                }
             }
         }
 
-
-        vLabelText = String.valueOf(Math.round(vCoolDownPoint + vCooldownTime - deltaTime));
-        vLabel.setText(vLabelText);
-        if (Integer.parseInt(vLabelText) < 0) {
-            vLabel.addAction(Actions.alpha(0));
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {
-            if (deltaTime > vCoolDownPoint + vCooldownTime) {
-                vLabel.addAction(Actions.alpha(1));
-                vSkill.addAction(Actions.alpha(0));
-                vSkill.addAction(Actions.fadeIn(5f));
-                vCoolDownPoint = deltaTime;
+        if (!removeV) {
+            vLabelText = String.valueOf(Math.round(vCoolDownPoint + vCooldownTime - deltaTime));
+            vLabel.setText(vLabelText);
+            if (Integer.parseInt(vLabelText) < 0) {
+                vLabel.addAction(Actions.alpha(0));
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {
+                if (deltaTime > vCoolDownPoint + vCooldownTime) {
+                    vLabel.addAction(Actions.alpha(1));
+                    vSkill.addAction(Actions.alpha(0));
+                    vSkill.addAction(Actions.fadeIn(5f));
+                    vCoolDownPoint = deltaTime;
+                }
             }
         }
 
@@ -424,15 +443,32 @@ public class GameScreen implements Screen {
 
 
         // CAMERA SHAKING OR STATIC
+        if (gonnaShake) {
+            if (bombShake) {
+                if (deltaTime >= xCoolDownPoint + 2) {
+                    shaking = true;
+                }
+            } else if (droneShake) {
+                if (deltaTime >= cCoolDownPoint + 2) {
+                    shaking = true;
+                }
+            }
+        }
         if (shaking) {
             camera.position.x = Math.round(gameMap.getPlayer().getX()
                     + (random.nextInt(shakeIntensityRange) - shakeIntensityBuffer));
             camera.position.y = Math.round(gameMap.getPlayer().getY()
                     + (random.nextInt(shakeIntensityRange) - shakeIntensityBuffer));
-            if (deltaTime >= xCoolDownPoint + 2 + shakingTime) {
-                gonnaShake = false;
-                shaking = false;
-                System.out.println("STOP IT");
+            if (bombShake) {
+                if (deltaTime >= xCoolDownPoint + 2 + shakingTime) {
+                    gonnaShake = false;
+                    shaking = false;
+                }
+            } else if (droneShake) {
+                if (deltaTime >= cCoolDownPoint + 2 + shakingTime) {
+                    gonnaShake = false;
+                    shaking = false;
+                }
             }
         } else {
             camera.position.x = Math.round(gameMap.getPlayer().getX());

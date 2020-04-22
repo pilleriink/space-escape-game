@@ -13,6 +13,8 @@ import ee.taltech.iti0200.server.packets.Move;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class Player3 extends Entity {
@@ -20,18 +22,21 @@ public class Player3 extends Entity {
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
     private static final double C_DELAY = 0.05;
-    private static final double V_DELAY = 0.75;
+    private static final double V_DELAY = 1;
     private static final double X_DELAY = 1;
+    private static final double X_SKILL_HEIGHT_LIMIT = 40.0;
 
-    private ArrayList<Entity> entities;
+    private ArrayList<Entity> entities, cSkillToHeal;
 
-    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2;
+    private Texture gunLeft, gunRight, cSkill1, cSkillField, cSkillReady, cSkill2, xSkillTexture;
     private NinePatch health;
     private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX;
     private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
-            bombGrounded, explosionTime;
+            bombGrounded, explosionTime, reachedLimit, xExplosion, xStuck, xRight, cSkillIsReady, cSkillIsDown;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
+    private Map<Float, Float> xSkillCurve;
+    float xSkillCurveIndex;
     Client client;
     String id, texture, gunfire;
 
@@ -42,6 +47,7 @@ public class Player3 extends Entity {
         this.texture = "character0/character0_running_left_0.png";
         this.gunfire = "no_gun.png";
         this.gunX = getX();
+        this.lives = lives;
 
         this.entities = entities;
         this.shootingRange = shootingRange;
@@ -52,12 +58,42 @@ public class Player3 extends Entity {
         this.playerType = playerType;
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
 
-        this.cSkill1 = new Texture("PlayerAbilities/Player0/cSkill1.png");
-        this.cSkill2 = new Texture("PlayerAbilities/Player0/cSkill2.png");
-        this.cSkill3 = new Texture("PlayerAbilities/Player0/cSkill3.png");
-        this.xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
-        this.xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
-        cSkillRange = cSkill1.getWidth();
+        this.cSkill1 = new Texture("PlayerAbilities/Player3/cSkill1.png");
+        this.cSkill2 = new Texture("PlayerAbilities/Player3/cSkill2.png");
+        this.cSkillField = new Texture("PlayerAbilities/Player3/cSkillField.png");
+        this.cSkillReady = new Texture("PlayerAbilities/Player3/cSkillReady.png");
+        this.xSkillTexture = new Texture("PlayerAbilities/Player3/xSkillTexture.png");
+
+
+        cSkillToHeal = new ArrayList<>();
+        xSkillCurve = new LinkedHashMap<>();
+        xSkillCurve.put((float) 0.0,(float) 0.0);
+        float indexX = (float) 0.0;
+        float indexY = (float) 0.0;
+        for (int i = 1; i <= 200; i++) {
+             if (reachedLimit) {
+                 if (xSkillCurve.get(indexX) > 0) {
+                     indexX += 1;
+                     indexY -= 2;
+                     xSkillCurve.put(indexX, indexY);
+                 } else {
+                     indexX += 1;
+                     indexY -= 2;
+                     xSkillCurve.put(indexX, indexY);
+                 }
+            } else if (xSkillCurve.get(indexX) < X_SKILL_HEIGHT_LIMIT) {
+                 indexX += 1;
+                 indexY += 2;
+                 xSkillCurve.put(indexX,indexY);
+             } else {
+                 reachedLimit = true;
+                 xSkillCurve.put(indexX + 1, (float) (indexY + 0.5));
+                 xSkillCurve.put(indexX + 2, indexY);
+                 xSkillCurve.put(indexX + 3, indexY);
+                 xSkillCurve.put(indexX + 4, (float) (indexY - 0.5));
+                 indexX += 4;
+             }
+        }
     }
 
     public boolean isRight() {
@@ -78,6 +114,10 @@ public class Player3 extends Entity {
 
     public float getLives() {
         return this.lives;
+    }
+
+    public float getTotalHealth() {
+        return totalHealth;
     }
 
     public void jump(float deltaTime, float gravity) {
@@ -155,56 +195,61 @@ public class Player3 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.X) && !xSkill) {
             xSkill = true;
             lastX = deltaTime;
-            xSkillX = pos.x;
-            xSkillY = pos.y;
+            if (isRight)  {
+                xRight = true;
+                xSkillX = pos.x + getWidth();
+            }
+            else xSkillX = pos.x;
+            xSkillY = pos.y + (getHeight() / 2);
+            xSkillCurveIndex = 0;
         }
-        if (explosionTime) {
+        if (xExplosion) {
             for (Entity entity : entities) {
                 if (entity.type != EntityType.PLAYER &&
-                        entity.getX() >= xSkillX - 200 && entity.getX() <= xSkillX + 200
-                        && entity.getY() >= xSkillY - 200 && entity.getY() <= xSkillY + 200 ) {
+                        entity.getX() + entity.getWidth() >= xSkillX - 100 &&
+                        entity.getX() <= xSkillX + xSkillTexture.getWidth() + 100 &&
+                        entity.getY() + entity.getHeight() >= xSkillY - 100 &&
+                        entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 15);
                     } else {
                         entity.setLives(0);
                     }
+                } else if (entity.type == EntityType.PLAYER &&
+                        entity.getX() + entity.getWidth() >= xSkillX - 100 &&
+                        entity.getX() <= xSkillX + xSkillTexture.getWidth() + 100 &&
+                        entity.getY() + entity.getHeight() >= xSkillY - 100 &&
+                        entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
+                    entity.setLives(Math.min(entity.getLives() + 300, entity.getTotalHealth()));
                 }
             }
-            explosionTime = false;
+            xExplosion = false;
         }
     }
 
 
     public void cSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C) && !cSkill) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C) && !cSkill && grounded) {
             cSkill = true;
             lastC = deltaTime;
-            cSkillX = pos.x;
+            cSkillX = pos.x - (cSkillField.getWidth() / 2);
             cSkillY = pos.y;
-            cSkillWasRight = isRight;
+        }
+        if (cSkillIsReady) {
             for (Entity entity : entities) {
-                if (isRight && entity.getX() > pos.x
-                        && entity.getX() <= getX() + getWidth() + cSkillRange + 20
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    if (entity.getLives() >= 10) {
-                        entity.setLives(entity.getLives() - 10);
-                    } else {
-                        entity.setLives(0);
-                    }
-                } else if (!isRight && entity.getX() < pos.x
-                        && entity.getX() + entity.getWidth() >= getX() - cSkillRange + 20
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    if (entity.getLives() >= 10) {
-                        entity.setLives(entity.getLives() - 10);
-                    } else {
-                        entity.setLives(0);
-                    }
+                if (entity.type == EntityType.PLAYER &&
+                        entity.getX() + (entity.getWidth() / 2) >= cSkillX &&
+                        entity.getX() <= cSkillX + cSkillField.getWidth() - (entity.getWidth() / 2) &&
+                        entity.getY() >= cSkillY && (entity.getY() + entity.getHeight()) <= cSkillY + 30) {
+                    cSkillToHeal.add(entity);
                 }
             }
+            for (Entity entity : cSkillToHeal) {
+                cSkillIsDown = false;
+                cSkillIsReady = false;
+                entity.setLives(Math.min(entity.getLives() + 200, entity.getTotalHealth()));
+            }
+            cSkillToHeal.clear();
         }
     }
 
@@ -212,8 +257,9 @@ public class Player3 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.V) && !vSkill) {
             vSkill = true;
             lastV = deltaTime;
-            SPEED += 150;
+            SPEED += 100;
             vSkillSpeedUp = true;
+            setLives(Math.min(getLives() + 300, totalHealth));
         }
     }
 
@@ -306,56 +352,57 @@ public class Player3 extends Entity {
         }
 
         if (xSkill) {
-            if (deltaTime <= lastX + X_DELAY){
-                if (!map.doesRectCollideMap(xSkillX, xSkillY - 2, xSkill1.getWidth(), xSkill1.getHeight())) {
-                    batch.draw(xSkill1, xSkillX, xSkillY -= 2);
-                } else {
-                    batch.draw(xSkill1, xSkillX, xSkillY);
+            if (xRight) {
+                if (!map.doesRectCollideMap(xSkillX + xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
+                    if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
+                        batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                        xSkillCurveIndex += 1;
+                    }
+                } else if (deltaTime <= lastX + 2) {
+                    batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
                 }
-            } else if (deltaTime > lastX + X_DELAY && deltaTime <= lastX + X_DELAY * 2) {
-                if (!map.doesRectCollideMap(xSkillX, xSkillY - 2, xSkill2.getWidth(), xSkill2.getHeight())) {
-                    batch.draw(xSkill2, xSkillX, xSkillY -= 2);
-                } else {
-                    batch.draw(xSkill2, xSkillX, xSkillY);
+            } else {
+                if (!map.doesRectCollideMap(xSkillX - xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
+                    if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
+                        batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                        xSkillCurveIndex += 1;
+                    }
+                } else if (deltaTime <= lastX + 2) {
+                    batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
                 }
-            } else if (deltaTime > lastX + X_DELAY * 2 && deltaTime <= lastX + 4 ) {
-                explosionTime = true;
             }
-            else if (deltaTime > lastX + 4) {
+            if (deltaTime >= lastX + 2 && deltaTime < lastX + 4) {
+                xExplosion = true;
+            }
+            if (deltaTime >= lastX + 4) {
                 xSkill = false;
+                xSkillCurveIndex = 0;
+                xRight = false;
             }
         }
 
 
         if (cSkill) {
-            if (cSkillWasRight) {
-                if (deltaTime <= lastC + C_DELAY) {
-                    batch.draw(cSkill1, pos.x + 20, pos.y, 200, 24);
-                } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
-                    batch.draw(cSkill2, pos.x + 20, pos.y, 200, 24);
-                } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
-                    batch.draw(cSkill3, pos.x + 20, pos.y, 200, 24);
-                } else if (deltaTime >= lastC + 3) {
-                    cSkill = false;
-                }
-            } else {
-                if (deltaTime <= lastC + C_DELAY) {
-                    batch.draw(cSkill1, pos.x - 210, pos.y, 200, 24);
-                } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
-                    batch.draw(cSkill2, pos.x - 210, pos.y, 200, 24);
-                } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
-                    batch.draw(cSkill3, pos.x - 210, pos.y, 200, 24);
-                } else if (deltaTime >= lastC + 3) {
-                    cSkill = false;
-                }
+            if (deltaTime <= lastC + 0.5) cSkillIsDown = true;
+            else if (deltaTime >= lastC + 4) cSkill = false;
+        }
+        if (cSkillIsDown) {
+            batch.draw(cSkillField, cSkillX, cSkillY);
+            if (deltaTime <= lastC + 1) batch.draw(cSkill2, cSkillX + 50, cSkillY + 40);
+            else if (deltaTime > lastC + 1 && deltaTime <= lastC + 2) batch.draw(cSkill1, cSkillX + 50, cSkillY + 40);
+            else if (deltaTime > lastC + 2) {
+                cSkillIsReady = true;
+                batch.draw(cSkillReady, cSkillX, cSkillY + 40);
             }
         }
         if (vSkill) {
             if (vSkillSpeedUp && deltaTime >= lastV + V_DELAY) {
-                SPEED -= 150;
+                SPEED -= 100;
                 vSkillSpeedUp = false;
             }
-            if (deltaTime >= lastV + 5) vSkill = false;
+            if (deltaTime >= lastV + 5) {
+                vSkill = false;
+            }
         }
     }
 

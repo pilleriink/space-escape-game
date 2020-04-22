@@ -19,7 +19,7 @@ public class Player0 extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
-    private static final double C_DELAY = 0.05;
+    private static final double C_DELAY = 0.02;
     private static final double V_DELAY = 0.75;
     private static final double X_DELAY = 1;
 
@@ -29,7 +29,7 @@ public class Player0 extends Entity {
     private NinePatch health;
     private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX;
     private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
-            bombGrounded, explosionTime;
+            bombGrounded, explosionTime, cDoesDmg, cDidDmg;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
     Client client;
@@ -77,6 +77,10 @@ public class Player0 extends Entity {
 
     public float getLives() {
         return this.lives;
+    }
+
+    public float getTotalHealth() {
+        return totalHealth;
     }
 
     public void jump(float deltaTime, float gravity) {
@@ -160,8 +164,9 @@ public class Player0 extends Entity {
         if (explosionTime) {
             for (Entity entity : entities) {
                 if (entity.type != EntityType.PLAYER &&
-                        entity.getX() >= xSkillX - 200 && entity.getX() <= xSkillX + 200
-                        && entity.getY() >= xSkillY - 200 && entity.getY() <= xSkillY + 200 ) {
+                        entity.getX() + entity.getWidth() >= xSkillX - 200 && entity.getX() <= xSkillX
+                        + xSkill2.getWidth() + 200 && entity.getY() + entity.getHeight() >= xSkillY - 200
+                        && entity.getY() <= xSkillY + xSkill2.getHeight() + 200 ) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 15);
                     } else {
@@ -181,22 +186,24 @@ public class Player0 extends Entity {
             cSkillX = pos.x;
             cSkillY = pos.y;
             cSkillWasRight = isRight;
+        }
+        if (cDoesDmg && !cDidDmg) {
+            cSkillX = pos.x;
+            cSkillY = pos.y;
             for (Entity entity : entities) {
                 if (isRight && entity.getX() > pos.x
-                        && entity.getX() <= getX() + getWidth() + cSkillRange + 20
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
+                        && entity.getX() <= getX() + getWidth() + cSkillRange
+                        && getY() >= entity.getY()
+                        && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
                     } else {
                         entity.setLives(0);
                     }
                 } else if (!isRight && entity.getX() < pos.x
-                        && entity.getX() + entity.getWidth() >= getX() - cSkillRange + 20
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
+                        && entity.getX() + entity.getWidth() >= getX() - cSkillRange
+                        && getY() >= entity.getY()
+                        && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
                     } else {
@@ -204,6 +211,7 @@ public class Player0 extends Entity {
                     }
                 }
             }
+            cDidDmg = true;
         }
     }
 
@@ -211,8 +219,7 @@ public class Player0 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.V) && !vSkill) {
             vSkill = true;
             lastV = deltaTime;
-            SPEED += 150;
-            vSkillSpeedUp = true;
+            setLives(Math.min(getLives() + 400, totalHealth));
         }
     }
 
@@ -334,28 +341,30 @@ public class Player0 extends Entity {
                     batch.draw(cSkill1, pos.x + 20, pos.y, 200, 24);
                 } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
                     batch.draw(cSkill2, pos.x + 20, pos.y, 200, 24);
+                    cDoesDmg = true;
                 } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
                     batch.draw(cSkill3, pos.x + 20, pos.y, 200, 24);
                 } else if (deltaTime >= lastC + 3) {
                     cSkill = false;
+                    cDoesDmg = false;
+                    cDidDmg = false;
                 }
             } else {
                 if (deltaTime <= lastC + C_DELAY) {
                     batch.draw(cSkill1, pos.x - 210, pos.y, 200, 24);
                 } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
                     batch.draw(cSkill2, pos.x - 210, pos.y, 200, 24);
+                    cDoesDmg = true;
                 } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
                     batch.draw(cSkill3, pos.x - 210, pos.y, 200, 24);
                 } else if (deltaTime >= lastC + 3) {
                     cSkill = false;
+                    cDoesDmg = false;
+                    cDidDmg = false;
                 }
             }
         }
         if (vSkill) {
-            if (vSkillSpeedUp && deltaTime >= lastV + V_DELAY) {
-                SPEED -= 150;
-                vSkillSpeedUp = false;
-            }
             if (deltaTime >= lastV + 5) vSkill = false;
         }
     }
