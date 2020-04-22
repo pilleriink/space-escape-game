@@ -11,15 +11,16 @@ public abstract class Entity {
     protected float velocityY = 0;
     protected GameMap map;
     protected boolean grounded = false;
-    protected float lives;
+    protected float lives, totalHealth;
     String id;
-    boolean isRight, moving, shoot;
+    boolean isRight, moving, shoot, isSlowed;
 
     public Entity(float x, float y, EntityType type, GameMap map, float lives, String id) {
         this.pos = new Vector2(x, y);
         this.type = type;
         this.map = map;
         this.lives = lives;
+        totalHealth = lives;
         this.id = id;
         this.isRight = false;
         this.moving = false;
@@ -36,6 +37,10 @@ public abstract class Entity {
 
     public boolean isShoot() {
         return shoot;
+    }
+
+    public float getTotalHealth() {
+        return totalHealth;
     }
 
     public String getId() {
