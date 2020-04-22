@@ -91,8 +91,12 @@ public class GameScreen implements Screen {
         playerIds.add(id);
         background = new Texture("menubackground.png");
 
-        for (int i = 0; i < 8; i++) {
-            gameMap.addEntity(new Enemy0(1000, 600, gameMap, 50, 150, gameMap.getEntities(), "" + i, client));
+        for (int i = 0; i < 4; i++) {
+            gameMap.addEntity(new Enemy0(1000, 600, gameMap, 10, 100, gameMap.getEntities(), "" + i, client));
+            playerIds.add("" + i);
+        }
+        for (int i = 4; i < 8; i++) {
+            gameMap.addEntity(new Enemy1(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
             playerIds.add("" + i);
         }
 
@@ -321,7 +325,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         if (!gameMap.getEntities().contains(me)) {
-            game.setScreen(new StartScreen(game));
+            game.setScreen(new EndScreen(game));
             dispose();
         }
 

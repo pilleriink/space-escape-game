@@ -28,29 +28,28 @@ public class GameServer {
         enemies = new ArrayList<>();
         firstConnection = new ArrayList<>();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 4; i++) {
             Enemy enemy = new Enemy();
             enemy.enemyType = "enemy0";
             enemy.id = "" + i;
-            enemy.lives = 50;
+            enemy.lives = 10;
+            int coordinates = (int) (Math.random() * (7));
+            enemy.x = enemyX.get(coordinates);
+            enemy.y = enemyY.get(coordinates);
+            enemies.add(enemy);
+        }
+        for (int i = 4; i < 8; i++) {
+            Enemy enemy = new Enemy();
+            enemy.enemyType = "enemy1";
+            enemy.id = "" + i;
+            enemy.lives = 10;
             int coordinates = (int) (Math.random() * (7));
             enemy.x = enemyX.get(coordinates);
             enemy.y = enemyY.get(coordinates);
             enemies.add(enemy);
         }
 
-
-        //Enemy enemy2 = new Enemy();
-        //enemy2.enemyType = "enemy1";
-        //enemy2.id = "1";
-        //enemy2.lives = 50;
-        //enemy2.x = 2000;
-        //enemy2.y = 700;
-
-        //enemies.add(enemy2);
-        //enemies.add(enemy1);
-
-        Server server = new Server();
+        server = new Server();
         server.start();
         server.bind(5200);
         Kryo kryoServer = server.getKryo();
@@ -83,15 +82,13 @@ public class GameServer {
                     player.id = ((Register) object).id;
                     player.playerType = ((Register) object).playerType;
                     player.lives = 500;
-                    int coordinates = (int) (Math.random() * (7));
+                    int coordinates = (int) (Math.random() * (6));
                     player.x = playerX.get(coordinates);
                     player.y = playerY.get(coordinates);
 
                     connection.sendTCP(player);
 
-                    for (Connection c : players.keySet()) {
-                        c.sendTCP(player);
-                    }
+                    server.sendToAllTCP(player);
                     players.put(connection, player);
                     firstConnection.add(connection);
                 }
@@ -102,8 +99,8 @@ public class GameServer {
                             players.get(c).x = ((Move) object).x;
                             players.get(c).y = ((Move) object).y;
                         }
-                        c.sendTCP(object);
                     }
+                    server.sendToAllTCP(object);
                 }
 
                 if (object instanceof Gun) {
@@ -118,9 +115,10 @@ public class GameServer {
                     for (Connection c : players.keySet()) {
                         if (players.get(c).id.equals(((LivesLost) object).id)) {
                             players.get(c).lives = ((LivesLost) object).lives;
+                            break;
                         }
-                        c.sendTCP(object);
                     }
+                    server.sendToAllTCP(object);
                 }
 
                 if (object instanceof MoveEnemy) {
@@ -140,18 +138,14 @@ public class GameServer {
                 }
 
                 if (object instanceof Death) {
-                    for (Connection c : players.keySet()) {
-                        c.sendTCP(object);
-                    }
+                    server.sendToAllTCP(object);
                     for (Enemy enemy : enemies) {
                         if (enemy.id.equals(((Death) object).id)) {
                             enemy.lives = 50;
                             int coordinates = (int) (Math.random() * (7));
                             enemy.x = enemyX.get(coordinates);
                             enemy.y = enemyY.get(coordinates);
-                            for (Connection c : players.keySet()) {
-                                c.sendTCP(enemy);
-                            }
+                            server.sendToAllTCP(enemy);
                             break;
                         }
                     }
@@ -163,6 +157,13 @@ public class GameServer {
 
                 }
 
+            }
+            public void disconnected (Connection c) {
+                Death death = new Death();
+                death.id = players.get(c).id;
+                firstConnection.remove(c);
+                players.remove(c);
+                server.sendToAllTCP(death);
             }
         });
     }

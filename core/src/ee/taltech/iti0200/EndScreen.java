@@ -9,38 +9,34 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.PlayerType;
-import ee.taltech.iti0200.server.packets.Register;
 
-import java.time.LocalDateTime;
-
-
-public class StartScreen implements Screen {
+public class EndScreen implements Screen {
 
     final SpaceEscape game;
     Client client;
 
     OrthographicCamera camera;
     SpriteBatch batch;
-    Texture spaceEscape, multiPlayer, singlePlayer, MPHover, SPHover, background;
+    Texture spaceEscape, background, tryAgain, tryAgainHover, exitGame, exitGameHover;
     int positionX;
-    PlayerType playerType;
     boolean isMP;
 
-    public StartScreen(final SpaceEscape game) {
+    public EndScreen(final SpaceEscape game) {
         this.game = game;
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = new SpriteBatch();
 
-        spaceEscape = new Texture("space_escape.png");
-        multiPlayer = new Texture("multi_player.png");
-        MPHover = new Texture("multi_player_hover.png");
-        singlePlayer = new Texture("single_player.png");
-        SPHover = new Texture("single_player_hover.png");
-        background = new Texture("menubackground.png");
+        spaceEscape = new Texture("game_over.png");
+        background = new Texture("end_screen.png");
+
+        tryAgain = new Texture("try_again.png");
+        tryAgainHover = new Texture("try_again_hover.png");
+        exitGame = new Texture("exit_game.png");
+        exitGameHover = new Texture("exit_game_hover.png");
+
         positionX = 0;
-        Gdx.input.setCursorCatched(true);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
@@ -59,13 +55,32 @@ public class StartScreen implements Screen {
         batch.begin();
 
         batch.draw(background, (float) (-0.5 * background.getWidth()), (float) (-0.5 * background.getHeight()));
-        batch.draw(spaceEscape, (float) (-0.5 * spaceEscape.getWidth()), spaceEscape.getHeight() * 4);
+        batch.draw(spaceEscape, (float) (-0.5 * spaceEscape.getWidth()), spaceEscape.getHeight() * 2);
+
+        if (positionX == 0) {
+            batch.draw(exitGame, (float) (-1.25 * exitGame.getWidth()), (float) (-1.5 * exitGame.getHeight()));
+            batch.draw(tryAgainHover, (float) (0.25 * tryAgainHover.getWidth()), (float) (-1.5 * exitGame.getHeight()));
+        } else {
+            batch.draw(exitGameHover, (float) (-1.25 * exitGame.getWidth()), (float) (-1.5 * exitGame.getHeight()));
+            batch.draw(tryAgain, (float) (0.25 * tryAgainHover.getWidth()), (float) (-1.5 * exitGame.getHeight()));
+        }
 
         batch.end();
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX == 0) {
+            positionX = 1;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX == 1) {
+            positionX = 0;
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            game.setScreen(new MenuScreen(game, isMP));
-            dispose();
+            if (positionX == 0) {
+                Gdx.app.exit();
+                dispose();
+            } else {
+                game.setScreen(new MenuScreen(game, isMP));
+                dispose();
+            }
         }
 
 

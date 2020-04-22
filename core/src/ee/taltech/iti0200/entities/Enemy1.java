@@ -133,7 +133,7 @@ public class Enemy1 extends Entity {
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(new Texture(enemyType.getMovingString().get(movingTime)), pos.x, pos.y, getWidth(), getHeight());
-        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float) (pos.x + 0.25 * getWidth()), pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth() / 2, 3);
+        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float) (pos.x + 0.37 * getWidth()), pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth() / 4, 3);
 
     }
 }
