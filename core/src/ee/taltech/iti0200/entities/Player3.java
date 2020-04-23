@@ -71,28 +71,28 @@ public class Player3 extends Entity {
         float indexX = (float) 0.0;
         float indexY = (float) 0.0;
         for (int i = 1; i <= 200; i++) {
-             if (reachedLimit) {
-                 if (xSkillCurve.get(indexX) > 0) {
-                     indexX += 1;
-                     indexY -= 2;
-                     xSkillCurve.put(indexX, indexY);
-                 } else {
-                     indexX += 1;
-                     indexY -= 2;
-                     xSkillCurve.put(indexX, indexY);
-                 }
+            if (reachedLimit) {
+                if (xSkillCurve.get(indexX) > 0) {
+                    indexX += 1;
+                    indexY -= 2;
+                    xSkillCurve.put(indexX, indexY);
+                } else {
+                    indexX += 1;
+                    indexY -= 2;
+                    xSkillCurve.put(indexX, indexY);
+                }
             } else if (xSkillCurve.get(indexX) < X_SKILL_HEIGHT_LIMIT) {
-                 indexX += 1;
-                 indexY += 2;
-                 xSkillCurve.put(indexX,indexY);
-             } else {
-                 reachedLimit = true;
-                 xSkillCurve.put(indexX + 1, (float) (indexY + 0.5));
-                 xSkillCurve.put(indexX + 2, indexY);
-                 xSkillCurve.put(indexX + 3, indexY);
-                 xSkillCurve.put(indexX + 4, (float) (indexY - 0.5));
-                 indexX += 4;
-             }
+                indexX += 1;
+                indexY += 2;
+                xSkillCurve.put(indexX,indexY);
+            } else {
+                reachedLimit = true;
+                xSkillCurve.put(indexX + 1, (float) (indexY + 0.5));
+                xSkillCurve.put(indexX + 2, indexY);
+                xSkillCurve.put(indexX + 3, indexY);
+                xSkillCurve.put(indexX + 4, (float) (indexY - 0.5));
+                indexX += 4;
+            }
         }
     }
 
@@ -171,20 +171,14 @@ public class Player3 extends Entity {
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.5 * getHeight() >= entity.getY()
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 }
             }
         }
@@ -212,8 +206,10 @@ public class Player3 extends Entity {
                         entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 15);
+                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
+                        livesLostPackage(entity);
                     }
                 } else if (entity.type == EntityType.PLAYER &&
                         entity.getX() + entity.getWidth() >= xSkillX - 100 &&
@@ -221,6 +217,7 @@ public class Player3 extends Entity {
                         entity.getY() + entity.getHeight() >= xSkillY - 100 &&
                         entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
                     entity.setLives(Math.min(entity.getLives() + 300, entity.getTotalHealth()));
+                    livesLostPackage(entity);
                 }
             }
             xExplosion = false;
@@ -248,9 +245,17 @@ public class Player3 extends Entity {
                 cSkillIsDown = false;
                 cSkillIsReady = false;
                 entity.setLives(Math.min(entity.getLives() + 200, entity.getTotalHealth()));
+                livesLostPackage(entity);
             }
             cSkillToHeal.clear();
         }
+    }
+
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
     }
 
     public void vSkill() {
@@ -260,6 +265,7 @@ public class Player3 extends Entity {
             SPEED += 100;
             vSkillSpeedUp = true;
             setLives(Math.min(getLives() + 300, totalHealth));
+            livesLostPackage(this);
         }
     }
 

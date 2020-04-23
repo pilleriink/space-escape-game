@@ -8,12 +8,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.entities.PlayerType;
 
 public class EndScreen implements Screen {
 
     final SpaceEscape game;
-    Client client;
 
     OrthographicCamera camera;
     SpriteBatch batch;
@@ -78,7 +76,7 @@ public class EndScreen implements Screen {
                 Gdx.app.exit();
                 dispose();
             } else {
-                game.setScreen(new MenuScreen(game, isMP));
+                game.setScreen(new MenuScreen(game));
                 dispose();
             }
         }

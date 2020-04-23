@@ -7,24 +7,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.entities.PlayerType;
-import ee.taltech.iti0200.server.packets.Register;
-
-import java.time.LocalDateTime;
 
 
 public class StartScreen implements Screen {
 
-    final SpaceEscape game;
-    Client client;
+    private final SpaceEscape game;
 
-    OrthographicCamera camera;
-    SpriteBatch batch;
-    Texture spaceEscape, multiPlayer, singlePlayer, MPHover, SPHover, background;
-    int positionX;
-    PlayerType playerType;
-    boolean isMP;
+    private OrthographicCamera camera;
+    private SpriteBatch batch;
+    private Texture spaceEscape, background;
 
     public StartScreen(final SpaceEscape game) {
         this.game = game;
@@ -34,12 +25,7 @@ public class StartScreen implements Screen {
         batch = new SpriteBatch();
 
         spaceEscape = new Texture("space_escape.png");
-        multiPlayer = new Texture("multi_player.png");
-        MPHover = new Texture("multi_player_hover.png");
-        singlePlayer = new Texture("single_player.png");
-        SPHover = new Texture("single_player_hover.png");
         background = new Texture("menubackground.png");
-        positionX = 0;
         Gdx.input.setCursorCatched(true);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
@@ -64,7 +50,7 @@ public class StartScreen implements Screen {
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            game.setScreen(new MenuScreen(game, isMP));
+            game.setScreen(new MenuScreen(game));
             dispose();
         }
 

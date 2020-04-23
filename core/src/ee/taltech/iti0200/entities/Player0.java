@@ -6,10 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.server.packets.Death;
-import ee.taltech.iti0200.server.packets.Gun;
-import ee.taltech.iti0200.server.packets.LivesLost;
-import ee.taltech.iti0200.server.packets.Move;
+import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
@@ -57,6 +54,13 @@ public class Player0 extends Entity {
         this.xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
         this.xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
         cSkillRange = cSkill1.getWidth();
+    }
+
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
     }
 
     public boolean isRight() {
@@ -134,20 +138,14 @@ public class Player0 extends Entity {
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.5 * getHeight() >= entity.getY()
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 }
             }
         }
@@ -169,8 +167,10 @@ public class Player0 extends Entity {
                         && entity.getY() <= xSkillY + xSkill2.getHeight() + 200 ) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 15);
+                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
+                        livesLostPackage(entity);
                     }
                 }
             }
@@ -197,8 +197,10 @@ public class Player0 extends Entity {
                         && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
+                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
+                        livesLostPackage(entity);
                     }
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - cSkillRange
@@ -206,8 +208,10 @@ public class Player0 extends Entity {
                         && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
+                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
+                        livesLostPackage(entity);
                     }
                 }
             }
@@ -220,6 +224,7 @@ public class Player0 extends Entity {
             vSkill = true;
             lastV = deltaTime;
             setLives(Math.min(getLives() + 400, totalHealth));
+            livesLostPackage(this);
         }
     }
 
@@ -260,6 +265,15 @@ public class Player0 extends Entity {
         move.texture = texture;
         client.sendTCP(move);
 
+    }
+
+    public void abilityPackage(float x, float y, String texture) {
+        Ability ability = new Ability();
+        ability.x = x;
+        ability.y = y;
+        ability.texture = texture;
+        ability.id = id;
+        client.sendTCP(ability);
     }
 
     @Override
@@ -313,6 +327,7 @@ public class Player0 extends Entity {
             client.sendTCP(gun);
         }
 
+
         if (xSkill) {
             if (deltaTime <= lastX + X_DELAY){
                 if (!map.doesRectCollideMap(xSkillX, xSkillY - 2, xSkill1.getWidth(), xSkill1.getHeight())) {
@@ -320,12 +335,14 @@ public class Player0 extends Entity {
                 } else {
                     batch.draw(xSkill1, xSkillX, xSkillY);
                 }
+                abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player0/xSkill1.png");
             } else if (deltaTime > lastX + X_DELAY && deltaTime <= lastX + X_DELAY * 2) {
                 if (!map.doesRectCollideMap(xSkillX, xSkillY - 2, xSkill2.getWidth(), xSkill2.getHeight())) {
                     batch.draw(xSkill2, xSkillX, xSkillY -= 2);
                 } else {
                     batch.draw(xSkill2, xSkillX, xSkillY);
                 }
+                abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player0/xSkill2.png");
             } else if (deltaTime > lastX + X_DELAY * 2 && deltaTime <= lastX + 4 ) {
                 explosionTime = true;
             }
@@ -339,11 +356,14 @@ public class Player0 extends Entity {
             if (cSkillWasRight) {
                 if (deltaTime <= lastC + C_DELAY) {
                     batch.draw(cSkill1, pos.x + 20, pos.y, 200, 24);
+                    abilityPackage(pos.x + 20, pos.y, "PlayerAbilities/Player0/cSkill1.png");
                 } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
                     batch.draw(cSkill2, pos.x + 20, pos.y, 200, 24);
+                    abilityPackage(pos.x + 20, pos.y, "PlayerAbilities/Player0/cSkill2.png");
                     cDoesDmg = true;
                 } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
                     batch.draw(cSkill3, pos.x + 20, pos.y, 200, 24);
+                    abilityPackage(pos.x + 20, pos.y, "PlayerAbilities/Player0/cSkill3.png");
                 } else if (deltaTime >= lastC + 3) {
                     cSkill = false;
                     cDoesDmg = false;
@@ -352,11 +372,14 @@ public class Player0 extends Entity {
             } else {
                 if (deltaTime <= lastC + C_DELAY) {
                     batch.draw(cSkill1, pos.x - 210, pos.y, 200, 24);
+                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill1.png");
                 } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
                     batch.draw(cSkill2, pos.x - 210, pos.y, 200, 24);
+                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill2.png");
                     cDoesDmg = true;
                 } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
                     batch.draw(cSkill3, pos.x - 210, pos.y, 200, 24);
+                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill3.png");
                 } else if (deltaTime >= lastC + 3) {
                     cSkill = false;
                     cDoesDmg = false;
