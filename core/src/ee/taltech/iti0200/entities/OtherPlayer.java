@@ -9,11 +9,11 @@ import java.util.ArrayList;
 
 public class OtherPlayer extends Entity {
 
-    float x, y, lives, lastXPos, totalHealth, gunPos;
+    float x, y, lives, lastXPos, totalHealth, gunPos, abilityX, abilityY, droneX, droneY;
     String id;
     GameMap map;
     PlayerType playerType;
-    String texture, gunfire;
+    String texture, gunfire, ability, drone;
     boolean keyPressed, isRight;
 
     public OtherPlayer(float x, float y, GameMap map, float lives, String id, PlayerType playerType) {
@@ -26,7 +26,33 @@ public class OtherPlayer extends Entity {
         this.totalHealth = getLives();
         this.texture = playerType.getId() + "/" + playerType.getId() + "_running_right_0.png";
         this.gunfire = "no_gun.png";
+        this.ability = "no_gun.png";
+        this.drone = "PlayerAbilities/Player2/droneTEST.png";
         this.gunPos = getX();
+    }
+
+    public void setDrone(String drone) {
+        this.drone = drone;
+    }
+
+    public void setDroneX(float droneX) {
+        this.droneX = droneX;
+    }
+
+    public void setDroneY(float droneY) {
+        this.droneY = droneY;
+    }
+
+    public void setAbility(String ability) {
+        this.ability = ability;
+    }
+
+    public void setAbilityX(float abilityX) {
+        this.abilityX = abilityX;
+    }
+
+    public void setAbilityY(float abilityY) {
+        this.abilityY = abilityY;
     }
 
     public void setGunPos(float gunPos) {
@@ -49,8 +75,13 @@ public class OtherPlayer extends Entity {
     public void render(SpriteBatch batch) {
         velocityY = 0;
         batch.draw(new Texture(texture), pos.x, pos.y, getWidth(), getHeight());
+        if (playerType.equals(PlayerType.PLAYER2)) {
+            batch.draw(new Texture(drone), droneX, droneY, getWidth(), getHeight());
+        }
         batch.draw(new Texture(gunfire), gunPos, pos.y + getHeight() / 4, 5, 5);
+        batch.draw(new Texture(ability), abilityX, abilityY);
         new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, pos.x, pos.y + 40, (getLives() / this.totalHealth) * getWidth(), 3);
         gunfire = "no_gun.png";
+        ability = "no_gun.png";
     }
 }

@@ -6,10 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.server.packets.Death;
-import ee.taltech.iti0200.server.packets.Gun;
-import ee.taltech.iti0200.server.packets.LivesLost;
-import ee.taltech.iti0200.server.packets.Move;
+import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
@@ -71,29 +68,45 @@ public class Player3 extends Entity {
         float indexX = (float) 0.0;
         float indexY = (float) 0.0;
         for (int i = 1; i <= 200; i++) {
-             if (reachedLimit) {
-                 if (xSkillCurve.get(indexX) > 0) {
-                     indexX += 1;
-                     indexY -= 2;
-                     xSkillCurve.put(indexX, indexY);
-                 } else {
-                     indexX += 1;
-                     indexY -= 2;
-                     xSkillCurve.put(indexX, indexY);
-                 }
+            if (reachedLimit) {
+                if (xSkillCurve.get(indexX) > 0) {
+                    indexX += 1;
+                    indexY -= 2;
+                    xSkillCurve.put(indexX, indexY);
+                } else {
+                    indexX += 1;
+                    indexY -= 2;
+                    xSkillCurve.put(indexX, indexY);
+                }
             } else if (xSkillCurve.get(indexX) < X_SKILL_HEIGHT_LIMIT) {
-                 indexX += 1;
-                 indexY += 2;
-                 xSkillCurve.put(indexX,indexY);
-             } else {
-                 reachedLimit = true;
-                 xSkillCurve.put(indexX + 1, (float) (indexY + 0.5));
-                 xSkillCurve.put(indexX + 2, indexY);
-                 xSkillCurve.put(indexX + 3, indexY);
-                 xSkillCurve.put(indexX + 4, (float) (indexY - 0.5));
-                 indexX += 4;
-             }
+                indexX += 1;
+                indexY += 2;
+                xSkillCurve.put(indexX,indexY);
+            } else {
+                reachedLimit = true;
+                xSkillCurve.put(indexX + 1, (float) (indexY + 0.5));
+                xSkillCurve.put(indexX + 2, indexY);
+                xSkillCurve.put(indexX + 3, indexY);
+                xSkillCurve.put(indexX + 4, (float) (indexY - 0.5));
+                indexX += 4;
+            }
         }
+    }
+
+    public void abilityPackage(float x, float y, String texture) {
+        Ability ability = new Ability();
+        ability.x = x;
+        ability.y = y;
+        ability.texture = texture;
+        ability.id = id;
+        client.sendTCP(ability);
+    }
+
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
     }
 
     public boolean isRight() {
@@ -171,20 +184,14 @@ public class Player3 extends Entity {
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.5 * getHeight() >= entity.getY()
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 }
             }
         }
@@ -212,8 +219,10 @@ public class Player3 extends Entity {
                         entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 15);
+                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
+                        livesLostPackage(entity);
                     }
                 } else if (entity.type == EntityType.PLAYER &&
                         entity.getX() + entity.getWidth() >= xSkillX - 100 &&
@@ -221,6 +230,7 @@ public class Player3 extends Entity {
                         entity.getY() + entity.getHeight() >= xSkillY - 100 &&
                         entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
                     entity.setLives(Math.min(entity.getLives() + 300, entity.getTotalHealth()));
+                    livesLostPackage(entity);
                 }
             }
             xExplosion = false;
@@ -248,6 +258,7 @@ public class Player3 extends Entity {
                 cSkillIsDown = false;
                 cSkillIsReady = false;
                 entity.setLives(Math.min(entity.getLives() + 200, entity.getTotalHealth()));
+                livesLostPackage(entity);
             }
             cSkillToHeal.clear();
         }
@@ -260,6 +271,7 @@ public class Player3 extends Entity {
             SPEED += 100;
             vSkillSpeedUp = true;
             setLives(Math.min(getLives() + 300, totalHealth));
+            livesLostPackage(this);
         }
     }
 
@@ -356,19 +368,23 @@ public class Player3 extends Entity {
                 if (!map.doesRectCollideMap(xSkillX + xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                        abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                    abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             } else {
                 if (!map.doesRectCollideMap(xSkillX - xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                        abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                    abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             }
             if (deltaTime >= lastX + 2 && deltaTime < lastX + 4) {
@@ -388,11 +404,16 @@ public class Player3 extends Entity {
         }
         if (cSkillIsDown) {
             batch.draw(cSkillField, cSkillX, cSkillY);
-            if (deltaTime <= lastC + 1) batch.draw(cSkill2, cSkillX + 50, cSkillY + 40);
+            abilityPackage(cSkillX, cSkillY, "PlayerAbilities/Player3/cSkillField.png");
+            if (deltaTime <= lastC + 1) {
+                batch.draw(cSkill2, cSkillX + 50, cSkillY + 40);
+                abilityPackage(cSkillX + 50, cSkillY + 40, "PlayerAbilities/Player3/cSkill2.png");
+            }
             else if (deltaTime > lastC + 1 && deltaTime <= lastC + 2) batch.draw(cSkill1, cSkillX + 50, cSkillY + 40);
             else if (deltaTime > lastC + 2) {
                 cSkillIsReady = true;
                 batch.draw(cSkillReady, cSkillX, cSkillY + 40);
+                abilityPackage(cSkillX, cSkillY + 40, "PlayerAbilities/Player3/cSkillReady.png");
             }
         }
         if (vSkill) {

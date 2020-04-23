@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-//import ee.taltech.iti0200.entities.Player;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.PlayerType;
 import ee.taltech.iti0200.server.packets.*;
@@ -20,28 +19,21 @@ import java.util.ArrayList;
 
 public class MenuScreen implements Screen {
 
-    final SpaceEscape game;
-    Client client;
+    private final SpaceEscape game;
+    private Client client;
+    private OrthographicCamera camera;
+    private SpriteBatch batch;
+    private Texture img0, img1, img2, img3, img0Hover, img1Hover, img2Hover, img3Hover, chooseCharacter, chooseBackground;
+    private int positionX;
+    private PlayerType playerType;
 
-    OrthographicCamera camera;
-    SpriteBatch batch;
-    Texture img0, img1, img2, img3, img0Hover, img1Hover, img2Hover, img3Hover, chooseCharacter, chooseBackground;
-    int positionX;
-    PlayerType playerType;
-    boolean isMP;
-
-    public MenuScreen(final SpaceEscape game, boolean isMP) {
+    public MenuScreen(final SpaceEscape game) {
         this.game = game;
-        this.isMP = isMP;
 
         client = new Client();
         client.start();
         try {
-            if (isMP) {
-                client.connect(5000, InetAddress.getLocalHost(), 5200);
-            } else {
-                client.connect(5000, InetAddress.getLocalHost(), 5200);
-            }
+            client.connect(5000, InetAddress.getLocalHost(), 5200);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,6 +46,8 @@ public class MenuScreen implements Screen {
         client.getKryo().register(Enemy.class);
         client.getKryo().register(MoveEnemy.class);
         client.getKryo().register(Death.class);
+        client.getKryo().register(Ability.class);
+        client.getKryo().register(Drone.class);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -72,7 +66,6 @@ public class MenuScreen implements Screen {
         chooseCharacter = new Texture("choose_character.png");
         chooseBackground = new Texture("choosebackground.png");
         positionX = 0;
-        //Gdx.input.setCursorCatched(true);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
@@ -98,7 +91,7 @@ public class MenuScreen implements Screen {
         batch.begin();
         batch.draw(chooseBackground, (float) (-0.5 * chooseBackground.getWidth()), (float) (-0.5 * chooseBackground.getHeight()));
 
-        batch.draw(chooseCharacter, -chooseCharacter.getWidth() / 2, chooseCharacter.getHeight() * 6);
+        batch.draw(chooseCharacter, (float) (-0.5 * chooseCharacter.getWidth()), chooseCharacter.getHeight() * 6);
 
         batch.draw(img0, -img0.getWidth() * 2 - 200, (float) (-img0.getHeight() / 1.5));
         batch.draw(img1, -img1.getWidth() - 75, (float) (-img1.getHeight() / 1.5));
@@ -129,12 +122,8 @@ public class MenuScreen implements Screen {
             Register register = new Register();
             register.id = LocalDateTime.now().toString();
             register.playerType = playerType.getId();
-
             game.setScreen(new GameScreen(game, playerType, client, register.id));
-
             client.sendTCP(register);
-            System.out.println("registered");
-
             dispose();
         }
 
