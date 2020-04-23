@@ -11,27 +11,29 @@ public enum EnemyType {
     ENEMY1("enemy1");
 
     private String id;
-    private ArrayList<Texture> moving;
+    private ArrayList<String> movingString;
 
     EnemyType(String id) {
         this.id = id;
-        this.moving = (ArrayList<Texture>) makeTextureList(id);
+        this.movingString = (ArrayList<String>) makeStringList(id);
+    }
+
+    public ArrayList<String> getMovingString() {
+        return movingString;
     }
 
     public String getId() {
         return id;
     }
 
-    public ArrayList<Texture> getMoving() { return moving; }
 
-    public List<Texture> makeTextureList(String id) {
-        ArrayList<Texture> image = new ArrayList<>();
+    public List<String> makeStringList(String id) {
+        ArrayList<String> image = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 8; j++) {
-                image.add(new Texture(id + "/" + id + "_moving_" + i + ".png"));
+                image.add(id + "/" + id + "_moving_" + i + ".png");
             }
         }
         return image;
     }
-
 }
