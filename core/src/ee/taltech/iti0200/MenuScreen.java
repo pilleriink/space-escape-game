@@ -47,6 +47,7 @@ public class MenuScreen implements Screen {
         client.getKryo().register(MoveEnemy.class);
         client.getKryo().register(Death.class);
         client.getKryo().register(Ability.class);
+        client.getKryo().register(Drone.class);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

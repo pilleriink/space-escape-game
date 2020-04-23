@@ -147,6 +147,16 @@ public class GameScreen implements Screen {
                     }
                 }
 
+                if (object instanceof Drone) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Drone) object).id)) {
+                            ((OtherPlayer) entity).setDrone(((Drone) object).texture);
+                            ((OtherPlayer) entity).setDroneX(((Drone) object).x);
+                            ((OtherPlayer) entity).setDroneY(((Drone) object).y);
+                        }
+                    }
+                }
+
                 if (object instanceof LivesLost) {
                     for (Entity entity : gameMap.getEntities()) {
                         if (entity instanceof OtherPlayer && entity.getId().equals(((LivesLost) object).id)) {
@@ -221,7 +231,7 @@ public class GameScreen implements Screen {
         } else if (playerType == PlayerType.PLAYER1) {
             xSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
             cSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
-            //vSkillTexture = new Texture("PlayerAbilities/Player1/xSkill05.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player1/xSkill05.png");
             zSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
 
             xCooldownTime = 4;

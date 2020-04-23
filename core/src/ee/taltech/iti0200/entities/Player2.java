@@ -6,10 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.server.packets.Death;
-import ee.taltech.iti0200.server.packets.Gun;
-import ee.taltech.iti0200.server.packets.LivesLost;
-import ee.taltech.iti0200.server.packets.Move;
+import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
@@ -70,6 +67,30 @@ public class Player2 extends Entity {
         xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
         xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
         cSkillRange = cSkill1.getWidth();
+    }
+
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
+    }
+
+    public void abilityPackage(float x, float y, String texture) {
+        Ability ability = new Ability();
+        ability.x = x;
+        ability.y = y;
+        ability.texture = texture;
+        ability.id = id;
+        client.sendTCP(ability);
+    }
+
+    public void dronePackage(float x, float y) {
+        Drone drone = new Drone();
+        drone.x = x;
+        drone.y = y;
+        drone.id = id;
+        drone.texture = "PlayerAbilities/Player2/droneTEST.png";
     }
 
     public boolean isRight() {
@@ -147,20 +168,14 @@ public class Player2 extends Entity {
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.5 * getHeight() >= entity.getY()
                         && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
                         && entity.getLives() > 0) {
                     entity.setLives(entity.getLives() - 1);
-                    LivesLost livesLost = new LivesLost();
-                    livesLost.id = entity.getId();
-                    livesLost.lives = entity.getLives();
-                    client.sendTCP(livesLost);
+                    livesLostPackage(entity);
                 }
             }
         }
@@ -204,6 +219,7 @@ public class Player2 extends Entity {
         }
         if (xExplosion) {
             closestEnemy.setLives(Math.max(closestEnemy.getLives() - 200, 0));
+            livesLostPackage(closestEnemy);
             xExplosion = false;
             closestEnemyY = 100000;
             closestEnemyX = 100000;
@@ -224,8 +240,10 @@ public class Player2 extends Entity {
                         && entity.getY() <= droneY + droneTexture.getHeight() + 200 ) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 30);
+                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
+                        livesLostPackage(entity);
                     }
                 }
             }
@@ -239,6 +257,7 @@ public class Player2 extends Entity {
             lastV = deltaTime;
             vSkill = true;
             setLives(Math.min(getLives() + 400, totalHealth));
+            livesLostPackage(this);
         }
     }
 
@@ -354,6 +373,7 @@ public class Player2 extends Entity {
         }
         // drawn
         batch.draw(droneTexture, droneX, droneY, getWidth(), getHeight());
+        dronePackage(droneX, droneY);
         health.draw(batch, pos.x, pos.y + 40, (getLives() / this.totalHealth) * getWidth(), 3);
 
         if (shoot) {
@@ -376,6 +396,7 @@ public class Player2 extends Entity {
         if (xSkill) {
             if (enemyFound) {
                 batch.draw(droneTexture, xSkillX, xSkillY, droneTexture.getWidth(), droneTexture.getHeight());
+                dronePackage(droneX, droneY);
             }
             if (deltaTime > lastX + 4) xSkill = false;
         }

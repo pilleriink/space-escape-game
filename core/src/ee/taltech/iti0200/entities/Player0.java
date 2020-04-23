@@ -63,6 +63,15 @@ public class Player0 extends Entity {
         client.sendTCP(livesLost);
     }
 
+    public void abilityPackage(float x, float y, String texture) {
+        Ability ability = new Ability();
+        ability.x = x;
+        ability.y = y;
+        ability.texture = texture;
+        ability.id = id;
+        client.sendTCP(ability);
+    }
+
     public boolean isRight() {
         return isRight;
     }
@@ -265,15 +274,6 @@ public class Player0 extends Entity {
         move.texture = texture;
         client.sendTCP(move);
 
-    }
-
-    public void abilityPackage(float x, float y, String texture) {
-        Ability ability = new Ability();
-        ability.x = x;
-        ability.y = y;
-        ability.texture = texture;
-        ability.id = id;
-        client.sendTCP(ability);
     }
 
     @Override

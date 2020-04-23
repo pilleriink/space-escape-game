@@ -6,10 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.server.packets.Death;
-import ee.taltech.iti0200.server.packets.Gun;
-import ee.taltech.iti0200.server.packets.LivesLost;
-import ee.taltech.iti0200.server.packets.Move;
+import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
@@ -94,6 +91,22 @@ public class Player3 extends Entity {
                 indexX += 4;
             }
         }
+    }
+
+    public void abilityPackage(float x, float y, String texture) {
+        Ability ability = new Ability();
+        ability.x = x;
+        ability.y = y;
+        ability.texture = texture;
+        ability.id = id;
+        client.sendTCP(ability);
+    }
+
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
     }
 
     public boolean isRight() {
@@ -251,13 +264,6 @@ public class Player3 extends Entity {
         }
     }
 
-    public void livesLostPackage(Entity entity) {
-        LivesLost livesLost = new LivesLost();
-        livesLost.id = entity.getId();
-        livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
-    }
-
     public void vSkill() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.V) && !vSkill) {
             vSkill = true;
@@ -362,19 +368,23 @@ public class Player3 extends Entity {
                 if (!map.doesRectCollideMap(xSkillX + xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                        abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                    abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             } else {
                 if (!map.doesRectCollideMap(xSkillX - xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                        abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
+                    abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             }
             if (deltaTime >= lastX + 2 && deltaTime < lastX + 4) {
@@ -394,11 +404,16 @@ public class Player3 extends Entity {
         }
         if (cSkillIsDown) {
             batch.draw(cSkillField, cSkillX, cSkillY);
-            if (deltaTime <= lastC + 1) batch.draw(cSkill2, cSkillX + 50, cSkillY + 40);
+            abilityPackage(cSkillX, cSkillY, "PlayerAbilities/Player3/cSkillField.png");
+            if (deltaTime <= lastC + 1) {
+                batch.draw(cSkill2, cSkillX + 50, cSkillY + 40);
+                abilityPackage(cSkillX + 50, cSkillY + 40, "PlayerAbilities/Player3/cSkill2.png");
+            }
             else if (deltaTime > lastC + 1 && deltaTime <= lastC + 2) batch.draw(cSkill1, cSkillX + 50, cSkillY + 40);
             else if (deltaTime > lastC + 2) {
                 cSkillIsReady = true;
                 batch.draw(cSkillReady, cSkillX, cSkillY + 40);
+                abilityPackage(cSkillX, cSkillY + 40, "PlayerAbilities/Player3/cSkillReady.png");
             }
         }
         if (vSkill) {

@@ -63,6 +63,7 @@ public class GameServer {
         kryoServer.register(MoveEnemy.class);
         kryoServer.register(Death.class);
         kryoServer.register(Ability.class);
+        kryoServer.register(Drone.class);
 
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
@@ -74,7 +75,6 @@ public class GameServer {
 
                     for (Enemy enemy1 : enemies) {
                         connection.sendTCP(enemy1);
-                        System.out.println(enemy1);
                     }
 
                     Player player = new Player();
@@ -111,6 +111,14 @@ public class GameServer {
                 }
 
                 if (object instanceof Ability) {
+                    for (Connection c : players.keySet()) {
+                        if (!c.equals(connection)) {
+                            c.sendTCP(object);
+                        }
+                    }
+                }
+
+                if (object instanceof Drone) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
                             c.sendTCP(object);
