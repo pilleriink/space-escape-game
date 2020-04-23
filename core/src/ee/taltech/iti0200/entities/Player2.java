@@ -190,7 +190,6 @@ public class Player2 extends Entity {
                     && closestEnemy.getY() + closestEnemy.getHeight() + 30 >= xSkillY && closestEnemy.getY() - 30 <= xSkillY) {
                 xExplosion = true;
                 enemyFound = false;
-                System.out.println("GNNA DO DMG");
             }
             if (xSkillX < closestEnemy.getX()) {
                 if (xSkillX <= closestEnemy.getX() - 5) xSkillX += 5;
@@ -204,9 +203,7 @@ public class Player2 extends Entity {
             }
         }
         if (xExplosion) {
-            System.out.println("DAMAGING HIM");
             closestEnemy.setLives(Math.max(closestEnemy.getLives() - 200, 0));
-            System.out.println(closestEnemy.getLives() + " LIVES");
             xExplosion = false;
             closestEnemyY = 100000;
             closestEnemyX = 100000;
@@ -385,7 +382,7 @@ public class Player2 extends Entity {
 
 
         if (cSkill) {
-        // Drone stops waits for 2 seconds, then goes back to owner
+            // Drone stops waits for 2 seconds, then goes back to owner
             if (deltaTime <= lastC + 2) droneCanMove = false;
             if (deltaTime > lastC + 2) droneExplosion = true;
             if (deltaTime > lastC + 6) cSkill = false;

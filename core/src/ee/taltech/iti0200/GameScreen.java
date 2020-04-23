@@ -137,6 +137,16 @@ public class GameScreen implements Screen {
                     }
                 }
 
+                if (object instanceof Ability) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Ability) object).id)) {
+                            ((OtherPlayer) entity).setAbility(((Ability) object).texture);
+                            ((OtherPlayer) entity).setAbilityX(((Ability) object).x);
+                            ((OtherPlayer) entity).setAbilityY(((Ability) object).y);
+                        }
+                    }
+                }
+
                 if (object instanceof LivesLost) {
                     for (Entity entity : gameMap.getEntities()) {
                         if (entity instanceof OtherPlayer && entity.getId().equals(((LivesLost) object).id)) {
@@ -211,7 +221,7 @@ public class GameScreen implements Screen {
         } else if (playerType == PlayerType.PLAYER1) {
             xSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
             cSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player1/xSkill05.png");
+            //vSkillTexture = new Texture("PlayerAbilities/Player1/xSkill05.png");
             zSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
 
             xCooldownTime = 4;
@@ -395,15 +405,15 @@ public class GameScreen implements Screen {
             cLabel.addAction(Actions.alpha(0));
         }
         if (!cHasToBeGrounded) {
-         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-             if (deltaTime > cCoolDownPoint + cCooldownTime) {
-                 cLabel.addAction(Actions.alpha(1));
-                 cSkill.addAction(Actions.alpha(0));
-                 cSkill.addAction(Actions.fadeIn(3f));
-                 cCoolDownPoint = deltaTime;
-                 if (droneShake) gonnaShake = true;
-               }
-        }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+                if (deltaTime > cCoolDownPoint + cCooldownTime) {
+                    cLabel.addAction(Actions.alpha(1));
+                    cSkill.addAction(Actions.alpha(0));
+                    cSkill.addAction(Actions.fadeIn(3f));
+                    cCoolDownPoint = deltaTime;
+                    if (droneShake) gonnaShake = true;
+                }
+            }
         } else {
             if (Gdx.input.isKeyJustPressed(Input.Keys.C) && me.isGrounded()) {
                 if (deltaTime > cCoolDownPoint + cCooldownTime) {

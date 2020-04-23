@@ -181,18 +181,18 @@ public class Player1 extends Entity {
             for (Entity entity : entities) {
                 if (entity != this) {
                     for (Map.Entry<Float, Float> skillXY : xSkillXY.entrySet()) {
-                            if (entity.getX() + entity.getWidth() >= skillXY.getKey() - 10 &&
-                                    (entity.getX()) <= skillXY.getKey() + 10 &&
-                                    entity.getY() <= skillXY.getValue() + 10 &&
-                                    (entity.getY() + entity.getHeight()) >= skillXY.getValue() - 10) {
-                                if (entity.getLives() - 0.1 > 0) {
-                                    entity.setLives((float) (entity.getLives() - 0.1));
-                                } else {
-                                    entity.setLives(0);
-                                    setLives(Math.min(getLives() + 100, totalHealth));
-                                }
+                        if (entity.getX() + entity.getWidth() >= skillXY.getKey() - 10 &&
+                                (entity.getX()) <= skillXY.getKey() + 10 &&
+                                entity.getY() <= skillXY.getValue() + 10 &&
+                                (entity.getY() + entity.getHeight()) >= skillXY.getValue() - 10) {
+                            if (entity.getLives() - 0.1 > 0) {
+                                entity.setLives((float) (entity.getLives() - 0.1));
+                            } else {
+                                entity.setLives(0);
+                                setLives(Math.min(getLives() + 100, totalHealth));
                             }
                         }
+                    }
                 }
             }
         }

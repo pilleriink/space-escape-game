@@ -62,8 +62,7 @@ public class GameServer {
         kryoServer.register(Enemy.class);
         kryoServer.register(MoveEnemy.class);
         kryoServer.register(Death.class);
-
-
+        kryoServer.register(Ability.class);
 
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
@@ -104,6 +103,14 @@ public class GameServer {
                 }
 
                 if (object instanceof Gun) {
+                    for (Connection c : players.keySet()) {
+                        if (!c.equals(connection)) {
+                            c.sendTCP(object);
+                        }
+                    }
+                }
+
+                if (object instanceof Ability) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
                             c.sendTCP(object);
@@ -152,6 +159,7 @@ public class GameServer {
                     for (Connection connection1 : players.keySet()) {
                         if (players.get(connection1).id.equals(((Death) object).id)) {
                             players.remove(connection1);
+                            break;
                         }
                     }
 
@@ -159,11 +167,13 @@ public class GameServer {
 
             }
             public void disconnected (Connection c) {
-                Death death = new Death();
-                death.id = players.get(c).id;
-                firstConnection.remove(c);
-                players.remove(c);
-                server.sendToAllTCP(death);
+                if (players.containsKey(c)) {
+                    Death death = new Death();
+                    death.id = players.get(c).id;
+                    firstConnection.remove(c);
+                    players.remove(c);
+                    server.sendToAllTCP(death);
+                }
             }
         });
     }

@@ -28,15 +28,13 @@ public class Enemy0 extends Entity {
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
-    private float movementTime, shootingRange, totalHealth;;
+    private float shootingRange, totalHealth;;
 
     private ArrayList<Entity> entities;
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY0;
-    private EntityType entityType = EntityType.ENEMY0;
     final Client client;
-    String id, texture, gunfire;
 
     public Enemy0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {
         super(x, y, EntityType.ENEMY0, map, lives, id);
@@ -132,7 +130,6 @@ public class Enemy0 extends Entity {
             client.sendTCP(death);
         }
         follow(deltaTime);
-        movementTime += Gdx.graphics.getDeltaTime();
         movingTime += 1;
         if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
         time += 1;
