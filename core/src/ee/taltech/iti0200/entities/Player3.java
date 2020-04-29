@@ -11,29 +11,34 @@ import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 public class Player3 extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
-    private static final double C_DELAY = 0.05;
+    private static final double C_TICK = 0.2;
     private static final double V_DELAY = 1;
     private static final double X_DELAY = 1;
     private static final double X_SKILL_HEIGHT_LIMIT = 40.0;
 
     private ArrayList<Entity> entities, cSkillToHeal;
 
-    private Texture gunLeft, gunRight, cSkill1, cSkillField, cSkillReady, cSkill2, xSkillTexture;
+    private Texture gunLeft, gunRight, cSkill1, cSkillField, cSkillField0, cSkillField1, cSkillField2,
+            cSkillReady, cSkill2, xSkillTexture, vSkillTexture;
     private NinePatch health;
-    private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX;
+    private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX, lastCTick;
     private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
             bombGrounded, explosionTime, reachedLimit, xExplosion, xStuck, xRight, cSkillIsReady, cSkillIsDown;
-    private int shootingTime, movingTime, jumpingPower, cSkillRange;
+    private int shootingTime, movingTime, jumpingPower, cSkillRange, fieldIndex;
     private PlayerType playerType;
     private Map<Float, Float> xSkillCurve;
     float xSkillCurveIndex;
+    private Random random;
+    private List<Texture> cSkillFieldList;
     Client client;
     String id, texture, gunfire;
 
@@ -57,9 +62,15 @@ public class Player3 extends Entity {
 
         this.cSkill1 = new Texture("PlayerAbilities/Player3/cSkill1.png");
         this.cSkill2 = new Texture("PlayerAbilities/Player3/cSkill2.png");
-        this.cSkillField = new Texture("PlayerAbilities/Player3/cSkillField.png");
+        this.cSkillField0 = new Texture("PlayerAbilities/Player3/cSkillField0.png");
+        this.cSkillField1 = new Texture("PlayerAbilities/Player3/cSkillField1.png");
+        this.cSkillField2 = new Texture("PlayerAbilities/Player3/cSkillField2.png");
         this.cSkillReady = new Texture("PlayerAbilities/Player3/cSkillReady.png");
         this.xSkillTexture = new Texture("PlayerAbilities/Player3/xSkillTexture.png");
+        this.vSkillTexture = new Texture("PlayerAbilities/Player3/vSkillTexture.png");
+
+        cSkillField = cSkillField0;
+        fieldIndex = 0;
 
 
         cSkillToHeal = new ArrayList<>();
@@ -69,15 +80,9 @@ public class Player3 extends Entity {
         float indexY = (float) 0.0;
         for (int i = 1; i <= 200; i++) {
             if (reachedLimit) {
-                if (xSkillCurve.get(indexX) > 0) {
-                    indexX += 1;
-                    indexY -= 2;
-                    xSkillCurve.put(indexX, indexY);
-                } else {
-                    indexX += 1;
-                    indexY -= 2;
-                    xSkillCurve.put(indexX, indexY);
-                }
+                indexX += 1;
+                indexY -= 2;
+                xSkillCurve.put(indexX, indexY);
             } else if (xSkillCurve.get(indexX) < X_SKILL_HEIGHT_LIMIT) {
                 indexX += 1;
                 indexY += 2;
@@ -91,6 +96,7 @@ public class Player3 extends Entity {
                 indexX += 4;
             }
         }
+        random = new Random();
     }
 
     public void abilityPackage(float x, float y, String texture) {
@@ -242,14 +248,14 @@ public class Player3 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.C) && !cSkill && grounded) {
             cSkill = true;
             lastC = deltaTime;
-            cSkillX = pos.x - (cSkillField.getWidth() / 2);
+            cSkillX = pos.x - (cSkillField1.getWidth() / 2);
             cSkillY = pos.y;
         }
         if (cSkillIsReady) {
             for (Entity entity : entities) {
                 if (entity.type == EntityType.PLAYER &&
                         entity.getX() + (entity.getWidth() / 2) >= cSkillX &&
-                        entity.getX() <= cSkillX + cSkillField.getWidth() - (entity.getWidth() / 2) &&
+                        entity.getX() <= cSkillX + cSkillField1.getWidth() - (entity.getWidth() / 2) &&
                         entity.getY() >= cSkillY && (entity.getY() + entity.getHeight()) <= cSkillY + 30) {
                     cSkillToHeal.add(entity);
                 }
@@ -399,17 +405,34 @@ public class Player3 extends Entity {
 
 
         if (cSkill) {
+            System.out.println(lastC);
             if (deltaTime <= lastC + 0.5) cSkillIsDown = true;
             else if (deltaTime >= lastC + 4) cSkill = false;
         }
         if (cSkillIsDown) {
+            if (deltaTime >= lastCTick + C_TICK) {
+                lastCTick = deltaTime;
+                if (cSkillField == cSkillField0) {
+                cSkillField = cSkillField1;
+                fieldIndex = 1;
+                } else if (cSkillField == cSkillField1) {
+                cSkillField = cSkillField2;
+                fieldIndex = 2;
+                } else {
+                    cSkillField = cSkillField0;
+                    fieldIndex = 0;
+                }
+            }
             batch.draw(cSkillField, cSkillX, cSkillY);
-            abilityPackage(cSkillX, cSkillY, "PlayerAbilities/Player3/cSkillField.png");
+            abilityPackage(cSkillX, cSkillY, "PlayerAbilities/Player3/cSkillField" + fieldIndex + ".png");
             if (deltaTime <= lastC + 1) {
                 batch.draw(cSkill2, cSkillX + 50, cSkillY + 40);
                 abilityPackage(cSkillX + 50, cSkillY + 40, "PlayerAbilities/Player3/cSkill2.png");
             }
-            else if (deltaTime > lastC + 1 && deltaTime <= lastC + 2) batch.draw(cSkill1, cSkillX + 50, cSkillY + 40);
+            else if (deltaTime > lastC + 1 && deltaTime <= lastC + 2){
+                batch.draw(cSkill1, cSkillX + 50, cSkillY + 40);
+                abilityPackage(cSkillX + 50, cSkillY + 40, "PlayerAbilities/Player3/cSkill1.png");
+            }
             else if (deltaTime > lastC + 2) {
                 cSkillIsReady = true;
                 batch.draw(cSkillReady, cSkillX, cSkillY + 40);
@@ -417,6 +440,9 @@ public class Player3 extends Entity {
             }
         }
         if (vSkill) {
+            if (vSkillSpeedUp && deltaTime < lastV + 0.3) {
+                batch.draw(vSkillTexture, pos.x, pos.y);
+            }
             if (vSkillSpeedUp && deltaTime >= lastV + V_DELAY) {
                 SPEED -= 100;
                 vSkillSpeedUp = false;

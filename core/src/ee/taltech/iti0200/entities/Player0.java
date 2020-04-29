@@ -22,7 +22,8 @@ public class Player0 extends Entity {
 
     private ArrayList<Entity> entities;
 
-    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2;
+    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, vSkillTexture, cSkill1Left,
+            cSkill2Left, cSkill3Left;
     private NinePatch health;
     private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX;
     private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
@@ -51,8 +52,12 @@ public class Player0 extends Entity {
         this.cSkill1 = new Texture("PlayerAbilities/Player0/cSkill1.png");
         this.cSkill2 = new Texture("PlayerAbilities/Player0/cSkill2.png");
         this.cSkill3 = new Texture("PlayerAbilities/Player0/cSkill3.png");
+        this.cSkill1Left = new Texture("PlayerAbilities/Player0/cSkill1Left.png");
+        this.cSkill2Left = new Texture("PlayerAbilities/Player0/cSkill2Left.png");
+        this.cSkill3Left = new Texture("PlayerAbilities/Player0/cSkill3Left.png");
         this.xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
         this.xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
+        this.vSkillTexture = new Texture("PlayerAbilities/Player0/vSkillTexture.png");
         cSkillRange = cSkill1.getWidth();
     }
 
@@ -371,15 +376,15 @@ public class Player0 extends Entity {
                 }
             } else {
                 if (deltaTime <= lastC + C_DELAY) {
-                    batch.draw(cSkill1, pos.x - 210, pos.y, 200, 24);
-                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill1.png");
+                    batch.draw(cSkill1Left, pos.x - 210, pos.y, 200, 24);
+                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill1Left.png");
                 } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
-                    batch.draw(cSkill2, pos.x - 210, pos.y, 200, 24);
-                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill2.png");
+                    batch.draw(cSkill2Left, pos.x - 210, pos.y, 200, 24);
+                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill2Left.png");
                     cDoesDmg = true;
                 } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
-                    batch.draw(cSkill3, pos.x - 210, pos.y, 200, 24);
-                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill3.png");
+                    batch.draw(cSkill3Left, pos.x - 210, pos.y, 200, 24);
+                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill3Left.png");
                 } else if (deltaTime >= lastC + 3) {
                     cSkill = false;
                     cDoesDmg = false;
@@ -388,6 +393,9 @@ public class Player0 extends Entity {
             }
         }
         if (vSkill) {
+            if (deltaTime <= lastV + 0.25) {
+                batch.draw(vSkillTexture, pos.x, pos.y);
+            }
             if (deltaTime >= lastV + 5) vSkill = false;
         }
     }

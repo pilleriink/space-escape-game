@@ -229,10 +229,10 @@ public class GameScreen implements Screen {
             vLabelText = "";
             bombShake = true;
         } else if (playerType == PlayerType.PLAYER1) {
-            xSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
-            cSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player1/xSkill05.png");
             zSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
+            xSkillTexture = new Texture("PlayerAbilities/Player1/xSkill.png");
+            cSkillTexture = new Texture("PlayerAbilities/Player1/cSkill.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player1/vSkill.png");
 
             xCooldownTime = 4;
             xLabelText = "";
@@ -240,10 +240,10 @@ public class GameScreen implements Screen {
             cLabelText = "";
             removeV = true;
         } else if (playerType == PlayerType.PLAYER2) {
-            xSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
+            zSkillTexture = new Texture("PlayerAbilities/Player2/zSkill.png");
+            xSkillTexture = new Texture("PlayerAbilities/Player2/xSkill.png");
             cSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
-            zSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player2/vSkill.png");
 
             xCooldownTime = 4;
             xLabelText = "";
@@ -253,10 +253,10 @@ public class GameScreen implements Screen {
             vLabelText = "";
             droneShake = true;
         } else {
-            xSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
-            cSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
+            zSkillTexture = new Texture("PlayerAbilities/Player3/zSkill.png");
+            xSkillTexture = new Texture("PlayerAbilities/Player3/xSkill.png");
+            cSkillTexture = new Texture("PlayerAbilities/Player3/cSkill.png");
             vSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
-            zSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
 
             xCooldownTime = 4;
             xLabelText = "";

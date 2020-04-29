@@ -24,7 +24,8 @@ public class Player2 extends Entity {
 
     private ArrayList<Entity> entities;
 
-    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, droneTexture;
+    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, droneTexture, vSkill1, vSkill2,
+            vSkill3;
     private NinePatch health;
     private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, xSkillX, xSkillY, lastV, lastZ,
             droneX, droneY, gunX, closestEnemyX, closestEnemyY;
@@ -64,6 +65,9 @@ public class Player2 extends Entity {
         cSkill1 = new Texture("PlayerAbilities/Player0/cSkill1.png");
         cSkill2 = new Texture("PlayerAbilities/Player0/cSkill2.png");
         cSkill3 = new Texture("PlayerAbilities/Player0/cSkill3.png");
+        vSkill1 = new Texture("PlayerAbilities/Player2/vSkill1.png");
+        vSkill2 = new Texture("PlayerAbilities/Player2/vSkill2.png");
+        vSkill3 = new Texture("PlayerAbilities/Player2/vSkill3.png");
         xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
         xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
         cSkillRange = cSkill1.getWidth();
@@ -409,6 +413,13 @@ public class Player2 extends Entity {
             if (deltaTime > lastC + 6) cSkill = false;
         }
         if (vSkill) {
+            if (deltaTime <= lastV + 0.1) {
+                batch.draw(vSkill1, pos.x, pos.y);
+            } else if (deltaTime > lastV + 0.1 && deltaTime <= lastV + 0.2) {
+                batch.draw(vSkill2, pos.x, pos.y);
+            } else if (deltaTime > lastV + 0.2 && deltaTime <= lastV + 0.3) {
+                batch.draw(vSkill3, pos.x, pos.y);
+            }
             if (deltaTime >= lastV + 5) vSkill = false;
         }
     }
