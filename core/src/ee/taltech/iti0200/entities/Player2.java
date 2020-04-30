@@ -94,7 +94,7 @@ public class Player2 extends Entity {
         drone.x = x;
         drone.y = y;
         drone.id = id;
-        drone.texture = "PlayerAbilities/Player2/droneTEST.png";
+        client.sendTCP(drone);
     }
 
     public boolean isRight() {
@@ -301,10 +301,12 @@ public class Player2 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
-        if (lives == 0) {
+        System.out.println(lives);
+        if (lives <= 0) {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
+            System.out.println("dead");
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -334,6 +336,7 @@ public class Player2 extends Entity {
         move.y = getY();
         move.texture = texture;
         client.sendTCP(move);
+        dronePackage(droneX, droneY);
     }
 
     @Override
@@ -377,7 +380,6 @@ public class Player2 extends Entity {
         }
         // drawn
         batch.draw(droneTexture, droneX, droneY, getWidth(), getHeight());
-        dronePackage(droneX, droneY);
         health.draw(batch, pos.x, pos.y + 40, (getLives() / this.totalHealth) * getWidth(), 3);
 
         if (shoot) {
@@ -400,7 +402,12 @@ public class Player2 extends Entity {
         if (xSkill) {
             if (enemyFound) {
                 batch.draw(droneTexture, xSkillX, xSkillY, droneTexture.getWidth(), droneTexture.getHeight());
-                dronePackage(droneX, droneY);
+                SmallDrone smallDrone = new SmallDrone();
+                smallDrone.id = id;
+                smallDrone.x = xSkillX;
+                smallDrone.y = xSkillY;
+                smallDrone.texture = "PlayerAbilities/Player2/droneTEST.png";
+                client.sendTCP(smallDrone);
             }
             if (deltaTime > lastX + 4) xSkill = false;
         }
