@@ -89,7 +89,9 @@ public abstract class Entity {
 
     public float getLives() {return this.lives;}
 
-    public void setLives(float lives) {this.lives = lives;}
+    public void setLives(float lives) {
+        this.lives = lives;
+    }
 
 
     public float getX() {

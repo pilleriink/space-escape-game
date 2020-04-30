@@ -149,10 +149,19 @@ public class GameScreen implements Screen {
 
                 if (object instanceof Drone) {
                     for (Entity entity : gameMap.getEntities()) {
-                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Drone) object).id)) {
-                            ((OtherPlayer) entity).setDrone(((Drone) object).texture);
+                        if (entity instanceof OtherPlayer && entity.getId().equals(((Drone) object).id)) {
                             ((OtherPlayer) entity).setDroneX(((Drone) object).x);
                             ((OtherPlayer) entity).setDroneY(((Drone) object).y);
+                        }
+                    }
+                }
+
+                if (object instanceof SmallDrone) {
+                    for (Entity entity : gameMap.getEntities()) {
+                        if (entity instanceof OtherPlayer && entity.getId().equals(((SmallDrone) object).id)) {
+                            ((OtherPlayer) entity).setSmallDroneX(((SmallDrone) object).x);
+                            ((OtherPlayer) entity).setSmallDroneY(((SmallDrone) object).y);
+                            ((OtherPlayer) entity).setSmallDrone(((SmallDrone) object).texture);
                         }
                     }
                 }
@@ -171,7 +180,11 @@ public class GameScreen implements Screen {
                         if (entity.getId().equals(((Enemy) object).id)) {
                             entity.setPosX(((Enemy) object).x);
                             entity.setPosY(((Enemy) object).y);
-                            entity.setLives(((Enemy) object).lives);
+                            if (((Enemy) object).lives > 10) {
+                                entity.setLives(10);
+                            } else {
+                                entity.setLives(((Enemy) object).lives);
+                            }
                         }
                     }
                 }
