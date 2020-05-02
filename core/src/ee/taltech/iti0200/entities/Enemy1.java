@@ -22,7 +22,7 @@ public class Enemy1 extends Entity {
     private boolean isRight;
     private EnemyType enemyType = EnemyType.ENEMY1;
     private Entity followed;
-    Client client;
+    final Client client;
     String id, texture, gunfire;
 
     public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {
@@ -100,7 +100,8 @@ public class Enemy1 extends Entity {
                 moveLeft(deltaTime);
             }
 
-            if (followed.getY() > getY() + 2 * getHeight() || followed.getY() < getY() - 2 * getHeight()) {
+            if (followed.getY() < getY() - getHeight() * 2 || followed.getY() > getY() + getHeight() * 2
+                    || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500) {
                 followed = null;
             }
 
@@ -109,6 +110,14 @@ public class Enemy1 extends Entity {
             moveEnemy.x = getX();
             moveEnemy.y = getY();
             client.sendTCP(moveEnemy);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
         }
     }
@@ -119,6 +128,14 @@ public class Enemy1 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         follow(deltaTime);
         movementTime += Gdx.graphics.getDeltaTime();

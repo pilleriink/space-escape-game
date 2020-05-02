@@ -39,7 +39,7 @@ public class Player3 extends Entity {
     float xSkillCurveIndex;
     private Random random;
     private List<Texture> cSkillFieldList;
-    Client client;
+    final Client client;
     String id, texture, gunfire;
 
     public Player3(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
@@ -106,6 +106,14 @@ public class Player3 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void livesLostPackage(Entity entity) {
@@ -113,6 +121,14 @@ public class Player3 extends Entity {
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
         client.sendTCP(livesLost);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isRight() {
@@ -218,8 +234,7 @@ public class Player3 extends Entity {
         }
         if (xExplosion) {
             for (Entity entity : entities) {
-                if (entity.type != EntityType.PLAYER &&
-                        entity.getX() + entity.getWidth() >= xSkillX - 100 &&
+                if (entity.getX() + entity.getWidth() >= xSkillX - 100 &&
                         entity.getX() <= xSkillX + xSkillTexture.getWidth() + 100 &&
                         entity.getY() + entity.getHeight() >= xSkillY - 100 &&
                         entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
@@ -253,8 +268,7 @@ public class Player3 extends Entity {
         }
         if (cSkillIsReady) {
             for (Entity entity : entities) {
-                if (entity.type == EntityType.PLAYER &&
-                        entity.getX() + (entity.getWidth() / 2) >= cSkillX &&
+                if (entity.getX() + (entity.getWidth() / 2) >= cSkillX &&
                         entity.getX() <= cSkillX + cSkillField1.getWidth() - (entity.getWidth() / 2) &&
                         entity.getY() >= cSkillY && (entity.getY() + entity.getHeight()) <= cSkillY + 30) {
                     cSkillToHeal.add(entity);
@@ -288,6 +302,14 @@ public class Player3 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -311,12 +333,22 @@ public class Player3 extends Entity {
             moving = false;
             movingTime = 0;
         }
-        Move move = new Move();
-        move.id = id;
-        move.x = getX();
-        move.y = getY();
-        move.texture = texture;
-        client.sendTCP(move);
+        if (!grounded || moving) {
+            Move move = new Move();
+            move.id = id;
+            move.x = getX();
+            move.y = getY();
+            move.texture = texture;
+            client.sendTCP(move);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -405,7 +437,6 @@ public class Player3 extends Entity {
 
 
         if (cSkill) {
-            System.out.println(lastC);
             if (deltaTime <= lastC + 0.5) cSkillIsDown = true;
             else if (deltaTime >= lastC + 4) cSkill = false;
         }
