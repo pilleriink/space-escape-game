@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.minlog.Log;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
@@ -65,9 +66,13 @@ public class GameServer {
         kryoServer.register(Ability.class);
         kryoServer.register(Drone.class);
         kryoServer.register(SmallDrone.class);
+        kryoServer.setRegistrationRequired(true);
+
+        Log.set(Log.LEVEL_TRACE);
 
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
+
                 if (object instanceof Register) {
 
                     for (Player value : players.values()) {

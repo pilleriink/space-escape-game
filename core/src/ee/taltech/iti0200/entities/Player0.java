@@ -10,6 +10,8 @@ import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Player0 extends Entity {
@@ -30,7 +32,7 @@ public class Player0 extends Entity {
             bombGrounded, explosionTime, cDoesDmg, cDidDmg;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
-    Client client;
+    final Client client;
     String id, texture, gunfire;
 
     public Player0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
@@ -66,6 +68,14 @@ public class Player0 extends Entity {
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
         client.sendTCP(livesLost);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void abilityPackage(float x, float y, String texture) {
@@ -75,6 +85,14 @@ public class Player0 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isRight() {
@@ -174,19 +192,22 @@ public class Player0 extends Entity {
             xSkillY = pos.y;
         }
         if (explosionTime) {
+            Map<Entity, Float> dead = new HashMap<>();
             for (Entity entity : entities) {
-                if (entity.type != EntityType.PLAYER &&
-                        entity.getX() + entity.getWidth() >= xSkillX - 200 && entity.getX() <= xSkillX
+                if (entity.getX() + entity.getWidth() >= xSkillX - 200 && entity.getX() <= xSkillX
                         + xSkill2.getWidth() + 200 && entity.getY() + entity.getHeight() >= xSkillY - 200
                         && entity.getY() <= xSkillY + xSkill2.getHeight() + 200 ) {
                     if (entity.getLives() >= 10) {
-                        entity.setLives(entity.getLives() - 15);
-                        livesLostPackage(entity);
+                        dead.put(entity, entity.getLives() - 15);
                     } else {
-                        entity.setLives(0);
-                        livesLostPackage(entity);
+                        dead.put(entity, (float) 0);
+
                     }
                 }
+            }
+            for (Entity entity : dead.keySet()) {
+                entity.setLives(dead.get(entity));
+                livesLostPackage(entity);
             }
             explosionTime = false;
         }
@@ -211,22 +232,20 @@ public class Player0 extends Entity {
                         && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
-                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
-                        livesLostPackage(entity);
                     }
+                    livesLostPackage(entity);
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - cSkillRange
                         && getY() >= entity.getY()
                         && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
-                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
-                        livesLostPackage(entity);
                     }
+                    livesLostPackage(entity);
                 }
             }
             cDidDmg = true;
@@ -249,6 +268,14 @@ public class Player0 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -272,12 +299,22 @@ public class Player0 extends Entity {
             moving = false;
             movingTime = 0;
         }
-        Move move = new Move();
-        move.id = id;
-        move.x = getX();
-        move.y = getY();
-        move.texture = texture;
-        client.sendTCP(move);
+        if (!grounded || moving) {
+            Move move = new Move();
+            move.id = id;
+            move.x = getX();
+            move.y = getY();
+            move.texture = texture;
+            client.sendTCP(move);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
     }
 

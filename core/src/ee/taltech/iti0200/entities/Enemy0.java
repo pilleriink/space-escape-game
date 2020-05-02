@@ -80,6 +80,15 @@ public class Enemy0 extends Entity {
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
                     client.sendTCP(livesLost);
+
+                    synchronized (client) {
+                        try {
+                            client.wait(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     break;
                 }
             }
@@ -108,17 +117,23 @@ public class Enemy0 extends Entity {
                 moveLeft(deltaTime);
             }
 
-            if (map.doesRectCollideMap(followed.getX(), followed.getY() - 2, followed.getWidth(), followed.getHeight())
-                    || followed.getY() < getY() - getHeight() * 2
+            if (followed.getY() < getY() - getHeight() * 2 || followed.getY() > getY() + getHeight() * 2
                     || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500) {
                 followed = null;
             }
-
             MoveEnemy moveEnemy = new MoveEnemy();
             moveEnemy.id = id;
             moveEnemy.x = getX();
             moveEnemy.y = getY();
             client.sendTCP(moveEnemy);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

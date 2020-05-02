@@ -34,7 +34,7 @@ public class Player2 extends Entity {
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
     private Entity closestEnemy;
-    Client client;
+    final Client client;
     String id, texture, gunfire;
 
     public Player2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
@@ -78,6 +78,14 @@ public class Player2 extends Entity {
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
         client.sendTCP(livesLost);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void abilityPackage(float x, float y, String texture) {
@@ -87,6 +95,14 @@ public class Player2 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void dronePackage(float x, float y) {
@@ -95,6 +111,14 @@ public class Player2 extends Entity {
         drone.y = y;
         drone.id = id;
         client.sendTCP(drone);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isRight() {
@@ -238,17 +262,16 @@ public class Player2 extends Entity {
         }
         if (droneExplosion) {
             for (Entity entity : entities) {
-                if (entity != this &&
-                        entity.getX() >= droneX - 200 && entity.getX() <= droneX + droneTexture.getWidth() + 200
+                if (entity != this
+                        && entity.getX() >= droneX - 200 && entity.getX() <= droneX + droneTexture.getWidth() + 200
                         && entity.getY() + entity.getHeight() >= droneY - 200
                         && entity.getY() <= droneY + droneTexture.getHeight() + 200 ) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 30);
-                        livesLostPackage(entity);
                     } else {
                         entity.setLives(0);
-                        livesLostPackage(entity);
                     }
+                    livesLostPackage(entity);
                 }
             }
             droneIsComingBack = true;
@@ -301,12 +324,18 @@ public class Player2 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
-        System.out.println(lives);
         if (lives <= 0) {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
-            System.out.println("dead");
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -330,13 +359,24 @@ public class Player2 extends Entity {
             moving = false;
             movingTime = 0;
         }
-        Move move = new Move();
-        move.id = id;
-        move.x = getX();
-        move.y = getY();
-        move.texture = texture;
-        client.sendTCP(move);
-        dronePackage(droneX, droneY);
+        if (!grounded || moving) {
+            Move move = new Move();
+            move.id = id;
+            move.x = getX();
+            move.y = getY();
+            move.texture = texture;
+            client.sendTCP(move);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            dronePackage(droneX, droneY);
+        }
     }
 
     @Override
@@ -397,6 +437,14 @@ public class Player2 extends Entity {
             gun.x = gunX;
             gun.id = id;
             client.sendTCP(gun);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         if (xSkill) {
@@ -408,6 +456,14 @@ public class Player2 extends Entity {
                 smallDrone.y = xSkillY;
                 smallDrone.texture = "PlayerAbilities/Player2/droneTEST.png";
                 client.sendTCP(smallDrone);
+
+                synchronized (client) {
+                    try {
+                        client.wait(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             if (deltaTime > lastX + 4) xSkill = false;
         }

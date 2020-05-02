@@ -36,7 +36,7 @@ public class Player1 extends Entity {
     private PlayerType playerType;
     private Map<Float, Float> xSkillXY = new HashMap<>();
     private Entity closestEnemy;
-    Client client;
+    final Client client;
     String id, texture, gunfire;
 
     public Player1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
@@ -79,6 +79,14 @@ public class Player1 extends Entity {
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
         client.sendTCP(livesLost);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void abilityPackage(float x, float y, String texture) {
@@ -88,6 +96,14 @@ public class Player1 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
+
+        synchronized (client) {
+            try {
+                client.wait(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isRight() {
@@ -282,12 +298,22 @@ public class Player1 extends Entity {
             moving = false;
             movingTime = 0;
         }
-        Move move = new Move();
-        move.id = id;
-        move.x = getX();
-        move.y = getY();
-        move.texture = texture;
-        client.sendTCP(move);
+        if (!grounded || moving) {
+            Move move = new Move();
+            move.id = id;
+            move.x = getX();
+            move.y = getY();
+            move.texture = texture;
+            client.sendTCP(move);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -338,6 +364,14 @@ public class Player1 extends Entity {
             gun.x = gunX;
             gun.id = id;
             client.sendTCP(gun);
+
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         if (xSkill) {

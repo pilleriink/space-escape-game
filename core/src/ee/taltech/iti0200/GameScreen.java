@@ -120,7 +120,7 @@ public class GameScreen implements Screen {
 
                 if (object instanceof Move) {
                     for (Entity entity : gameMap.getEntities()) {
-                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Move) object).id)) {
+                        if (entity instanceof OtherPlayer && entity.getId().equals(((Move) object).id)) {
                             entity.setPosX(((Move) object).x);
                             entity.setPosY(((Move) object).y);
                             ((OtherPlayer) entity).setTexture(((Move) object).texture);
@@ -130,7 +130,7 @@ public class GameScreen implements Screen {
 
                 if (object instanceof Gun) {
                     for (Entity entity : gameMap.getEntities()) {
-                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Gun) object).id)) {
+                        if (entity instanceof OtherPlayer && entity.getId().equals(((Gun) object).id)) {
                             ((OtherPlayer) entity).setGunfire(((Gun) object).gun);
                             ((OtherPlayer) entity).setGunPos(((Gun) object).x);
                         }
@@ -139,7 +139,7 @@ public class GameScreen implements Screen {
 
                 if (object instanceof Ability) {
                     for (Entity entity : gameMap.getEntities()) {
-                        if (entity instanceof OtherPlayer && ((OtherPlayer) entity).getId().equals(((Ability) object).id)) {
+                        if (entity instanceof OtherPlayer && entity.getId().equals(((Ability) object).id)) {
                             ((OtherPlayer) entity).setAbility(((Ability) object).texture);
                             ((OtherPlayer) entity).setAbilityX(((Ability) object).x);
                             ((OtherPlayer) entity).setAbilityY(((Ability) object).y);
@@ -168,7 +168,7 @@ public class GameScreen implements Screen {
 
                 if (object instanceof LivesLost) {
                     for (Entity entity : gameMap.getEntities()) {
-                        if (entity instanceof OtherPlayer && entity.getId().equals(((LivesLost) object).id)) {
+                        if (entity.getId().equals(((LivesLost) object).id)) {
                             entity.setLives(((LivesLost) object).lives);
                             (entity).setLives(((LivesLost) object).lives);
                         }
