@@ -26,7 +26,7 @@ public class StartScreen implements Screen {
 
         spaceEscape = new Texture("space_escape.png");
         background = new Texture("menubackground.png");
-        //Gdx.input.setCursorCatched(true);
+        Gdx.input.setCursorCatched(true);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 

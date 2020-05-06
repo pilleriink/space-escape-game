@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class MenuScreen implements Screen {
 
-    private final SpaceEscape game;
+    private SpaceEscape game;
     private Client client;
     private OrthographicCamera camera;
     private SpriteBatch batch;

@@ -25,6 +25,7 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
+        junitVersion = '4.12'
     }
 
     repositories {
@@ -52,6 +53,10 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
         compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+        testCompile "junit:junit:$junitVersion"
+        testImplementation 'junit:junit:4.12'
+        implementation 'junit:junit:4.12'
+        implementation 'org.mockito:mockito-core:2.7.22'
     }
 }
 
@@ -69,5 +74,9 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+        testCompile "junit:junit:$junitVersion"
+        testImplementation 'junit:junit:4.12'
+        implementation 'junit:junit:4.12'
+        implementation 'org.mockito:mockito-core:2.7.22'
     }
 }
