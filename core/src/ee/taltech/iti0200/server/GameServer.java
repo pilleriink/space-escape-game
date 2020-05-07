@@ -4,13 +4,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
-import ee.taltech.iti0200.world.GameMap;
-import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class GameServer {
@@ -43,6 +39,16 @@ public class GameServer {
             enemy.enemyType = "enemy1";
             enemy.id = "" + i;
             enemy.lives = 10;
+            int coordinates = (int) (Math.random() * (7));
+            enemy.x = enemyX.get(coordinates);
+            enemy.y = enemyY.get(coordinates);
+            enemies.add(enemy);
+        }
+        for (int i = 4; i < 8; i++) {
+            Enemy enemy = new Enemy();
+            enemy.enemyType = "enemy2";
+            enemy.id = "" + i;
+            enemy.lives = 5;
             int coordinates = (int) (Math.random() * (7));
             enemy.x = enemyX.get(coordinates);
             enemy.y = enemyY.get(coordinates);

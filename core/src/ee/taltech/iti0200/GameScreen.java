@@ -18,16 +18,12 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.entities.Enemy0;
-import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class GameScreen implements Screen {
@@ -100,6 +96,10 @@ public class GameScreen implements Screen {
         }
         for (int i = 4; i < 8; i++) {
             gameMap.addEntity(new Enemy1(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
+            playerIds.add("" + i);
+        }
+        for (int i = 8; i < 12; i++) {
+            gameMap.addEntity(new Enemy2(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
             playerIds.add("" + i);
         }
 
@@ -344,6 +344,8 @@ public class GameScreen implements Screen {
         switch (id) {
             case "enemy0":
                 return EnemyType.ENEMY0;
+            case "enemy2":
+                return EnemyType.ENEMY2;
             default:
                 return EnemyType.ENEMY1;
         }
