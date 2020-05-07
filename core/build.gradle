@@ -1,6 +1,71 @@
 apply plugin: "java"
 
-sourceCompatibility = 1.7
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-sourceSets.main.java.srcDirs = [ "src/" ]
+jar {
+    manifest {
+        attributes(
+                'Main-Class': "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
+        )
+    }
+}
+
+sourceCompatibility = 1.7
+sourceSets {
+    test {
+        java {
+            srcDirs = ["src/test/java/"]
+        }
+        resources {
+            srcDirs = ["../core/src/test/resources/"]
+        }
+    }
+    main {
+        java {
+            srcDirs = ["src/main/java/"]
+        }
+        resources {
+            srcDirs = ["../core/assets"]
+        }
+    }
+}
+
+project.ext.mainClassName = "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
+project.ext.assetsDir = new File("../core/assets")
+
+task run(dependsOn: classes, type: JavaExec) {
+    main = project.ext.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
+}
+
+task debug(dependsOn: classes, type: JavaExec) {
+    main = project.ext.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
+    debug = true
+}
+
+task dist(type: Jar) {
+    manifest {
+        attributes(
+                'Main-Class': "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
+        )
+    }
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+task copyTestResources(type: Copy) {
+    from "${projectDir}/src/test/resources"
+    into "${buildDir}/classes/test"
+}
+processTestResources.dependsOn copyTestResources
+
+dist.dependsOn classes
