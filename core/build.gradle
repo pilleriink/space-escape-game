@@ -4,16 +4,32 @@ apply plugin: "java"
 jar {
     manifest {
         attributes(
-                'Main-Class': "ee.taltech.iti0200.desktop.ServerMain"
+                'Main-Class': "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
         )
     }
 }
 
 sourceCompatibility = 1.7
-sourceSets.main.java.srcDirs = [ "src/" ]
-sourceSets.main.resources.srcDirs = ["../core/assets"]
+sourceSets {
+    test {
+        java {
+            srcDirs = ["src/test/java/"]
+        }
+        resources {
+            srcDirs = ["../core/src/test/resources/"]
+        }
+    }
+    main {
+        java {
+            srcDirs = ["src/main/java/"]
+        }
+        resources {
+            srcDirs = ["../core/assets"]
+        }
+    }
+}
 
-project.ext.mainClassName = "ee.taltech.iti0200.desktop.ServerMain"
+project.ext.mainClassName = "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
 project.ext.assetsDir = new File("../core/assets")
 
 task run(dependsOn: classes, type: JavaExec) {
@@ -36,7 +52,7 @@ task debug(dependsOn: classes, type: JavaExec) {
 task dist(type: Jar) {
     manifest {
         attributes(
-                'Main-Class': "ee.taltech.iti0200.desktop.ServerMain"
+                'Main-Class': "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
         )
     }
     dependsOn configurations.runtimeClasspath
@@ -46,5 +62,10 @@ task dist(type: Jar) {
     with jar
 }
 
+task copyTestResources(type: Copy) {
+    from "${projectDir}/src/test/resources"
+    into "${buildDir}/classes/test"
+}
+processTestResources.dependsOn copyTestResources
 
 dist.dependsOn classes
