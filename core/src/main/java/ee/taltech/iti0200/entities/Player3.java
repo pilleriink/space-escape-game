@@ -30,8 +30,8 @@ public class Player3 extends Entity {
     private Texture gunLeft, gunRight, cSkill1, cSkillField, cSkillField0, cSkillField1, cSkillField2,
             cSkillReady, cSkill2, xSkillTexture, vSkillTexture;
     private NinePatch health;
-    private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX, lastCTick;
-    private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
+    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX, lastCTick;
+    public boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
             bombGrounded, explosionTime, reachedLimit, xExplosion, xStuck, xRight, cSkillIsReady, cSkillIsDown;
     private int shootingTime, movingTime, jumpingPower, cSkillRange, fieldIndex;
     private PlayerType playerType;
@@ -197,31 +197,29 @@ public class Player3 extends Entity {
 
     public void shoot() {
         for (Entity entity : entities) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-                shoot = true;
-                shootingTime = 0;
-                if (isRight && entity.getX() > pos.x
-                        && entity.getX() <= getX() + getWidth() + shootingRange
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    entity.setLives(entity.getLives() - 1);
-                    livesLostPackage(entity);
-                } else if (!isRight && entity.getX() < pos.x
-                        && entity.getX() + entity.getWidth() >= getX() - shootingRange
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    entity.setLives(entity.getLives() - 1);
-                    livesLostPackage(entity);
-                }
+            shoot = true;
+            shootingTime = 0;
+            if (isRight && entity.getX() > pos.x
+                    && entity.getX() <= getX() + getWidth() + shootingRange
+                    && getY() + 0.5 * getHeight() >= entity.getY()
+                    && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
+                    && entity.getLives() > 0) {
+                entity.setLives(entity.getLives() - 1);
+                livesLostPackage(entity);
+            } else if (!isRight && entity.getX() < pos.x
+                    && entity.getX() + entity.getWidth() >= getX() - shootingRange
+                    && getY() + 0.5 * getHeight() >= entity.getY()
+                    && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
+                    && entity.getLives() > 0) {
+                entity.setLives(entity.getLives() - 1);
+                livesLostPackage(entity);
             }
         }
     }
 
 
     public void xSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X) && !xSkill) {
+        if (!xSkill) {
             xSkill = true;
             lastX = deltaTime;
             if (isRight)  {
@@ -234,11 +232,11 @@ public class Player3 extends Entity {
         }
         if (xExplosion) {
             for (Entity entity : entities) {
-                if (entity.getX() + entity.getWidth() >= xSkillX - 100 &&
+                if (entity.type != EntityType.PLAYER && entity.getX() + entity.getWidth() >= xSkillX - 100 &&
                         entity.getX() <= xSkillX + xSkillTexture.getWidth() + 100 &&
                         entity.getY() + entity.getHeight() >= xSkillY - 100 &&
                         entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
-                    if (entity.getLives() >= 10) {
+                    if (entity.getLives() >= 15) {
                         entity.setLives(entity.getLives() - 15);
                         livesLostPackage(entity);
                     } else {
@@ -260,7 +258,7 @@ public class Player3 extends Entity {
 
 
     public void cSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C) && !cSkill && grounded) {
+        if (!cSkill && grounded) {
             cSkill = true;
             lastC = deltaTime;
             cSkillX = pos.x - (cSkillField1.getWidth() / 2);
@@ -285,7 +283,7 @@ public class Player3 extends Entity {
     }
 
     public void vSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.V) && !vSkill) {
+        if (!vSkill) {
             vSkill = true;
             lastV = deltaTime;
             SPEED += 100;
@@ -317,10 +315,10 @@ public class Player3 extends Entity {
             moveLeft(deltaTime);
             moveRight(deltaTime);
         }
-        shoot();
-        xSkill();
-        cSkill();
-        vSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) shoot();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X) || xSkill) xSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C) || cSkill) cSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) vSkill();
         if (shootingTime > 5) { shoot = false; }
         if (getX() != lastXPos) {
             movingTime += 1;

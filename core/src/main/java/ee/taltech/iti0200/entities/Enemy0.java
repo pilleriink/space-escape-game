@@ -30,7 +30,7 @@ public class Enemy0 extends Entity {
     private int time, movingTime;
     private float shootingRange, totalHealth;;
 
-    private ArrayList<Entity> entities;
+    public ArrayList<Entity> entities;
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY0;
@@ -68,10 +68,11 @@ public class Enemy0 extends Entity {
         for (Entity entity : entities) {
             if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
                 shoot = true;
-                if (entity.getX() <= getX() + getWidth() + shootingRange
+                if (isRight && entity.getX() > getX() && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()
-                        || entity.getX() + entity.getWidth() >= getX() - shootingRange
+                        || !isRight && entity.getX() < getX() && entity.getX() + entity.getWidth() >= getX()
+                        - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
                     time = 0;

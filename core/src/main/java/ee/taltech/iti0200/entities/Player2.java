@@ -27,13 +27,13 @@ public class Player2 extends Entity {
     private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, droneTexture, vSkill1, vSkill2,
             vSkill3;
     private NinePatch health;
-    private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, xSkillX, xSkillY, lastV, lastZ,
+    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, xSkillX, xSkillY, lastV, lastZ,
             droneX, droneY, gunX, closestEnemyX, closestEnemyY;
-    private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
+    public boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
             bombGrounded, explosionTime, droneCanMove, droneIsComingBack, droneExplosion, enemyFound, xExplosion;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
-    private Entity closestEnemy;
+    public Entity closestEnemy;
     final Client client;
     String id, texture, gunfire;
 
@@ -187,31 +187,29 @@ public class Player2 extends Entity {
 
     public void shoot() {
         for (Entity entity : entities) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-                shoot = true;
-                shootingTime = 0;
-                if (isRight && entity.getX() > pos.x
-                        && entity.getX() <= getX() + getWidth() + shootingRange
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    entity.setLives(entity.getLives() - 1);
-                    livesLostPackage(entity);
-                } else if (!isRight && entity.getX() < pos.x
-                        && entity.getX() + entity.getWidth() >= getX() - shootingRange
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    entity.setLives(entity.getLives() - 1);
-                    livesLostPackage(entity);
-                }
+            shoot = true;
+            shootingTime = 0;
+            if (isRight && entity.getX() > pos.x
+                    && entity.getX() <= getX() + getWidth() + shootingRange
+                    && getY() + 0.5 * getHeight() >= entity.getY()
+                    && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
+                    && entity.getLives() > 0) {
+                entity.setLives(entity.getLives() - 1);
+                livesLostPackage(entity);
+            } else if (!isRight && entity.getX() < pos.x
+                    && entity.getX() + entity.getWidth() >= getX() - shootingRange
+                    && getY() + 0.5 * getHeight() >= entity.getY()
+                    && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
+                    && entity.getLives() > 0) {
+                entity.setLives(entity.getLives() - 1);
+                livesLostPackage(entity);
             }
         }
     }
 
 
     public void xSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X) && !xSkill) {
+        if (!xSkill) {
             xSkill = true;
             lastX = deltaTime;
             closestEnemy = entities.get(entities.size() - 1);
@@ -246,7 +244,7 @@ public class Player2 extends Entity {
             }
         }
         if (xExplosion) {
-            closestEnemy.setLives(Math.max(closestEnemy.getLives() - 200, 0));
+            closestEnemy.setLives(Math.max(closestEnemy.getLives() - 40, 0));
             livesLostPackage(closestEnemy);
             xExplosion = false;
             closestEnemyY = 100000;
@@ -256,7 +254,7 @@ public class Player2 extends Entity {
 
 
     public void cSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C) && !cSkill) {
+        if (!cSkill) {
             cSkill = true;
             lastC = deltaTime;
         }
@@ -280,7 +278,7 @@ public class Player2 extends Entity {
     }
 
     public void vSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.V) && !vSkill) {
+        if (!vSkill) {
             lastV = deltaTime;
             vSkill = true;
             setLives(Math.min(getLives() + 400, totalHealth));
@@ -343,10 +341,10 @@ public class Player2 extends Entity {
             moveLeft(deltaTime);
             moveRight(deltaTime);
         }
-        shoot();
-        xSkill();
-        cSkill();
-        vSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) shoot();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X) || xSkill) xSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C) || cSkill) cSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) vSkill();
         if (shootingTime > 5) { shoot = false; }
         if (getX() != lastXPos) {
             movingTime += 1;

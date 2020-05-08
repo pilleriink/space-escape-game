@@ -13,9 +13,9 @@ public class StartScreen implements Screen {
 
     private final SpaceEscape game;
 
-    private OrthographicCamera camera;
-    private SpriteBatch batch;
-    private Texture spaceEscape, background;
+    public OrthographicCamera camera;
+    public SpriteBatch batch;
+    public Texture spaceEscape, background;
 
     public StartScreen(final SpaceEscape game) {
         this.game = game;
@@ -50,7 +50,7 @@ public class StartScreen implements Screen {
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            game.setScreen(new MenuScreen(game));
+            game.setScreen(new MenuScreen(game, true));
             dispose();
         }
 

@@ -27,15 +27,17 @@ public class MenuScreen implements Screen {
     private int positionX;
     private PlayerType playerType;
 
-    public MenuScreen(final SpaceEscape game) {
+    public MenuScreen(final SpaceEscape game, boolean connect) {
         this.game = game;
 
         client = new Client();
         client.start();
-        try {
-            client.connect(5000, "64.227.126.245", 5200);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (connect) {
+            try {
+                client.connect(5000, "64.227.126.245", 5200);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         client.getKryo().register(Register.class);
         client.getKryo().register(Move.class);
@@ -52,7 +54,7 @@ public class MenuScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch = new SpriteBatch();
+        batch = game.batch;
 
         img0 = new Texture("character0.png");
         img1 = new Texture("character1.png");
@@ -80,11 +82,8 @@ public class MenuScreen implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX > 0) {
-            positionX--;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX < 3) {
-            positionX++;
-        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX > 0) positionX--;
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX < 3) positionX++;
 
 
         Gdx.gl.glClearColor(0, 0, 0, 1);

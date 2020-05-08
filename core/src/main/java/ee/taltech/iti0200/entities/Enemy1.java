@@ -18,7 +18,7 @@ public class Enemy1 extends Entity {
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
     private float movementTime, shootingRange, totalHealth;
-    private ArrayList<Entity> entities;
+    public ArrayList<Entity> entities;
     private boolean isRight;
     private EnemyType enemyType = EnemyType.ENEMY1;
     private Entity followed;
@@ -56,7 +56,7 @@ public class Enemy1 extends Entity {
     public void shoot() {
         for (Entity entity : entities) {
             if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
-                if (isRight
+                if (isRight && entity.getX() > getX()
                         && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
@@ -66,7 +66,7 @@ public class Enemy1 extends Entity {
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
                     client.sendTCP(livesLost);
-                } else if (!isRight
+                } else if (!isRight && entity.getX() < getX()
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
@@ -150,7 +150,9 @@ public class Enemy1 extends Entity {
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(new Texture(enemyType.getMovingString().get(movingTime)), pos.x, pos.y, getWidth(), getHeight());
-        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float) (pos.x + 0.37 * getWidth()), pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth() / 4, 3);
+        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float)
+                (pos.x + 0.37 * getWidth()), pos.y + getHeight() + 10,
+                (getLives() / this.totalHealth) * getWidth() / 4, 3);
 
     }
 }

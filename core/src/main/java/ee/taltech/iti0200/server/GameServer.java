@@ -69,6 +69,8 @@ public class GameServer {
 
         Log.set(Log.LEVEL_TRACE);
 
+
+
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
 

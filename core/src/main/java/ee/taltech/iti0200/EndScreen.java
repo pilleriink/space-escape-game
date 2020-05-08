@@ -76,7 +76,7 @@ public class EndScreen implements Screen {
                 Gdx.app.exit();
                 dispose();
             } else {
-                game.setScreen(new MenuScreen(game));
+                game.setScreen(new MenuScreen(game, true));
                 dispose();
             }
         }
