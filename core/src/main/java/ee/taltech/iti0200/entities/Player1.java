@@ -287,7 +287,7 @@ public class Player1 extends Entity {
             moving = true;
             lastXPos = getX();
             lastYPos = getY();
-            } else {
+        } else {
             moving = false;
             movingTime = 0;
         }

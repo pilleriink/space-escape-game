@@ -50,7 +50,7 @@ public class StartScreen implements Screen {
         batch.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            game.setScreen(new MenuScreen(game, true));
+            game.setScreen(new MenuScreen(game));
             dispose();
         }
 

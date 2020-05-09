@@ -27,17 +27,15 @@ public class MenuScreen implements Screen {
     private int positionX;
     private PlayerType playerType;
 
-    public MenuScreen(final SpaceEscape game, boolean connect) {
+    public MenuScreen(final SpaceEscape game) {
         this.game = game;
 
         client = new Client();
         client.start();
-        if (connect) {
-            try {
-                client.connect(5000, "64.227.126.245", 5200);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            client.connect(5000, "64.227.126.245", 5200);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         client.getKryo().register(Register.class);
         client.getKryo().register(Move.class);

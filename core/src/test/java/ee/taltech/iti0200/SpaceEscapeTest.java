@@ -3,49 +3,23 @@ package ee.taltech.iti0200;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Listener;
-import ee.taltech.iti0200.SpaceEscape;
-import ee.taltech.iti0200.entities.Enemy0;
-import ee.taltech.iti0200.entities.Enemy1;
 import ee.taltech.iti0200.entities.EnemyType;
 import ee.taltech.iti0200.entities.Entity;
-import ee.taltech.iti0200.entities.EntityType;
 import ee.taltech.iti0200.entities.Player0;
 import ee.taltech.iti0200.entities.PlayerType;
-import ee.taltech.iti0200.server.GameServer;
-import ee.taltech.iti0200.server.packets.Ability;
-import ee.taltech.iti0200.server.packets.Death;
-import ee.taltech.iti0200.server.packets.Drone;
-import ee.taltech.iti0200.server.packets.Enemy;
-import ee.taltech.iti0200.server.packets.Gun;
-import ee.taltech.iti0200.server.packets.LivesLost;
-import ee.taltech.iti0200.server.packets.Move;
-import ee.taltech.iti0200.server.packets.MoveEnemy;
-import ee.taltech.iti0200.server.packets.Player;
-import ee.taltech.iti0200.server.packets.Register;
-import ee.taltech.iti0200.server.packets.SmallDrone;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TileType;
-import ee.taltech.iti0200.world.TiledGameMap;
 import org.junit.Assert;
-import org.junit.Test;
 
-import java.io.IOException;
-import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.booleanThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SpaceEscapeTest {
 
@@ -84,7 +58,7 @@ public class SpaceEscapeTest {
     @org.junit.Test
     public void testMenuScreen() {
         // doesnt throw errors
-        MenuScreen menuScreen = new MenuScreen(escape, false);
+        MenuScreen menuScreen = new MenuScreen(escape);
         // override methods
         menuScreen.show();
         menuScreen.resize(1, 2);
@@ -96,8 +70,72 @@ public class SpaceEscapeTest {
 
     @org.junit.Test
     public void testGameScreen() {
-        TiledGameMap gameMap = mock(TiledGameMap.class);
-        GameScreen gameScreen = mock(GameScreen.class);
+//        TiledGameMap gameMap = mock(TiledGameMap.class);
+//        GameScreen gameScreen = mock(GameScreen.class);
+        SpaceEscape escape = new SpaceEscape();
+        LwjglApplicationConfiguration conf = new LwjglApplicationConfiguration();
+        conf.width = 1;
+        conf.height = 1;
+        GameScreen gameScreen = new GameScreen(escape, PlayerType.PLAYER0, client);
+        // cooldowns and textures are assigned correctly
+        Assert.assertEquals(4, gameScreen.xCooldownTime);
+        Assert.assertEquals(3, gameScreen.cCooldownTime);
+        Assert.assertEquals(5, gameScreen.vCooldownTime);
+        gameScreen.initializePlayerType(PlayerType.PLAYER1);
+        Assert.assertEquals(4, gameScreen.xCooldownTime);
+        Assert.assertEquals(8, gameScreen.cCooldownTime);
+        gameScreen.initializePlayerType(PlayerType.PLAYER2);
+        Assert.assertEquals(4, gameScreen.xCooldownTime);
+        Assert.assertEquals(6, gameScreen.cCooldownTime);
+        Assert.assertEquals(5, gameScreen.vCooldownTime);
+        gameScreen.initializePlayerType(PlayerType.PLAYER3);
+        Assert.assertEquals(4, gameScreen.xCooldownTime);
+        Assert.assertEquals(4, gameScreen.cCooldownTime);
+        Assert.assertEquals(5, gameScreen.vCooldownTime);
+
+
+        // getPlayerType and getEnemyType returns correct player type based on texture prefix
+        Assert.assertEquals(PlayerType.PLAYER0, gameScreen.getPlayerType("character0"));
+        Assert.assertEquals(PlayerType.PLAYER1, gameScreen.getPlayerType("character1"));
+        Assert.assertEquals(PlayerType.PLAYER2, gameScreen.getPlayerType("character2"));
+        Assert.assertEquals(PlayerType.PLAYER3, gameScreen.getPlayerType("character3"));
+        Assert.assertEquals(EnemyType.ENEMY0, gameScreen.getEnemyType("enemy0"));
+        Assert.assertEquals(EnemyType.ENEMY1, gameScreen.getEnemyType("enemy1"));
+        gameScreen.stage = mock(Stage.class);
+        GameMap mapp = new GameMap() {
+            @Override
+            public void dispose() {
+
+            }
+
+            @Override
+            public TileType getTileTypeByCoordinate(int layer, int col, int row) {
+                return null;
+            }
+
+            @Override
+            public int getWidth() {
+                return 0;
+            }
+
+            @Override
+            public int getHeight() {
+                return 0;
+            }
+
+            @Override
+            public int getLayers() {
+                return 0;
+            }
+        };
+
+        // override methods
+        gameScreen.resize(1, 1);
+        gameScreen.show();
+        gameScreen.hide();
+        gameScreen.pause();
+        gameScreen.resume();
+        gameScreen.dispose();
     }
 
 }
