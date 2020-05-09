@@ -1,26 +1,15 @@
 package ee.taltech.iti0200.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.server.packets.Death;
 import ee.taltech.iti0200.server.packets.LivesLost;
 import ee.taltech.iti0200.server.packets.MoveEnemy;
 import ee.taltech.iti0200.world.GameMap;
-import org.w3c.dom.Text;
 
-import java.awt.geom.FlatteningPathIterator;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class Enemy0 extends Entity {

@@ -7,8 +7,6 @@ import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
-import ee.taltech.iti0200.world.GameMap;
-import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
 import java.util.*;

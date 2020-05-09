@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
+
 import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 

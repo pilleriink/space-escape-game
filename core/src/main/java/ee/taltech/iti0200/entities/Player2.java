@@ -10,8 +10,6 @@ import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Optional;
 
 
 public class Player2 extends Entity {

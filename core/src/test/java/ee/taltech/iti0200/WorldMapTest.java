@@ -6,13 +6,11 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
+import ee.taltech.iti0200.entities.*;
 import ee.taltech.iti0200.entities.Enemy0;
 import ee.taltech.iti0200.entities.Entity;
-import ee.taltech.iti0200.entities.Player0;
-import ee.taltech.iti0200.entities.PlayerType;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TileType;
-import ee.taltech.iti0200.world.TiledGameMap;
 import org.junit.Assert;
 
 import java.util.ArrayList;

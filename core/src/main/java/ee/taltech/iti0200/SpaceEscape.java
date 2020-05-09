@@ -3,6 +3,10 @@ package ee.taltech.iti0200;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ee.taltech.iti0200.entities.*;
+import ee.taltech.iti0200.entities.Enemy0;
+import ee.taltech.iti0200.entities.Entity;
+import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 
