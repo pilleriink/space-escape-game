@@ -10,7 +10,7 @@ public abstract class Entity {
     protected EntityType type;
     protected float velocityY = 0;
     protected GameMap map;
-    protected boolean grounded = false;
+    public boolean grounded = false;
     protected float lives, totalHealth;
     String id;
     boolean isRight, moving, shoot;

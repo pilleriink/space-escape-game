@@ -9,8 +9,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.entities.PlayerType;
+import ee.taltech.iti0200.entities.*;
+import ee.taltech.iti0200.entities.Enemy0;
+import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
+import ee.taltech.iti0200.world.GameMap;
+import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -52,7 +56,7 @@ public class MenuScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch = new SpriteBatch();
+        batch = game.batch;
 
         img0 = new Texture("character0.png");
         img1 = new Texture("character1.png");
@@ -80,11 +84,8 @@ public class MenuScreen implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX > 0) {
-            positionX--;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX < 3) {
-            positionX++;
-        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX > 0) positionX--;
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX < 3) positionX++;
 
 
         Gdx.gl.glClearColor(0, 0, 0, 1);

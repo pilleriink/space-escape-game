@@ -1,10 +1,8 @@
 package ee.taltech.iti0200.world;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.entities.*;
 import ee.taltech.iti0200.entities.Player0;
 
@@ -13,7 +11,7 @@ import java.util.Arrays;
 
 public abstract class GameMap {
 
-    protected ArrayList<Entity> entities;
+    public ArrayList<Entity> entities;
 
     public GameMap() {
         entities = new ArrayList<>();

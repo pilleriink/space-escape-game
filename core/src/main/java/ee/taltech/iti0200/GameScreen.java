@@ -25,9 +25,7 @@ import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class GameScreen implements Screen {
@@ -117,7 +115,6 @@ public class GameScreen implements Screen {
                         gameMap.addEntity(otherPlayer);
                     }
                 }
-
                 if (object instanceof Move) {
                     for (Entity entity : gameMap.getEntities()) {
                         if (entity instanceof OtherPlayer && entity.getId().equals(((Move) object).id)) {
@@ -228,58 +225,7 @@ public class GameScreen implements Screen {
         int screenCenterY = Gdx.graphics.getHeight() / 2;
 
         // abilities
-        if (playerType == PlayerType.PLAYER0) {
-            zSkillTexture = new Texture("PlayerAbilities/Player0/zSkill.png");
-            xSkillTexture = new Texture("PlayerAbilities/Player0/xSkill.png");
-            cSkillTexture = new Texture("PlayerAbilities/Player0/cSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player0/vSkill.png");
-
-            xCooldownTime = 4;
-            xLabelText = "";
-            cCooldownTime = 3;
-            cLabelText = "";
-            vCooldownTime = 5;
-            vLabelText = "";
-            bombShake = true;
-        } else if (playerType == PlayerType.PLAYER1) {
-            zSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
-            xSkillTexture = new Texture("PlayerAbilities/Player1/xSkill.png");
-            cSkillTexture = new Texture("PlayerAbilities/Player1/cSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player1/vSkill.png");
-
-            xCooldownTime = 4;
-            xLabelText = "";
-            cCooldownTime = 8;
-            cLabelText = "";
-            removeV = true;
-        } else if (playerType == PlayerType.PLAYER2) {
-            zSkillTexture = new Texture("PlayerAbilities/Player2/zSkill.png");
-            xSkillTexture = new Texture("PlayerAbilities/Player2/xSkill.png");
-            cSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player2/vSkill.png");
-
-            xCooldownTime = 4;
-            xLabelText = "";
-            cCooldownTime = 6;
-            cLabelText = "";
-            vCooldownTime = 5;
-            vLabelText = "";
-            droneShake = true;
-        } else {
-            zSkillTexture = new Texture("PlayerAbilities/Player3/zSkill.png");
-            xSkillTexture = new Texture("PlayerAbilities/Player3/xSkill.png");
-            cSkillTexture = new Texture("PlayerAbilities/Player3/cSkill.png");
-            vSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
-
-            xCooldownTime = 4;
-            xLabelText = "";
-            cCooldownTime = 4;
-            cLabelText = "";
-            vCooldownTime = 5;
-            vLabelText = "";
-            bombShake = true;
-            cHasToBeGrounded = true;
-        }
+        initializePlayerType(playerType);
 
 
         zSkill = new Image(zSkillTexture);
@@ -340,12 +286,74 @@ public class GameScreen implements Screen {
 
     }
 
+    public GameScreen(SpaceEscape escape, PlayerType playerType, Client client) {
+        // constructor for testing
+        this.client = client;
+        this.game = escape;
+        initializePlayerType(playerType);
+    }
+
     public EnemyType getEnemyType(String id) {
         switch (id) {
             case "enemy0":
                 return EnemyType.ENEMY0;
             default:
                 return EnemyType.ENEMY1;
+        }
+    }
+
+    public void initializePlayerType(PlayerType playerType) {
+        if (playerType == PlayerType.PLAYER0) {
+            zSkillTexture = new Texture("PlayerAbilities/Player0/zSkill.png");
+            xSkillTexture = new Texture("PlayerAbilities/Player0/xSkill.png");
+            cSkillTexture = new Texture("PlayerAbilities/Player0/cSkill.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player0/vSkill.png");
+
+            xCooldownTime = 4;
+            xLabelText = "";
+            cCooldownTime = 3;
+            cLabelText = "";
+            vCooldownTime = 5;
+            vLabelText = "";
+            bombShake = true;
+        } else if (playerType == PlayerType.PLAYER1) {
+            zSkillTexture = new Texture("PlayerAbilities/Player1/zSkill.png");
+            xSkillTexture = new Texture("PlayerAbilities/Player1/xSkill.png");
+            cSkillTexture = new Texture("PlayerAbilities/Player1/cSkill.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player1/vSkill.png");
+
+            xCooldownTime = 4;
+            xLabelText = "";
+            cCooldownTime = 8;
+            cLabelText = "";
+            removeV = true;
+        } else if (playerType == PlayerType.PLAYER2) {
+            zSkillTexture = new Texture("PlayerAbilities/Player2/zSkill.png");
+            xSkillTexture = new Texture("PlayerAbilities/Player2/xSkill.png");
+            cSkillTexture = new Texture("PlayerAbilities/Player2/cSkill.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player2/vSkill.png");
+
+            xCooldownTime = 4;
+            xLabelText = "";
+            cCooldownTime = 6;
+            cLabelText = "";
+            vCooldownTime = 5;
+            vLabelText = "";
+            droneShake = true;
+        } else {
+            zSkillTexture = new Texture("PlayerAbilities/Player3/zSkill.png");
+            xSkillTexture = new Texture("PlayerAbilities/Player3/xSkill.png");
+            cSkillTexture = new Texture("PlayerAbilities/Player3/cSkill.png");
+            vSkillTexture = new Texture("PlayerAbilities/Player3/vSkill.png");
+
+            xCooldownTime = 4;
+            xLabelText = "";
+            cCooldownTime = 4;
+            cLabelText = "";
+            vCooldownTime = 5;
+            vLabelText = "";
+            bombShake = true;
+            cHasToBeGrounded = true;
         }
     }
 

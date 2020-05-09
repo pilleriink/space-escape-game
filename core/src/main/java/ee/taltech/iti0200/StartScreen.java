@@ -13,9 +13,9 @@ public class StartScreen implements Screen {
 
     private final SpaceEscape game;
 
-    private OrthographicCamera camera;
-    private SpriteBatch batch;
-    private Texture spaceEscape, background;
+    public OrthographicCamera camera;
+    public SpriteBatch batch;
+    public Texture spaceEscape, background;
 
     public StartScreen(final SpaceEscape game) {
         this.game = game;

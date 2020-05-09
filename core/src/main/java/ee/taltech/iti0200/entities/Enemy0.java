@@ -1,26 +1,15 @@
 package ee.taltech.iti0200.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.server.packets.Death;
 import ee.taltech.iti0200.server.packets.LivesLost;
 import ee.taltech.iti0200.server.packets.MoveEnemy;
 import ee.taltech.iti0200.world.GameMap;
-import org.w3c.dom.Text;
 
-import java.awt.geom.FlatteningPathIterator;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class Enemy0 extends Entity {
@@ -30,7 +19,7 @@ public class Enemy0 extends Entity {
     private int time, movingTime;
     private float shootingRange, totalHealth;;
 
-    private ArrayList<Entity> entities;
+    public ArrayList<Entity> entities;
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY0;
@@ -68,10 +57,11 @@ public class Enemy0 extends Entity {
         for (Entity entity : entities) {
             if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
                 shoot = true;
-                if (entity.getX() <= getX() + getWidth() + shootingRange
+                if (isRight && entity.getX() > getX() && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()
-                        || entity.getX() + entity.getWidth() >= getX() - shootingRange
+                        || !isRight && entity.getX() < getX() && entity.getX() + entity.getWidth() >= getX()
+                        - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
                     time = 0;
