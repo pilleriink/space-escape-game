@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Enemy2 extends Entity {
 
-    private static final int SPEED = 80;
+    private static int SPEED = 40;
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
     private float shootingRange, totalHealth;;
@@ -58,12 +58,8 @@ public class Enemy2 extends Entity {
         for (Entity entity : entities) {
             if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
                 shoot = true;
-                if (entity.getX() <= getX() + getWidth() + shootingRange
-                        && getY() + 0.3 * getHeight() >= entity.getY()
-                        && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()
-                        || entity.getX() + entity.getWidth() >= getX() - shootingRange
-                        && getY() + 0.3 * getHeight() >= entity.getY()
-                        && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
+                if (entity.getX() - 2 <= getX() && entity.getX() + 2 >= getX()
+                        && getY() <= entity.getY() + 2 && entity.getY() - 2 <= getY()) {
                     time = 0;
                     entity.setLives(entity.getLives() - 1);
                     LivesLost livesLost = new LivesLost();
@@ -81,31 +77,80 @@ public class Enemy2 extends Entity {
         for (Entity player : entities) {
             if (player.getType().equals(EntityType.PLAYER)
                     && player.getY() >= getY() && player.getY() <= getY() + getHeight()
-                    && player.getX() > getX()  - 300 && player.getX() < getX() + 300) {
-                followed = player;
-            }
-            if (player.getType().equals(EntityType.PLAYER)
-                    && player.getY() >= getY() && player.getY() <= getY() + getHeight()
                     && player.getX() > getX()  - 100 && player.getX() < getX() + 100) {
                 sprint = true;
             }
+            else if (player.getType().equals(EntityType.PLAYER)
+                    && player.getY() >= getY() && player.getX() > getX() - 500 && player.getX() < getX() + 500) {
+                followed = player;
+                sprint = false;
+            }
+
         }
 
         if (followed != null) {
-            if (isRight && map.doesRectCollideMap(getX() + 5, getY(), getWidth(), getHeight())
-                    || !isRight && map.doesRectCollideMap(getX() - 5, getY(), getWidth(), getHeight())) {
-                jump();
+//            if (map.doesRectCollideMap(getX() + 2, getY() + 2, getWidth(), getHeight())) {
+//                setPosY(getY() + 1);
+//                setPosX(getX() + 1);
+//            }
+            if (!map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight())) {
+                moveY(1);
             }
+            if (!map.doesRectCollideMap(getX() + 2, getY(), getWidth(), getHeight())) {
+                moveX(1);
+            }
+            if (!map.doesRectCollideMap(getX() - 2, getY(), getWidth(), getHeight())) {
+                moveX(-1);
+            }
+            if (!map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight())) {
+                moveY(-1);
+            }
+            if (map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+                if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()
+                && !map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight())) {
+
+                    moveX(1);
+                } else if (!map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+                    moveX(-1);
+                } else if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+                    moveX(1);
+                }
+            }
+            if (map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight()) && followed.getY() < getY()) {
+                if (!map.doesRectCollideMap(getX() + 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+
+                    moveX(1);
+                }
+                if (!map.doesRectCollideMap(getX() - 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+                    moveX(-1);
+                }
+            }
+//            if (map.doesRectCollideMap(getX() - 5, getY() + 5, getWidth(), getHeight())
+//                    || map.doesRectCollideMap(getX() + 5, getY() - 5, getWidth(), getHeight())) {
+//                setPosY(getY() - 1);
+//            }
+//            if (map.doesRectCollideMap(getX(), getY() + 10, getWidth(), getHeight())
+//                    || map.doesRectCollideMap(getX(), getY() -10, getWidth(), getHeight())) {
+//                setPosY(getY() - 1);
+//
+//            }
 
             if (followed.getX() > getX()) {
                 moveRight(deltaTime);
             } else if (followed.getX() < getX()) {
                 moveLeft(deltaTime);
             }
+            if (followed.getY() > getY()) {
+                setPosY(getY() + 1);
+            } else if (followed.getY() < getY()) {
+                setPosY(getY() - 1);
+            }
 
-            if (map.doesRectCollideMap(followed.getX(), followed.getY() - 2, followed.getWidth(), followed.getHeight())
-                    || followed.getY() < getY() - getHeight() * 2
-                    || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500) {
+
+
+            if (map.doesRectCollideMap(followed.getX(), followed.getY(), followed.getWidth(), followed.getHeight())
+                    || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500 || followed.getY() < getY() - 200
+            || followed.getY() > getY() + 200) {
                 followed = null;
             }
 //            if (map.doesRectCollideMap(followed.getX(), followed.getY() - 2, followed.getWidth(), followed.getHeight())
