@@ -17,8 +17,10 @@ public class Enemy2 extends Entity {
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
     private float shootingRange, totalHealth;;
-
+    private boolean isTooClose = false;
     private ArrayList<Entity> entities;
+    private ArrayList<Entity> oldTargets = new ArrayList<>();
+    private ArrayList<Entity> target = new ArrayList<>();
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY2;
@@ -61,11 +63,16 @@ public class Enemy2 extends Entity {
                 if (entity.getX() - 2 <= getX() && entity.getX() + 2 >= getX()
                         && getY() <= entity.getY() + 2 && entity.getY() - 2 <= getY()) {
                     time = 0;
-                    entity.setLives(entity.getLives() - 1);
+                    entity.setLives(entity.getLives() - 5);
+                    oldTargets.add(entity);
+                    target.clear();
                     LivesLost livesLost = new LivesLost();
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
                     client.sendTCP(livesLost);
+                    if (oldTargets.size() == 2) {
+                        oldTargets.clear();
+                    }
                     break;
                 }
             }
@@ -76,14 +83,21 @@ public class Enemy2 extends Entity {
 
         for (Entity player : entities) {
             if (player.getType().equals(EntityType.PLAYER)
-                    && player.getY() >= getY() && player.getY() <= getY() + getHeight()
-                    && player.getX() > getX()  - 100 && player.getX() < getX() + 100) {
+                    && player.getY() >= getY() - 50 && player.getY() <= getY() + 50
+                    && player.getX() > getX()  - 50 && player.getX() < getX() + 50) {
                 sprint = true;
             }
-            else if (player.getType().equals(EntityType.PLAYER)
-                    && player.getY() >= getY() && player.getX() > getX() - 500 && player.getX() < getX() + 500) {
+            else if (player.getType().equals(EntityType.PLAYER) && oldTargets.isEmpty()
+                    && target.isEmpty()) {
                 followed = player;
+                target.add(player);
+                oldTargets.add(player);
                 sprint = false;
+            } else if (player.getType().equals(EntityType.PLAYER) && !oldTargets.contains(player)
+                    && target.isEmpty()) {
+                followed = player;
+                target.add(player);
+                oldTargets.add(player);
             }
 
         }
@@ -93,38 +107,38 @@ public class Enemy2 extends Entity {
 //                setPosY(getY() + 1);
 //                setPosX(getX() + 1);
 //            }
-            if (!map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight())) {
-                moveY(1);
-            }
-            if (!map.doesRectCollideMap(getX() + 2, getY(), getWidth(), getHeight())) {
-                moveX(1);
-            }
-            if (!map.doesRectCollideMap(getX() - 2, getY(), getWidth(), getHeight())) {
-                moveX(-1);
-            }
-            if (!map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight())) {
-                moveY(-1);
-            }
-            if (map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-                if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()
-                && !map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight())) {
-
-                    moveX(1);
-                } else if (!map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-                    moveX(-1);
-                } else if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-                    moveX(1);
-                }
-            }
-            if (map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight()) && followed.getY() < getY()) {
-                if (!map.doesRectCollideMap(getX() + 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-
-                    moveX(1);
-                }
-                if (!map.doesRectCollideMap(getX() - 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-                    moveX(-1);
-                }
-            }
+//            if (!map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight())) {
+//                moveY(1);
+//            }
+//            if (!map.doesRectCollideMap(getX() + 2, getY(), getWidth(), getHeight())) {
+//                moveX(1);
+//            }
+//            if (!map.doesRectCollideMap(getX() - 2, getY(), getWidth(), getHeight())) {
+//                moveX(-1);
+//            }
+//            if (!map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight())) {
+//                moveY(-1);
+//            }
+//            if (map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+//                if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()
+//                && !map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight())) {
+//
+//                    moveX(1);
+//                } else if (!map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+//                    moveX(-1);
+//                } else if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+//                    moveX(1);
+//                }
+//            }
+//            if (map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight()) && followed.getY() < getY()) {
+//                if (!map.doesRectCollideMap(getX() + 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+//
+//                    moveX(1);
+//                }
+//                if (!map.doesRectCollideMap(getX() - 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
+//                    moveX(-1);
+//                }
+//            }
 //            if (map.doesRectCollideMap(getX() - 5, getY() + 5, getWidth(), getHeight())
 //                    || map.doesRectCollideMap(getX() + 5, getY() - 5, getWidth(), getHeight())) {
 //                setPosY(getY() - 1);
@@ -134,25 +148,29 @@ public class Enemy2 extends Entity {
 //                setPosY(getY() - 1);
 //
 //            }
-
+            if (sprint) {
+                if (followed.getX() > getX()) {
+                    setPosX(getX() + 0.7f);
+                } else if (followed.getX() < getX()) {
+                    setPosX(getX() - 0.7f);
+                }
+                if (followed.getY() > getY()) {
+                    setPosY(getY() + 0.7f);
+                } else if (followed.getY() < getY()) {
+                    setPosY(getY() - 0.7f);
+                }
+            }
             if (followed.getX() > getX()) {
-                moveRight(deltaTime);
+                setPosX(getX() + 0.3f);
             } else if (followed.getX() < getX()) {
-                moveLeft(deltaTime);
+                setPosX(getX() - 0.3f);
             }
             if (followed.getY() > getY()) {
-                setPosY(getY() + 1);
+                setPosY(getY() + 0.3f);
             } else if (followed.getY() < getY()) {
-                setPosY(getY() - 1);
+                setPosY(getY() - 0.3f);
             }
 
-
-
-            if (map.doesRectCollideMap(followed.getX(), followed.getY(), followed.getWidth(), followed.getHeight())
-                    || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500 || followed.getY() < getY() - 200
-            || followed.getY() > getY() + 200) {
-                followed = null;
-            }
 //            if (map.doesRectCollideMap(followed.getX(), followed.getY() - 2, followed.getWidth(), followed.getHeight())
 //                    || followed.getY() < getY() - getHeight() * 2
 //                    || followed.getX() < getX()  - 150 || followed.getX() > getX() + 150) {
@@ -177,21 +195,17 @@ public class Enemy2 extends Entity {
         if (sprint = true) {
 //            gravity = 0;
             follow(deltaTime * 2);
-            movingTime += 1;
-            if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
-            time += 1;
-//            super.update(deltaTime * 2, gravity); // applies the gravity
+            //            super.update(deltaTime * 2, gravity); // applies the gravity
             //move(deltaTime);
-            shoot();
-            if (time > 2) { shoot = false; }
-        }
+        } else {
 //        gravity = 0;
-        follow(deltaTime);
+            follow(deltaTime);
+            //        super.update(deltaTime, gravity); // applies the gravity
+            //move(deltaTime);
+        }
         movingTime += 1;
         if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
         time += 1;
-//        super.update(deltaTime, gravity); // applies the gravity
-        //move(deltaTime);
         shoot();
         if (time > 2) { shoot = false; }
     }
