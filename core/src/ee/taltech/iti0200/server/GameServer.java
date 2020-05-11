@@ -44,7 +44,7 @@ public class GameServer {
             enemy.y = enemyY.get(coordinates);
             enemies.add(enemy);
         }
-        for (int i = 4; i < 8; i++) {
+        for (int i = 8; i < 12; i++) {
             Enemy enemy = new Enemy();
             enemy.enemyType = "enemy2";
             enemy.id = "" + i;
