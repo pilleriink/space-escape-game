@@ -99,14 +99,7 @@ public class Player3 extends Entity {
         random = new Random();
     }
 
-    public void abilityPackage(float x, float y, String texture) {
-        Ability ability = new Ability();
-        ability.x = x;
-        ability.y = y;
-        ability.texture = texture;
-        ability.id = id;
-        client.sendTCP(ability);
-
+    public void clientWait() {
         synchronized (client) {
             try {
                 client.wait(1);
@@ -116,19 +109,22 @@ public class Player3 extends Entity {
         }
     }
 
+    public void abilityPackage(float x, float y, String texture) {
+        Ability ability = new Ability();
+        ability.x = x;
+        ability.y = y;
+        ability.texture = texture;
+        ability.id = id;
+        client.sendTCP(ability);
+        clientWait();
+    }
+
     public void livesLostPackage(Entity entity) {
         LivesLost livesLost = new LivesLost();
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
         client.sendTCP(livesLost);
-
-        synchronized (client) {
-            try {
-                client.wait(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        clientWait();
     }
 
     public boolean isRight() {
@@ -300,14 +296,7 @@ public class Player3 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -338,14 +327,7 @@ public class Player3 extends Entity {
             move.y = getY();
             move.texture = texture;
             client.sendTCP(move);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
     }
 
@@ -397,6 +379,7 @@ public class Player3 extends Entity {
             gun.x = gunX;
             gun.id = id;
             client.sendTCP(gun);
+            clientWait();
         }
 
         if (xSkill) {

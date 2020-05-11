@@ -63,12 +63,7 @@ public class Player0 extends Entity {
         cSkillRange = cSkill1.getWidth();
     }
 
-    public void livesLostPackage(Entity entity) {
-        LivesLost livesLost = new LivesLost();
-        livesLost.id = entity.getId();
-        livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
-
+    public void clientWait() {
         synchronized (client) {
             try {
                 client.wait(1);
@@ -78,6 +73,14 @@ public class Player0 extends Entity {
         }
     }
 
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
+        clientWait();
+    }
+
     public void abilityPackage(float x, float y, String texture) {
         Ability ability = new Ability();
         ability.x = x;
@@ -85,14 +88,7 @@ public class Player0 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
-
-        synchronized (client) {
-            try {
-                client.wait(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        clientWait();
     }
 
     public boolean isRight() {
@@ -266,14 +262,7 @@ public class Player0 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
         shootingTime += 1;
         jump(deltaTime, gravity);

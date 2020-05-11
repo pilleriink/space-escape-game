@@ -74,12 +74,7 @@ public class Player1 extends Entity {
         cSkillRange = cSkill1.getWidth();
     }
 
-    public void livesLostPackage(Entity entity) {
-        LivesLost livesLost = new LivesLost();
-        livesLost.id = entity.getId();
-        livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
-
+    public void clientWait() {
         synchronized (client) {
             try {
                 client.wait(1);
@@ -89,6 +84,14 @@ public class Player1 extends Entity {
         }
     }
 
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
+        clientWait();
+    }
+
     public void abilityPackage(float x, float y, String texture) {
         Ability ability = new Ability();
         ability.x = x;
@@ -96,14 +99,7 @@ public class Player1 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
-
-        synchronized (client) {
-            try {
-                client.wait(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        clientWait();
     }
 
     public boolean isRight() {
@@ -299,14 +295,7 @@ public class Player1 extends Entity {
             move.y = getY();
             move.texture = texture;
             client.sendTCP(move);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
     }
 
@@ -358,14 +347,7 @@ public class Player1 extends Entity {
             gun.x = gunX;
             gun.id = id;
             client.sendTCP(gun);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
 
         if (xSkill) {
@@ -429,8 +411,6 @@ public class Player1 extends Entity {
                     abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill05.png");
                 }
             }
-            System.out.println(pos.x);
-            System.out.println(pos.y);
             if (deltaTime >= lastX + 4) {
                 xSkillXY.clear();
                 xSkill = false;

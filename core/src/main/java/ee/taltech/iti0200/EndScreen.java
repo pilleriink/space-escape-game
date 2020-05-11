@@ -22,8 +22,6 @@ public class EndScreen implements Screen {
     public EndScreen(final SpaceEscape game) {
         this.game = game;
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = new SpriteBatch();
 
         spaceEscape = new Texture("game_over.png");
@@ -74,11 +72,10 @@ public class EndScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             if (positionX == 0) {
                 Gdx.app.exit();
-                dispose();
             } else {
                 game.setScreen(new MenuScreen(game));
-                dispose();
             }
+            dispose();
         }
 
 

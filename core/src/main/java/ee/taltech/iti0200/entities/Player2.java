@@ -71,12 +71,7 @@ public class Player2 extends Entity {
         cSkillRange = cSkill1.getWidth();
     }
 
-    public void livesLostPackage(Entity entity) {
-        LivesLost livesLost = new LivesLost();
-        livesLost.id = entity.getId();
-        livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
-
+    public void clientWait() {
         synchronized (client) {
             try {
                 client.wait(1);
@@ -84,6 +79,14 @@ public class Player2 extends Entity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
+        clientWait();
     }
 
     public void abilityPackage(float x, float y, String texture) {
@@ -93,14 +96,7 @@ public class Player2 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
-
-        synchronized (client) {
-            try {
-                client.wait(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        clientWait();
     }
 
     public void dronePackage(float x, float y) {
@@ -109,14 +105,7 @@ public class Player2 extends Entity {
         drone.y = y;
         drone.id = id;
         client.sendTCP(drone);
-
-        synchronized (client) {
-            try {
-                client.wait(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        clientWait();
     }
 
     public boolean isRight() {
@@ -324,14 +313,7 @@ public class Player2 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -362,15 +344,7 @@ public class Player2 extends Entity {
             move.y = getY();
             move.texture = texture;
             client.sendTCP(move);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            clientWait();
             dronePackage(droneX, droneY);
         }
     }
@@ -433,14 +407,7 @@ public class Player2 extends Entity {
             gun.x = gunX;
             gun.id = id;
             client.sendTCP(gun);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
 
         if (xSkill) {
@@ -452,14 +419,7 @@ public class Player2 extends Entity {
                 smallDrone.y = xSkillY;
                 smallDrone.texture = "PlayerAbilities/Player2/droneTEST.png";
                 client.sendTCP(smallDrone);
-
-                synchronized (client) {
-                    try {
-                        client.wait(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                clientWait();
             }
             if (deltaTime > lastX + 4) xSkill = false;
         }

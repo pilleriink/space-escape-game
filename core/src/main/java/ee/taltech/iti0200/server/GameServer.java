@@ -46,6 +46,16 @@ public class GameServer {
             enemy.y = enemyY.get(coordinates);
             enemies.add(enemy);
         }
+        for (int i = 8; i < 12; i++) {
+            Enemy enemy = new Enemy();
+            enemy.enemyType = "enemy2";
+            enemy.id = "" + i;
+            enemy.lives = 5;
+            int coordinates = (int) (Math.random() * (7));
+            enemy.x = enemyX.get(coordinates);
+            enemy.y = enemyY.get(coordinates);
+            enemies.add(enemy);
+        }
 
         server = new Server();
         server.start();

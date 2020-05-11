@@ -20,8 +20,6 @@ public class StartScreen implements Screen {
     public StartScreen(final SpaceEscape game) {
         this.game = game;
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = game.batch;
 
         spaceEscape = new Texture("space_escape.png");

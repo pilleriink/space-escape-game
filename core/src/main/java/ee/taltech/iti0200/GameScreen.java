@@ -100,6 +100,12 @@ public class GameScreen implements Screen {
             gameMap.addEntity(new Enemy1(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
             playerIds.add("" + i);
         }
+        for (int i = 8; i < 12; i++) {
+            gameMap.addEntity(new Enemy2(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
+            playerIds.add("" + i);
+        }
+
+
 
         //gameMap.addEntity(new Enemy1(2000, 700, gameMap, 50, 150, gameMap.getEntities(), "1", client));
         //playerIds.add("1");
