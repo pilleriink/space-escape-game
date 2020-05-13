@@ -77,7 +77,7 @@ public class Player0 extends Entity {
         LivesLost livesLost = new LivesLost();
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
+        client.sendUDP(livesLost);
         clientWait();
     }
 
@@ -87,7 +87,7 @@ public class Player0 extends Entity {
         ability.y = y;
         ability.texture = texture;
         ability.id = id;
-        client.sendTCP(ability);
+        client.sendUDP(ability);
         clientWait();
     }
 
@@ -293,7 +293,7 @@ public class Player0 extends Entity {
             move.x = getX();
             move.y = getY();
             move.texture = texture;
-            client.sendTCP(move);
+            client.sendUDP(move);
 
             synchronized (client) {
                 try {
@@ -354,7 +354,7 @@ public class Player0 extends Entity {
             gun.gun = gunfire;
             gun.x = gunX;
             gun.id = id;
-            client.sendTCP(gun);
+            client.sendUDP(gun);
         }
 
 

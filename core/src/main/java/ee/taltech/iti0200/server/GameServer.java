@@ -59,7 +59,7 @@ public class GameServer {
 
         server = new Server();
         server.start();
-        server.bind(5200);
+        server.bind(5200, 5201);
         Kryo kryoServer = server.getKryo();
         kryoServer.register(Register.class);
         kryoServer.register(Move.class);
@@ -114,13 +114,13 @@ public class GameServer {
                             players.get(c).y = ((Move) object).y;
                         }
                     }
-                    server.sendToAllTCP(object);
+                    server.sendToAllUDP(object);
                 }
 
                 if (object instanceof Gun) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -128,7 +128,7 @@ public class GameServer {
                 if (object instanceof Ability) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -136,7 +136,7 @@ public class GameServer {
                 if (object instanceof Drone) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -144,7 +144,7 @@ public class GameServer {
                 if (object instanceof SmallDrone) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -163,7 +163,7 @@ public class GameServer {
                     if (connection.equals(firstConnection.get(0))) {
                         for (Connection c : players.keySet()) {
                             if (!c.equals(connection)) {
-                                c.sendTCP(object);
+                                c.sendUDP(object);
                             }
                         }
                     }

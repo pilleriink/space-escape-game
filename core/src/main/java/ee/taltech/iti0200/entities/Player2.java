@@ -85,7 +85,7 @@ public class Player2 extends Entity {
         LivesLost livesLost = new LivesLost();
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
+        client.sendUDP(livesLost);
         clientWait();
     }
 
@@ -95,7 +95,7 @@ public class Player2 extends Entity {
         ability.y = y;
         ability.texture = texture;
         ability.id = id;
-        client.sendTCP(ability);
+        client.sendUDP(ability);
         clientWait();
     }
 
@@ -104,7 +104,7 @@ public class Player2 extends Entity {
         drone.x = x;
         drone.y = y;
         drone.id = id;
-        client.sendTCP(drone);
+        client.sendUDP(drone);
         clientWait();
     }
 
@@ -248,7 +248,8 @@ public class Player2 extends Entity {
             lastC = deltaTime;
         }
         if (droneExplosion) {
-            for (Entity entity : entities) {
+            for (int i = 0; i < entities.size(); i++) {
+                Entity entity = entities.get(i);
                 if (entity != this
                         && entity.getX() >= droneX - 200 && entity.getX() <= droneX + droneTexture.getWidth() + 200
                         && entity.getY() + entity.getHeight() >= droneY - 200
@@ -345,7 +346,7 @@ public class Player2 extends Entity {
             move.x = getX();
             move.y = getY();
             move.texture = texture;
-            client.sendTCP(move);
+            client.sendUDP(move);
             clientWait();
             dronePackage(droneX, droneY);
         }
@@ -408,7 +409,7 @@ public class Player2 extends Entity {
             gun.gun = gunfire;
             gun.x = gunX;
             gun.id = id;
-            client.sendTCP(gun);
+            client.sendUDP(gun);
             clientWait();
         }
 
@@ -420,7 +421,7 @@ public class Player2 extends Entity {
                 smallDrone.x = xSkillX;
                 smallDrone.y = xSkillY;
                 smallDrone.texture = "PlayerAbilities/Player2/droneTEST.png";
-                client.sendTCP(smallDrone);
+                client.sendUDP(smallDrone);
                 clientWait();
             }
             if (deltaTime > lastX + 4) xSkill = false;
@@ -428,7 +429,6 @@ public class Player2 extends Entity {
 
 
         if (cSkill) {
-            // Drone stops waits for 2 seconds, then goes back to owner
             if (deltaTime <= lastC + 2) droneCanMove = false;
             if (deltaTime > lastC + 2) droneExplosion = true;
             if (deltaTime > lastC + 6) cSkill = false;

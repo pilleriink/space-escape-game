@@ -374,7 +374,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        System.out.println(gameMap.getEntities().contains(me));
         if (!gameMap.getEntities().contains(me)) {
             game.setScreen(new EndScreen(game));
             dispose();

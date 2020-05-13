@@ -65,7 +65,7 @@ public class Enemy1 extends Entity {
                     LivesLost livesLost = new LivesLost();
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
-                    client.sendTCP(livesLost);
+                    client.sendUDP(livesLost);
                 } else if (!isRight && entity.getX() < getX()
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
@@ -74,7 +74,7 @@ public class Enemy1 extends Entity {
                     LivesLost livesLost = new LivesLost();
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
-                    client.sendTCP(livesLost);
+                    client.sendUDP(livesLost);
                 }
             }
         }
@@ -109,7 +109,7 @@ public class Enemy1 extends Entity {
             moveEnemy.id = id;
             moveEnemy.x = getX();
             moveEnemy.y = getY();
-            client.sendTCP(moveEnemy);
+            client.sendUDP(moveEnemy);
 
             synchronized (client) {
                 try {
