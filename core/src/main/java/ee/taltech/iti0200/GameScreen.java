@@ -101,14 +101,9 @@ public class GameScreen implements Screen {
             playerIds.add("" + i);
         }
         for (int i = 8; i < 12; i++) {
-            gameMap.addEntity(new Enemy2(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
+            gameMap.addEntity(new Enemy2(1000, 600, gameMap, 5, 1, gameMap.getEntities(), "" + i, client));
             playerIds.add("" + i);
         }
-
-
-
-        //gameMap.addEntity(new Enemy1(2000, 700, gameMap, 50, 150, gameMap.getEntities(), "1", client));
-        //playerIds.add("1");
 
         this.client.addListener(new Listener() {
             public void received (Connection connection, Object object) {
@@ -173,7 +168,7 @@ public class GameScreen implements Screen {
                     for (Entity entity : gameMap.getEntities()) {
                         if (entity.getId().equals(((LivesLost) object).id)) {
                             entity.setLives(((LivesLost) object).lives);
-                            (entity).setLives(((LivesLost) object).lives);
+                            entity.setLives(((LivesLost) object).lives);
                         }
                     }
                 }
@@ -379,6 +374,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        System.out.println(gameMap.getEntities().contains(me));
         if (!gameMap.getEntities().contains(me)) {
             game.setScreen(new EndScreen(game));
             dispose();

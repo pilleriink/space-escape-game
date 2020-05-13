@@ -17,15 +17,15 @@ public class Enemy2 extends Entity {
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
     private float shootingRange, totalHealth;
-    public boolean isTooClose = false;
-    public ArrayList<Entity> entities;
-    public ArrayList<Entity> oldTargets = new ArrayList<>();
-    public ArrayList<Entity> target = new ArrayList<>();
+    private boolean isTooClose = false;
+    private ArrayList<Entity> entities;
+    private ArrayList<Entity> oldTargets = new ArrayList<>();
+    private ArrayList<Entity> target = new ArrayList<>();
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY2;
     final Client client;
-    public boolean sprint;
+    Boolean sprint;
 
 
     public Enemy2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {
@@ -38,6 +38,27 @@ public class Enemy2 extends Entity {
         this.totalHealth = getLives();
         this.sprint = true;
     }
+
+    public boolean isTooClose() {
+        return isTooClose;
+    }
+
+    public Boolean getSprint() {
+        return sprint;
+    }
+
+    public void setOldTargets(ArrayList<Entity> oldTargets) {
+        this.oldTargets = oldTargets;
+    }
+
+    public void setSprint(Boolean sprint) {
+        this.sprint = sprint;
+    }
+
+    public void setTarget(ArrayList<Entity> target) {
+        this.target = target;
+    }
+
     public String getId() {
         return id;
     }
@@ -198,7 +219,7 @@ public class Enemy2 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
-        if (lives == 0) {
+        if (lives < 1) {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);

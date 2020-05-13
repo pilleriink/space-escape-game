@@ -292,7 +292,7 @@ public class Player3 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
-        if (lives == 0) {
+        if (lives < 1) {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
