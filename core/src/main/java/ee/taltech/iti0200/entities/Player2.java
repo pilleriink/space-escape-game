@@ -248,7 +248,7 @@ public class Player2 extends Entity {
             cSkill = true;
             lastC = deltaTime;
         }
-        if (droneExplosion) {
+        if (droneExplosion && !droneIsComingBack) {
             for (int i = 0; i < entities.size(); i++) {
                 Entity entity = entities.get(i);
                 if (entity != this
