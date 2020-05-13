@@ -16,7 +16,6 @@ import org.junit.Assert;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class WorldMapTest {
 

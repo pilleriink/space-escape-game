@@ -172,7 +172,7 @@ public class ServerTest {
         Assert.assertNotNull(gameServer.firstConnection);
         Assert.assertNotNull(gameServer.players);
         Assert.assertNotNull(gameServer.enemies);
-        Assert.assertEquals(8, gameServer.enemies.size());
+        Assert.assertEquals(12, gameServer.enemies.size());
 
 
     }

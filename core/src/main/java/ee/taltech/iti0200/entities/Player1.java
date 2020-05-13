@@ -24,17 +24,16 @@ public class Player1 extends Entity {
     private static final double V_DELAY = 0.75;
     private static final double X_DELAY = 1;
 
-    private ArrayList<Entity> entities;
+    public ArrayList<Entity> entities;
 
     private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill50, xSkill45, xSkill40, xSkill35, xSkill30,
-            xSkill25, xSkill20, xSkill15, xSkill10, xSkill05;
+            xSkill25, xSkill20, xSkill15, xSkill10, xSkill05, xSkillTexture;
     private NinePatch health;
     public float totalHealth, shootingRange, lastX, lastXPos, lastYPos,
-            lastC, deltaTime,  gunX, closestEnemyX, closestEnemyY;
+            lastC, deltaTime,  gunX, closestEnemyX, closestEnemyY, xSkillX, xSkillY;
     public boolean isRight, shoot, moving, keyPressed, cSkill, xSkill, cPlanted, cExploding;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
-    public Map<Float, Float> xSkillXY = new HashMap<>();
     public Entity closestEnemy;
     final Client client;
     String id, texture, gunfire;
@@ -61,25 +60,11 @@ public class Player1 extends Entity {
         this.cSkill1 = new Texture("PlayerAbilities/Player1/cSkill1.png");
         this.cSkill2 = new Texture("PlayerAbilities/Player1/cSkill2.png");
         this.cSkill3 = new Texture("PlayerAbilities/Player1/cSkill3.png");
-        this.xSkill50 = new Texture("PlayerAbilities/Player1/xSkill50.png");
-        this.xSkill45 = new Texture("PlayerAbilities/Player1/xSkill45.png");
-        this.xSkill40 = new Texture("PlayerAbilities/Player1/xSkill40.png");
-        this.xSkill35 = new Texture("PlayerAbilities/Player1/xSkill35.png");
-        this.xSkill30 = new Texture("PlayerAbilities/Player1/xSkill30.png");
-        this.xSkill25 = new Texture("PlayerAbilities/Player1/xSkill25.png");
-        this.xSkill20 = new Texture("PlayerAbilities/Player1/xSkill20.png");
-        this.xSkill15 = new Texture("PlayerAbilities/Player1/xSkill15.png");
-        this.xSkill10 = new Texture("PlayerAbilities/Player1/xSkill10.png");
-        this.xSkill05 = new Texture("PlayerAbilities/Player1/xSkill05.png");
+        this.xSkillTexture = new Texture("PlayerAbilities/Player1/xSkillTexture.png");
         cSkillRange = cSkill1.getWidth();
     }
 
-    public void livesLostPackage(Entity entity) {
-        LivesLost livesLost = new LivesLost();
-        livesLost.id = entity.getId();
-        livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
-
+    public void clientWait() {
         synchronized (client) {
             try {
                 client.wait(1);
@@ -87,6 +72,14 @@ public class Player1 extends Entity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void livesLostPackage(Entity entity) {
+        LivesLost livesLost = new LivesLost();
+        livesLost.id = entity.getId();
+        livesLost.lives = entity.getLives();
+        client.sendTCP(livesLost);
+        clientWait();
     }
 
     public void abilityPackage(float x, float y, String texture) {
@@ -96,14 +89,7 @@ public class Player1 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendTCP(ability);
-
-        synchronized (client) {
-            try {
-                client.wait(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        clientWait();
     }
 
     public boolean isRight() {
@@ -197,24 +183,22 @@ public class Player1 extends Entity {
         if (!xSkill) {
             xSkill = true;
             lastX = deltaTime;
+            xSkillX = pos.x - (xSkillTexture.getWidth() / 2);
+            xSkillY = pos.y;
         }
         for (Entity entity : entities) {
-            if (entity != this) {
-                for (Map.Entry<Float, Float> skillXY : xSkillXY.entrySet()) {
-                    if (entity.getX() + entity.getWidth() >= skillXY.getKey() - 10 &&
-                            (entity.getX()) <= skillXY.getKey() + 10 &&
-                            entity.getY() <= skillXY.getValue() + 10 &&
-                            (entity.getY() + entity.getHeight()) >= skillXY.getValue() - 10) {
-                        if (entity.getLives() - 0.1 > 0) {
-                            entity.setLives((float) (entity.getLives() - 0.1));
-                            livesLostPackage(entity);
-                        } else {
-                            entity.setLives(0);
-                            setLives(Math.min(getLives() + 100, totalHealth));
-                            livesLostPackage(entity);
-                            livesLostPackage(this);
-                        }
-                    }
+            if (entity != this && entity.getX() + (entity.getWidth() / 2) >= xSkillX &&
+                    entity.getX() <= xSkillX + xSkillTexture.getWidth() - (entity.getWidth() / 2) &&
+                    entity.getY() + entity.getHeight() >= xSkillY &&
+                    entity.getY() <= xSkillY + xSkillTexture.getHeight()) {
+                if (entity.getLives() > 0.4f) {
+                    entity.setLives(entity.getLives() - 0.4f);
+                    livesLostPackage(entity);
+                } else {
+                    entity.setLives(0);
+                    setLives(Math.min(getLives() + 100, totalHealth));
+                    livesLostPackage(entity);
+                    livesLostPackage(this);
                 }
             }
         }
@@ -226,6 +210,8 @@ public class Player1 extends Entity {
             cSkill = true;
             lastC = deltaTime;
             closestEnemy = entities.get(entities.size() - 1);
+            closestEnemyX = 100000;
+            closestEnemyY = 100000;
             for (Entity entity : entities) {
                 if (entity != this) {
                     if (entity.getX() < closestEnemyX && entity.getY() < closestEnemyY) {
@@ -299,14 +285,7 @@ public class Player1 extends Entity {
             move.y = getY();
             move.texture = texture;
             client.sendTCP(move);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
     }
 
@@ -358,90 +337,20 @@ public class Player1 extends Entity {
             gun.x = gunX;
             gun.id = id;
             client.sendTCP(gun);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
 
         if (xSkill) {
-            if (deltaTime <= lastX + 0.2) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill50, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill50.png");
-                }
-            } else if (deltaTime > lastX + 0.2 && deltaTime <= lastX + 0.4) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill45, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill45.png");
-                }
-            } else if (deltaTime > lastX + 0.4 && deltaTime <= lastX + 0.6) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill40, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill40.png");
-                }
-            } else if (deltaTime > lastX + 0.6 && deltaTime <= lastX + 0.8) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill35, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill35.png");
-                }
-            } else if (deltaTime > lastX + 0.8 && deltaTime <= lastX + 1) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill30, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill30.png");
-                }
-            } else if (deltaTime > lastX + 1 && deltaTime <= lastX + 1.2) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill25, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill25.png");
-                }
-            } else if (deltaTime > lastX + 1.2 && deltaTime <= lastX + 1.4) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill20, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill20.png");
-                }
-            } else if (deltaTime > lastX + 1.4 && deltaTime <= lastX + 1.6) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill15, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill15.png");
-                }
-            } else if (deltaTime > lastX + 1.6 && deltaTime <= lastX + 1.8) {
-                xSkillXY.put(pos.x, pos.y);
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill10, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill10.png");
-                }
-            } else if (deltaTime > lastX + 1.8 && deltaTime <= lastX + 4) {
-                for (Map.Entry<Float, Float> puddlePos : xSkillXY.entrySet()) {
-                    batch.draw(xSkill05, puddlePos.getKey(), puddlePos.getValue());
-                    abilityPackage(puddlePos.getKey(), puddlePos.getValue(), "PlayerAbilities/Player1/xSkill05.png");
-                }
-            }
-            System.out.println(pos.x);
-            System.out.println(pos.y);
-            if (deltaTime >= lastX + 4) {
-                xSkillXY.clear();
-                xSkill = false;
-            }
+            batch.draw(xSkillTexture, xSkillX, xSkillY);
+            abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player1/xSkillTexture.png");
+            if (deltaTime >= lastX + 4) xSkill = false;
         }
 
 
         if (cSkill) {
             if (cPlanted) {
                 if (deltaTime <= lastC + 1) {
-                    batch.draw(cSkill3, closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
+                    batch.draw(cSkill3, closestEnemy.getX() + (closestEnemy.getWidth() / 2f), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
                     abilityPackage(closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15), "PlayerAbilities/Player1/cSkill3.png");
                 } else if (deltaTime <= lastC + 2 && deltaTime > lastC + 1) {
                     batch.draw(cSkill2, closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
