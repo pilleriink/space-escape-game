@@ -17,15 +17,15 @@ public class Enemy2 extends Entity {
     private static final int JUMP_VELOCITY = 5;
     private int time, movingTime;
     private float shootingRange, totalHealth;
-    private boolean isTooClose = false;
-    private ArrayList<Entity> entities;
-    private ArrayList<Entity> oldTargets = new ArrayList<>();
-    private ArrayList<Entity> target = new ArrayList<>();
+    public boolean isTooClose = false;
+    public ArrayList<Entity> entities;
+    public ArrayList<Entity> oldTargets = new ArrayList<>();
+    public ArrayList<Entity> target = new ArrayList<>();
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY2;
     final Client client;
-    Boolean sprint;
+    public boolean sprint;
 
 
     public Enemy2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {

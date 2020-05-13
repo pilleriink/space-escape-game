@@ -219,11 +219,12 @@ public class Player0 extends Entity {
         if (cDoesDmg && !cDidDmg) {
             cSkillX = pos.x;
             cSkillY = pos.y;
+            // 24 - cSkill height
             for (Entity entity : entities) {
                 if (isRight && entity.getX() > pos.x
                         && entity.getX() <= getX() + getWidth() + cSkillRange
                         && getY() >= entity.getY()
-                        && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
+                        && getY() + 24 <= entity.getY() + entity.getHeight() + 24) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
                     } else {
@@ -233,7 +234,7 @@ public class Player0 extends Entity {
                 } else if (!isRight && entity.getX() < pos.x
                         && entity.getX() + entity.getWidth() >= getX() - cSkillRange
                         && getY() >= entity.getY()
-                        && getY() + getHeight() <= entity.getY() + entity.getHeight()) {
+                        && getY() + 24 <= entity.getY() + entity.getHeight() + 24) {
                     if (entity.getLives() >= 10) {
                         entity.setLives(entity.getLives() - 10);
                     } else {

@@ -200,6 +200,8 @@ public class Player2 extends Entity {
             xSkill = true;
             lastX = deltaTime;
             closestEnemy = entities.get(entities.size() - 1);
+            closestEnemyX = 100000;
+            closestEnemyY = 100000;
             xSkillX = droneX;
             xSkillY = droneY;
             for (Entity entity : entities) {
