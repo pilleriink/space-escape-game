@@ -11,7 +11,7 @@ import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
 
-public class Enemy0 extends Entity {
+public class FirstEnemy extends Entity {
 
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
@@ -26,8 +26,8 @@ public class Enemy0 extends Entity {
     private EnemyType enemyType = EnemyType.ENEMY0;
     private final Client client;
 
-    public Enemy0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
-                  String id, Client client) {
+    public FirstEnemy(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                      String id, Client client) {
         super(x, y, EntityType.ENEMY0, map, lives, id);
         this.id = id;
         this.client = client;

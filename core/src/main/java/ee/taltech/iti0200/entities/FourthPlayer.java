@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 
-public class Player3 extends Entity {
+public class FourthPlayer extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
@@ -43,8 +43,8 @@ public class Player3 extends Entity {
     private final Client client;
     private String id, texture, gunfire;
 
-    public Player3(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
-                   PlayerType playerType, Client client, String id) {
+    public FourthPlayer(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                        PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;

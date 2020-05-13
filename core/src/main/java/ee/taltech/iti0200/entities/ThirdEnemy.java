@@ -11,7 +11,7 @@ import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
 
-public class Enemy2 extends Entity {
+public class ThirdEnemy extends Entity {
 
     private static int SPEED = 50;
     private static final int JUMP_VELOCITY = 5;
@@ -28,8 +28,8 @@ public class Enemy2 extends Entity {
     private Boolean sprint;
 
 
-    public Enemy2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
-                  String id, Client client) {
+    public ThirdEnemy(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                      String id, Client client) {
         super(x, y, EntityType.ENEMY2, map, lives, id);
         this.id = id;
         this.client = client;

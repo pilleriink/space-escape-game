@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-
 import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
 
-public class Player1 extends Entity {
+
+public class ThirdPlayer extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
@@ -20,21 +20,23 @@ public class Player1 extends Entity {
     private static final double V_DELAY = 0.75;
     private static final double X_DELAY = 1;
 
-    public ArrayList<Entity> entities;
+    private ArrayList<Entity> entities;
 
-    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkillTexture;
+    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, droneTexture, vSkill1, vSkill2,
+            vSkill3;
     private NinePatch health;
-    public float totalHealth, shootingRange, lastX, lastXPos, lastYPos,
-            lastC, deltaTime, gunX, closestEnemyX, closestEnemyY, xSkillX, xSkillY;
-    public boolean isRight, shoot, moving, keyPressed, cSkill, xSkill, cPlanted, cExploding;
+    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, xSkillX, xSkillY, lastV, lastZ,
+            droneX, droneY, gunX, closestEnemyX, closestEnemyY;
+    public boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
+            bombGrounded, explosionTime, droneCanMove, droneIsComingBack, droneExplosion, enemyFound, xExplosion;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
     public Entity closestEnemy;
-    final Client client;
-    String id, texture, gunfire;
+    private final Client client;
+    private String id, texture, gunfire;
 
-    public Player1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
-                   PlayerType playerType, Client client, String id) {
+    public ThirdPlayer(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                       PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;
@@ -50,13 +52,23 @@ public class Player1 extends Entity {
         this.lastXPos = getX();
         this.playerType = playerType;
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
+        droneX = (int) x - 15;
+        droneY = (int) y - 15;
+        droneCanMove = true;
+        droneIsComingBack = false;
+        droneExplosion = false;
         closestEnemyX = 100000;
         closestEnemyY = 100000;
 
-        this.cSkill1 = new Texture("PlayerAbilities/Player1/cSkill1.png");
-        this.cSkill2 = new Texture("PlayerAbilities/Player1/cSkill2.png");
-        this.cSkill3 = new Texture("PlayerAbilities/Player1/cSkill3.png");
-        this.xSkillTexture = new Texture("PlayerAbilities/Player1/xSkillTexture.png");
+        droneTexture = new Texture("PlayerAbilities/Player2/droneTEST.png");
+        cSkill1 = new Texture("PlayerAbilities/Player0/cSkill1.png");
+        cSkill2 = new Texture("PlayerAbilities/Player0/cSkill2.png");
+        cSkill3 = new Texture("PlayerAbilities/Player0/cSkill3.png");
+        vSkill1 = new Texture("PlayerAbilities/Player2/vSkill1.png");
+        vSkill2 = new Texture("PlayerAbilities/Player2/vSkill2.png");
+        vSkill3 = new Texture("PlayerAbilities/Player2/vSkill3.png");
+        xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
+        xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
         cSkillRange = cSkill1.getWidth();
     }
 
@@ -85,6 +97,15 @@ public class Player1 extends Entity {
         ability.texture = texture;
         ability.id = id;
         client.sendUDP(ability);
+        clientWait();
+    }
+
+    public void dronePackage(float x, float y) {
+        Drone drone = new Drone();
+        drone.x = x;
+        drone.y = y;
+        drone.id = id;
+        client.sendUDP(drone);
         clientWait();
     }
 
@@ -133,7 +154,7 @@ public class Player1 extends Entity {
             moveX((float) (-SPEED * 1.5 * deltaTime));
             isRight = false;
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)){
             moveX(-SPEED * deltaTime);
             isRight = false;
         }
@@ -145,7 +166,7 @@ public class Player1 extends Entity {
             moveX((float) (SPEED * 1.5 * deltaTime));
             isRight = true;
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
             moveX(SPEED * deltaTime);
             isRight = true;
         }
@@ -179,24 +200,45 @@ public class Player1 extends Entity {
         if (!xSkill) {
             xSkill = true;
             lastX = deltaTime;
-            xSkillX = pos.x - (xSkillTexture.getWidth() / 2);
-            xSkillY = pos.y;
-        }
-        for (Entity entity : entities) {
-            if (entity != this && entity.getX() + (entity.getWidth() / 2) >= xSkillX &&
-                    entity.getX() <= xSkillX + xSkillTexture.getWidth() - (entity.getWidth() / 2) &&
-                    entity.getY() + entity.getHeight() >= xSkillY &&
-                    entity.getY() <= xSkillY + xSkillTexture.getHeight()) {
-                if (entity.getLives() > 0.4f) {
-                    entity.setLives(entity.getLives() - 0.4f);
-                    livesLostPackage(entity);
-                } else {
-                    entity.setLives(0);
-                    setLives(Math.min(getLives() + 100, totalHealth));
-                    livesLostPackage(entity);
-                    livesLostPackage(this);
+            closestEnemy = entities.get(entities.size() - 1);
+            closestEnemyX = 100000;
+            closestEnemyY = 100000;
+            xSkillX = droneX;
+            xSkillY = droneY;
+            for (Entity entity : entities) {
+                if (entity != this) {
+                    if (entity.getX() < closestEnemyX && entity.getY() < closestEnemyY) {
+                        closestEnemy = entity;
+                        enemyFound = true;
+                        closestEnemyX = entity.getX();
+                        closestEnemyY = entity.getY();
+                    }
                 }
             }
+        }
+        if (enemyFound) {
+            if (closestEnemy.getX() - 30 <= xSkillX && closestEnemy.getX() + closestEnemy.getWidth() + 30 >= xSkillX
+                    && closestEnemy.getY() + closestEnemy.getHeight() + 30 >= xSkillY && closestEnemy.getY() - 30 <= xSkillY) {
+                xExplosion = true;
+                enemyFound = false;
+            }
+            if (xSkillX < closestEnemy.getX()) {
+                if (xSkillX <= closestEnemy.getX() - 5) xSkillX += 5;
+            } else {
+                if (xSkillX >= closestEnemy.getX() + 5) xSkillX -= 5;
+            }
+            if (xSkillY < closestEnemy.getY()) {
+                if (xSkillY <= closestEnemy.getY() - 5) xSkillY += 5;
+            } else {
+                if (xSkillY >= closestEnemyY + 5) xSkillY -= 5;
+            }
+        }
+        if (xExplosion) {
+            closestEnemy.setLives(Math.max(closestEnemy.getLives() - 40, 0));
+            livesLostPackage(closestEnemy);
+            xExplosion = false;
+            closestEnemyY = 100000;
+            closestEnemyX = 100000;
         }
     }
 
@@ -205,43 +247,69 @@ public class Player1 extends Entity {
         if (!cSkill) {
             cSkill = true;
             lastC = deltaTime;
-            closestEnemy = entities.get(entities.size() - 1);
-            closestEnemyX = 100000;
-            closestEnemyY = 100000;
-            for (Entity entity : entities) {
-                if (entity != this) {
-                    if (entity.getX() < closestEnemyX && entity.getY() < closestEnemyY) {
-                        closestEnemy = entity;
-                        closestEnemyX = entity.getX();
-                        closestEnemyY = entity.getY();
-                    }
-                }
-            }
-            cPlanted = true;
         }
-        if (cExploding) {
-            for (Entity entity : entities) {
-                if (entity != this) {
-                    if (closestEnemy.getX() - 5 <= entity.getX() + entity.getWidth() &&
-                            (closestEnemy.getX() + closestEnemy.getWidth() + 5) >= entity.getX() &&
-                            closestEnemy.getY() - 5 <= (entity.getY() + entity.getHeight())
-                            && (closestEnemy.getY() + closestEnemy.getHeight() + 5) >= entity.getY()) {
-                        if (entity.getLives() - 50 > 0) {
-                            entity.setLives(entity.getLives() - 50);
-                            livesLostPackage(entity);
-                        } else {
-                            entity.setLives(0);
-                            setLives(Math.min(getLives() + 100, totalHealth));
-                            livesLostPackage(entity);
-                            livesLostPackage(this);
-                        }
+        if (droneExplosion && !droneIsComingBack) {
+            for (int i = 0; i < entities.size(); i++) {
+                Entity entity = entities.get(i);
+                if (entity != this
+                        && entity.getX() >= droneX - 200 && entity.getX() <= droneX + droneTexture.getWidth() + 200
+                        && entity.getY() + entity.getHeight() >= droneY - 200
+                        && entity.getY() <= droneY + droneTexture.getHeight() + 200 ) {
+                    if (entity.getLives() >= 10) {
+                        entity.setLives(entity.getLives() - 30);
+                    } else {
+                        entity.setLives(0);
                     }
+                    livesLostPackage(entity);
                 }
             }
-            cExploding = false;
-            cPlanted = false;
+            droneIsComingBack = true;
+            droneExplosion = false;
         }
     }
+
+    public void vSkill() {
+        if (!vSkill) {
+            lastV = deltaTime;
+            vSkill = true;
+            setLives(Math.min(getLives() + 400, totalHealth));
+            livesLostPackage(this);
+        }
+    }
+
+    public void dronePosition() {
+        if (droneCanMove) {
+            if (isRight) {
+                if (droneX > pos.x - 20) {
+                    droneX -= 2;
+                } else {
+                    droneX = pos.x - 20;
+                }
+            } else {
+                if (droneX < pos.x + 20) {
+                    droneX += 2;
+                } else {
+                    droneX = pos.x + 20;
+                }
+            }
+        } else if (droneIsComingBack) {
+            if (droneX < pos.x) {
+                if (droneX < pos.x - 20) droneX += 5;
+            } else {
+                if (droneX > pos.x + 20) droneX -= 5;
+            }
+            if (droneY < pos.y + 20) {
+                if (droneY < pos.y + 15) droneY += 5;
+            } else {
+                if (droneY > pos.y + 25) droneY -= 5;
+            }
+            if (pos.x - 20 <= droneX && pos.x + 20 >= droneX && pos.y + 15 <= droneY && pos.y + 25 >= droneY) {
+                droneCanMove = true;
+                droneIsComingBack = false;
+            }
+        }
+    }
+
 
     @Override
     public void update(float deltaTime, float gravity) {
@@ -249,6 +317,7 @@ public class Player1 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
+            clientWait();
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -259,17 +328,15 @@ public class Player1 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) shoot();
         if (Gdx.input.isKeyJustPressed(Input.Keys.X) || xSkill) xSkill();
         if (Gdx.input.isKeyJustPressed(Input.Keys.C) || cSkill) cSkill();
-        if (shootingTime > 5) {
-            shoot = false;
-        }
-        if (getX() != lastXPos || getY() != lastYPos) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) vSkill();
+        if (shootingTime > 5) { shoot = false; }
+        if (getX() != lastXPos) {
             movingTime += 1;
             if (movingTime > playerType.getRunningRight().size() - 1) {
                 movingTime = 0;
             }
             moving = true;
             lastXPos = getX();
-            lastYPos = getY();
         } else {
             moving = false;
             movingTime = 0;
@@ -282,12 +349,14 @@ public class Player1 extends Entity {
             move.texture = texture;
             client.sendUDP(move);
             clientWait();
+            dronePackage(droneX, droneY);
         }
     }
 
     @Override
     public void render(SpriteBatch batch) {
         deltaTime += Gdx.graphics.getDeltaTime();
+        // draw player
         if (keyPressed) {
             if (isRight) {
                 texture = playerType.getId() + "/" + playerType.getId() + "_jumping_up_right.png";
@@ -296,7 +365,8 @@ public class Player1 extends Entity {
                 texture = playerType.getId() + "/" + playerType.getId() + "_jumping_up_left.png";
                 batch.draw(playerType.getLeftJumpingUp(), pos.x, pos.y, getWidth(), getHeight());
             }
-        } else {
+        }
+        else {
             if (!moving || !grounded) {
                 if (isRight) {
                     texture = playerType.getId() + "/" + playerType.getId() + "_running_right_0.png";
@@ -315,6 +385,15 @@ public class Player1 extends Entity {
                 }
             }
         }
+        // draw a drone
+        if (droneCanMove) {
+            droneY = pos.y + 20;
+            dronePosition();
+        } else if (droneIsComingBack) {
+            dronePosition();
+        }
+        // drawn
+        batch.draw(droneTexture, droneX, droneY, getWidth(), getHeight());
         health.draw(batch, pos.x, pos.y + 40, (getLives() / this.totalHealth) * getWidth(), 3);
 
         if (shoot) {
@@ -336,28 +415,35 @@ public class Player1 extends Entity {
         }
 
         if (xSkill) {
-            batch.draw(xSkillTexture, xSkillX, xSkillY);
-            abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player1/xSkillTexture.png");
-            if (deltaTime >= lastX + 4) xSkill = false;
+            if (enemyFound) {
+                batch.draw(droneTexture, xSkillX, xSkillY, droneTexture.getWidth(), droneTexture.getHeight());
+                SmallDrone smallDrone = new SmallDrone();
+                smallDrone.id = id;
+                smallDrone.x = xSkillX;
+                smallDrone.y = xSkillY;
+                smallDrone.texture = "PlayerAbilities/Player2/droneTEST.png";
+                client.sendUDP(smallDrone);
+                clientWait();
+            }
+            if (deltaTime > lastX + 4) xSkill = false;
         }
 
 
         if (cSkill) {
-            if (cPlanted) {
-                if (deltaTime <= lastC + 1) {
-                    batch.draw(cSkill3, closestEnemy.getX() + (closestEnemy.getWidth() / 2f), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
-                    abilityPackage(closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15), "PlayerAbilities/Player1/cSkill3.png");
-                } else if (deltaTime <= lastC + 2 && deltaTime > lastC + 1) {
-                    batch.draw(cSkill2, closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
-                    abilityPackage(closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15), "PlayerAbilities/Player1/cSkill2.png");
-                } else if (deltaTime <= lastC + 3 && deltaTime > lastC + 2) {
-                    batch.draw(cSkill1, closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
-                    abilityPackage(closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15), "PlayerAbilities/Player1/cSkill1.png");
-                } else if (deltaTime >= lastC + 3) {
-                    cExploding = true;
-                }
+            if (deltaTime <= lastC + 2) droneCanMove = false;
+            if (deltaTime > lastC + 2 && deltaTime <= lastC + 2.1) droneExplosion = true;
+            if (deltaTime > lastC + 6) cSkill = false;
+        }
+        if (vSkill) {
+            if (deltaTime <= lastV + 0.1) {
+                batch.draw(vSkill1, pos.x, pos.y);
+            } else if (deltaTime > lastV + 0.1 && deltaTime <= lastV + 0.2) {
+                batch.draw(vSkill2, pos.x, pos.y);
+            } else if (deltaTime > lastV + 0.2 && deltaTime <= lastV + 0.3) {
+                batch.draw(vSkill3, pos.x, pos.y);
             }
-            if (deltaTime >= lastC + 8) cSkill = false;
+            if (deltaTime >= lastV + 5) vSkill = false;
         }
     }
+
 }

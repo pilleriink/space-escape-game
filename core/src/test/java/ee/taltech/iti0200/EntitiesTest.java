@@ -39,253 +39,253 @@ public class EntitiesTest {
     @org.junit.Test
     public void testEnemy0() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Player0 player0 = new Player0(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
-        Enemy0 enemy0 = new Enemy0(5, 10, map, 10, 100, entities, "enemy0", client);
-        entities.add(player0);
-        entities.add(enemy0);
-        enemy0.entities = entities;
+        FirstPlayer firstPlayer = new FirstPlayer(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
+        FirstEnemy firstEnemy = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy0", client);
+        entities.add(firstPlayer);
+        entities.add(firstEnemy);
+        firstEnemy.entities = entities;
 
-        Assert.assertEquals("enemy0", enemy0.getId());
+        Assert.assertEquals("enemy0", firstEnemy.getId());
         // is moving
-        float oldX = enemy0.getX();
-        enemy0.moveRight((float) 0.1);
-        Assert.assertNotEquals(oldX, enemy0.getX());
-        enemy0.moveLeft((float) 0.1);
-        Assert.assertEquals(oldX, enemy0.getX(), 0.1);
+        float oldX = firstEnemy.getX();
+        firstEnemy.moveRight((float) 0.1);
+        Assert.assertNotEquals(oldX, firstEnemy.getX());
+        firstEnemy.moveLeft((float) 0.1);
+        Assert.assertEquals(oldX, firstEnemy.getX(), 0.1);
 
         // shoot does dmg !!!
-        float oldPlayerHPRight = player0.getLives();
+        float oldPlayerHPRight = firstPlayer.getLives();
         // Player on the right
-        enemy0.shoot();
-        Assert.assertEquals(oldPlayerHPRight, player0.getLives(), 0.1);
-        enemy0.moveRight((float) 0.01);
-        enemy0.shoot();
-        Assert.assertNotEquals(oldPlayerHPRight, player0.getLives());
+        firstEnemy.shoot();
+        Assert.assertEquals(oldPlayerHPRight, firstPlayer.getLives(), 0.1);
+        firstEnemy.moveRight((float) 0.01);
+        firstEnemy.shoot();
+        Assert.assertNotEquals(oldPlayerHPRight, firstPlayer.getLives());
         // Player on the left
-        player0.setPosX(-90);
-        float oldPlayerHPLeft = player0.getLives();
-        enemy0.shoot();
-        Assert.assertEquals(oldPlayerHPLeft, player0.getLives(), 0.1);
-        enemy0.moveLeft((float) 0.01);
-        enemy0.shoot();
-        Assert.assertNotEquals(oldPlayerHPLeft, player0.getLives());
+        firstPlayer.setPosX(-90);
+        float oldPlayerHPLeft = firstPlayer.getLives();
+        firstEnemy.shoot();
+        Assert.assertEquals(oldPlayerHPLeft, firstPlayer.getLives(), 0.1);
+        firstEnemy.moveLeft((float) 0.01);
+        firstEnemy.shoot();
+        Assert.assertNotEquals(oldPlayerHPLeft, firstPlayer.getLives());
         // Player out of range
-        player0.setPosX(-100000);
-        enemy0.shoot();
-        Assert.assertEquals(8, player0.getLives(), 0.1);
-        enemy0.moveRight((float) 0.01);
-        player0.setPosX(100000);
-        enemy0.shoot();
-        Assert.assertEquals(8, player0.getLives(), 0.1);
+        firstPlayer.setPosX(-100000);
+        firstEnemy.shoot();
+        Assert.assertEquals(8, firstPlayer.getLives(), 0.1);
+        firstEnemy.moveRight((float) 0.01);
+        firstPlayer.setPosX(100000);
+        firstEnemy.shoot();
+        Assert.assertEquals(8, firstPlayer.getLives(), 0.1);
 
 
         // Enemy follows player
 
         // player out of range
-        enemy0.setPosX(5);
-        enemy0.follow((float) 0.01);
-        Assert.assertEquals(5, enemy0.getX(), 0.1);
+        firstEnemy.setPosX(5);
+        firstEnemy.follow((float) 0.01);
+        Assert.assertEquals(5, firstEnemy.getX(), 0.1);
         // player on the right
-        player0.setPosX(100);
-        enemy0.follow((float) 0.01);
-        Assert.assertNotEquals(5, enemy0.getX());
+        firstPlayer.setPosX(100);
+        firstEnemy.follow((float) 0.01);
+        Assert.assertNotEquals(5, firstEnemy.getX());
         // player on the left
-        player0.setPosX(-100);
-        float oldEnemyX = enemy0.getX();
-        enemy0.follow((float) 0.01);
-        Assert.assertNotEquals(oldEnemyX, enemy0.getX());
+        firstPlayer.setPosX(-100);
+        float oldEnemyX = firstEnemy.getX();
+        firstEnemy.follow((float) 0.01);
+        Assert.assertNotEquals(oldEnemyX, firstEnemy.getX());
         // player got out of range
-        player0.setPosX(-1000);
-        enemy0.follow((float) 0.01);
-        float newEnemyX = enemy0.getX();
-        Assert.assertEquals(newEnemyX, enemy0.getX(), 0.1);
+        firstPlayer.setPosX(-1000);
+        firstEnemy.follow((float) 0.01);
+        float newEnemyX = firstEnemy.getX();
+        Assert.assertEquals(newEnemyX, firstEnemy.getX(), 0.1);
 
         // update changes values
-        oldEnemyX = enemy0.getX();
-        player0.setPosX(-100);
-        enemy0.update(1, -9.8f);
-        Assert.assertNotEquals(oldEnemyX, enemy0.getX());
+        oldEnemyX = firstEnemy.getX();
+        firstPlayer.setPosX(-100);
+        firstEnemy.update(1, -9.8f);
+        Assert.assertNotEquals(oldEnemyX, firstEnemy.getX());
 
         // jump doesnt throw errors
-        enemy0.jump();
+        firstEnemy.jump();
 
         // death
         // death
-        enemy0.setLives(0);
-        enemy0.update(1, -9.8f);
+        firstEnemy.setLives(0);
+        firstEnemy.update(1, -9.8f);
     }
 
     @org.junit.Test
     public void testEnemy1() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Player0 player0 = new Player0(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
-        Enemy1 enemy1 = new Enemy1(5, 10, map, 10, 100, entities, "enemy1", client);
-        entities.add(player0);
-        entities.add(enemy1);
-        enemy1.entities = entities;
+        FirstPlayer firstPlayer = new FirstPlayer(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
+        SecondEnemy secondEnemy = new SecondEnemy(5, 10, map, 10, 100, entities, "enemy1", client);
+        entities.add(firstPlayer);
+        entities.add(secondEnemy);
+        secondEnemy.entities = entities;
 
-        Assert.assertEquals("enemy1", enemy1.getId());
+        Assert.assertEquals("enemy1", secondEnemy.getId());
         // is moving
-        float oldX = enemy1.getX();
-        enemy1.moveRight((float) 0.1);
-        Assert.assertNotEquals(oldX, enemy1.getX());
-        enemy1.moveLeft((float) 0.1);
-        Assert.assertEquals(oldX, enemy1.getX(), 0.1);
+        float oldX = secondEnemy.getX();
+        secondEnemy.moveRight((float) 0.1);
+        Assert.assertNotEquals(oldX, secondEnemy.getX());
+        secondEnemy.moveLeft((float) 0.1);
+        Assert.assertEquals(oldX, secondEnemy.getX(), 0.1);
 
         // shoot does dmg !!!
-        float oldPlayerHPRight = player0.getLives();
+        float oldPlayerHPRight = firstPlayer.getLives();
         // Player on the right
-        enemy1.shoot();
-        Assert.assertEquals(oldPlayerHPRight, player0.getLives(), 0.1);
-        enemy1.moveRight((float) 0.01);
-        enemy1.shoot();
-        Assert.assertNotEquals(oldPlayerHPRight, player0.getLives());
+        secondEnemy.shoot();
+        Assert.assertEquals(oldPlayerHPRight, firstPlayer.getLives(), 0.1);
+        secondEnemy.moveRight((float) 0.01);
+        secondEnemy.shoot();
+        Assert.assertNotEquals(oldPlayerHPRight, firstPlayer.getLives());
         // Player on the left
-        player0.setPosX(-90);
-        float oldPlayerHPLeft = player0.getLives();
-        enemy1.shoot();
-        Assert.assertEquals(oldPlayerHPLeft, player0.getLives(), 0.1);
-        enemy1.moveLeft((float) 0.01);
-        enemy1.shoot();
-        Assert.assertNotEquals(oldPlayerHPLeft, player0.getLives());
+        firstPlayer.setPosX(-90);
+        float oldPlayerHPLeft = firstPlayer.getLives();
+        secondEnemy.shoot();
+        Assert.assertEquals(oldPlayerHPLeft, firstPlayer.getLives(), 0.1);
+        secondEnemy.moveLeft((float) 0.01);
+        secondEnemy.shoot();
+        Assert.assertNotEquals(oldPlayerHPLeft, firstPlayer.getLives());
         // Player out of range
-        player0.setPosX(-100000);
-        enemy1.shoot();
-        Assert.assertEquals(8, player0.getLives(), 0.1);
-        enemy1.moveRight((float) 0.01);
-        player0.setPosX(100000);
-        enemy1.shoot();
-        Assert.assertEquals(8, player0.getLives(), 0.1);
+        firstPlayer.setPosX(-100000);
+        secondEnemy.shoot();
+        Assert.assertEquals(8, firstPlayer.getLives(), 0.1);
+        secondEnemy.moveRight((float) 0.01);
+        firstPlayer.setPosX(100000);
+        secondEnemy.shoot();
+        Assert.assertEquals(8, firstPlayer.getLives(), 0.1);
 
 
         // Enemy follows player
 
         // player out of range
-        enemy1.setPosX(5);
-        enemy1.follow((float) 0.01);
-        Assert.assertEquals(5, enemy1.getX(), 0.1);
+        secondEnemy.setPosX(5);
+        secondEnemy.follow((float) 0.01);
+        Assert.assertEquals(5, secondEnemy.getX(), 0.1);
         // player on the right
-        player0.setPosX(100);
-        enemy1.follow((float) 0.01);
-        Assert.assertNotEquals(5, enemy1.getX());
+        firstPlayer.setPosX(100);
+        secondEnemy.follow((float) 0.01);
+        Assert.assertNotEquals(5, secondEnemy.getX());
         // player on the left
-        player0.setPosX(-100);
-        float oldEnemyX = enemy1.getX();
-        enemy1.follow((float) 0.01);
-        Assert.assertNotEquals(oldEnemyX, enemy1.getX());
+        firstPlayer.setPosX(-100);
+        float oldEnemyX = secondEnemy.getX();
+        secondEnemy.follow((float) 0.01);
+        Assert.assertNotEquals(oldEnemyX, secondEnemy.getX());
         // player got out of range
-        player0.setPosX(-1000);
-        enemy1.follow((float) 0.01);
-        float newEnemyX = enemy1.getX();
-        Assert.assertEquals(newEnemyX, enemy1.getX(), 0.1);
+        firstPlayer.setPosX(-1000);
+        secondEnemy.follow((float) 0.01);
+        float newEnemyX = secondEnemy.getX();
+        Assert.assertEquals(newEnemyX, secondEnemy.getX(), 0.1);
 
         // update changes values
-        oldEnemyX = enemy1.getX();
-        player0.setPosX(-10);
-        enemy1.update(1, -9.8f);
-        Assert.assertNotEquals(oldEnemyX, enemy1.getX());
+        oldEnemyX = secondEnemy.getX();
+        firstPlayer.setPosX(-10);
+        secondEnemy.update(1, -9.8f);
+        Assert.assertNotEquals(oldEnemyX, secondEnemy.getX());
 
         // jump doesnt throw errors
-        enemy1.jump();
+        secondEnemy.jump();
 
         // death
-        enemy1.setLives(0);
-        enemy1.update(1, -9.8f);
+        secondEnemy.setLives(0);
+        secondEnemy.update(1, -9.8f);
     }
 
 
     @org.junit.Test
     public void testEnemy2() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Player0 player0 = new Player0(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
-        Enemy2 enemy2 = new Enemy2(5, 10, map, 10, 100, entities, "enemy2", client);
-        entities.add(player0);
-        entities.add(enemy2);
+        FirstPlayer firstPlayer = new FirstPlayer(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
+        ThirdEnemy thirdEnemy = new ThirdEnemy(5, 10, map, 10, 100, entities, "enemy2", client);
+        entities.add(firstPlayer);
+        entities.add(thirdEnemy);
 
-        Assert.assertEquals("enemy2", enemy2.getId());
+        Assert.assertEquals("enemy2", thirdEnemy.getId());
         // is moving
-        float oldX = enemy2.getX();
-        enemy2.moveRight((float) 0.1);
-        Assert.assertNotEquals(oldX, enemy2.getX());
-        enemy2.moveLeft((float) 0.1);
-        Assert.assertEquals(oldX, enemy2.getX(), 0.1);
+        float oldX = thirdEnemy.getX();
+        thirdEnemy.moveRight((float) 0.1);
+        Assert.assertNotEquals(oldX, thirdEnemy.getX());
+        thirdEnemy.moveLeft((float) 0.1);
+        Assert.assertEquals(oldX, thirdEnemy.getX(), 0.1);
 
         // shoot does dmg !!! for Enemy2, entity has to physically touch player to do dmg
-        float oldPlayerHP = player0.getLives();
+        float oldPlayerHP = firstPlayer.getLives();
         // out of range
-        enemy2.setPosX(10);
-        enemy2.setPosY(10);
-        player0.setPosX(20);
-        player0.setPosY(20);
-        enemy2.shoot();
-        Assert.assertEquals(oldPlayerHP, player0.getLives(), 0.1);
+        thirdEnemy.setPosX(10);
+        thirdEnemy.setPosY(10);
+        firstPlayer.setPosX(20);
+        firstPlayer.setPosY(20);
+        thirdEnemy.shoot();
+        Assert.assertEquals(oldPlayerHP, firstPlayer.getLives(), 0.1);
         // in range
-        player0.setPosX(10);
-        player0.setPosY(10);
-        enemy2.shoot();
-        Assert.assertNotEquals(oldPlayerHP, player0.getLives(), 0.1);
+        firstPlayer.setPosX(10);
+        firstPlayer.setPosY(10);
+        thirdEnemy.shoot();
+        Assert.assertNotEquals(oldPlayerHP, firstPlayer.getLives(), 0.1);
 
-        enemy2.setOldTargets(new ArrayList<Entity>());
-        enemy2.setTarget(new ArrayList<Entity>());
+        thirdEnemy.setOldTargets(new ArrayList<Entity>());
+        thirdEnemy.setTarget(new ArrayList<Entity>());
         // Enemy follows player
         // player is far
-        enemy2.setSprint(false);
+        thirdEnemy.setSprint(false);
         // player top right
-        player0.setPosX(200);
-        player0.setPosY(200);
-        enemy2.follow(1f);
-        Assert.assertEquals(10.5, enemy2.getX(), 0.1);
-        Assert.assertEquals(10.5, enemy2.getY(), 0.1);
+        firstPlayer.setPosX(200);
+        firstPlayer.setPosY(200);
+        thirdEnemy.follow(1f);
+        Assert.assertEquals(10.5, thirdEnemy.getX(), 0.1);
+        Assert.assertEquals(10.5, thirdEnemy.getY(), 0.1);
         // player bottom left
-        player0.setPosX(-200);
-        player0.setPosY(-200);
-        enemy2.follow(1f);
-        Assert.assertEquals(10, enemy2.getX(), 0.1);
-        Assert.assertEquals(10, enemy2.getY(), 0.1);
+        firstPlayer.setPosX(-200);
+        firstPlayer.setPosY(-200);
+        thirdEnemy.follow(1f);
+        Assert.assertEquals(10, thirdEnemy.getX(), 0.1);
+        Assert.assertEquals(10, thirdEnemy.getY(), 0.1);
         // player is close
-        enemy2.setSprint(true);
+        thirdEnemy.setSprint(true);
         // player top right
-        player0.setPosX(20);
-        player0.setPosY(20);
-        enemy2.follow(1f);
-        Assert.assertEquals(11.5, enemy2.getX(), 0.1);
-        Assert.assertEquals(11.5, enemy2.getY(), 0.1);
+        firstPlayer.setPosX(20);
+        firstPlayer.setPosY(20);
+        thirdEnemy.follow(1f);
+        Assert.assertEquals(11.5, thirdEnemy.getX(), 0.1);
+        Assert.assertEquals(11.5, thirdEnemy.getY(), 0.1);
         // player bottom left
-        player0.setPosX(-20);
-        player0.setPosY(-20);
-        enemy2.follow(1f);
-        Assert.assertEquals(10, enemy2.getX(), 0.1);
-        Assert.assertEquals(10, enemy2.getY(), 0.1);
+        firstPlayer.setPosX(-20);
+        firstPlayer.setPosY(-20);
+        thirdEnemy.follow(1f);
+        Assert.assertEquals(10, thirdEnemy.getX(), 0.1);
+        Assert.assertEquals(10, thirdEnemy.getY(), 0.1);
         // player too close changes bool isTooClose
-        player0.setPosX(10);
-        player0.setPosY(10);
-        enemy2.follow(1f);
-        Assert.assertTrue(enemy2.isTooClose());
-        Assert.assertFalse(enemy2.getSprint());
+        firstPlayer.setPosX(10);
+        firstPlayer.setPosY(10);
+        thirdEnemy.follow(1f);
+        Assert.assertTrue(thirdEnemy.isTooClose());
+        Assert.assertFalse(thirdEnemy.getSprint());
 
 
         // update changes values with sprint
-        float oldEnemyX = enemy2.getX();
-        player0.setPosX(-100);
-        enemy2.update(1, -9.8f);
-        Assert.assertNotEquals(oldEnemyX, enemy2.getX());
+        float oldEnemyX = thirdEnemy.getX();
+        firstPlayer.setPosX(-100);
+        thirdEnemy.update(1, -9.8f);
+        Assert.assertNotEquals(oldEnemyX, thirdEnemy.getX());
         // update changes values without sprint
-        enemy2.setSprint(false);
-        player0.setPosX(-100);
-        enemy2.update(1, -9.8f);
-        Assert.assertNotEquals(oldEnemyX, enemy2.getX());
+        thirdEnemy.setSprint(false);
+        firstPlayer.setPosX(-100);
+        thirdEnemy.update(1, -9.8f);
+        Assert.assertNotEquals(oldEnemyX, thirdEnemy.getX());
 
         // jump doesnt throw errors
-        enemy2.jump();
+        thirdEnemy.jump();
 
         // death
-        enemy2.setLives(0);
-        enemy2.update(1, -9.8f);
+        thirdEnemy.setLives(0);
+        thirdEnemy.update(1, -9.8f);
 
         // enemy chooses new target
-        Player0 player01 = new Player0(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
-        entities.add(player01);
-        enemy2.follow(1f);
+        FirstPlayer firstPlayer01 = new FirstPlayer(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
+        entities.add(firstPlayer01);
+        thirdEnemy.follow(1f);
     }
 
 
@@ -394,7 +394,7 @@ public class EntitiesTest {
     @org.junit.Test
     public void testOtherPlayer() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Enemy0 enemy0 = new Enemy0(5, 10, map, 10, 100, entities, "enemy0", client);
+        FirstEnemy firstEnemy = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy0", client);
         OtherPlayer otherPlayer = new OtherPlayer(5, 10, map, 10, "otherPlayer", PlayerType.PLAYER0);
         // getters setters
         otherPlayer.setSmallDrone("test");
@@ -417,498 +417,498 @@ public class EntitiesTest {
     @org.junit.Test
     public void testPlayer0() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Enemy0 enemy0 = new Enemy0(5, 10, map, 10, 100, entities, "enemy0", client);
-        Player0 player0 = new Player0(5, 10, map, 1000, 100, entities,
+        FirstEnemy firstEnemy = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy0", client);
+        FirstPlayer firstPlayer = new FirstPlayer(5, 10, map, 1000, 100, entities,
                 PlayerType.PLAYER0, client, "player0");
-        Player0 player0mock = mock(Player0.class);
+        FirstPlayer firstPlayerMock = mock(FirstPlayer.class);
 
-        entities.add(player0);
-        entities.add(enemy0);
+        entities.add(firstPlayer);
+        entities.add(firstEnemy);
 
 
         // lives lost package doesnt throw errors
-        player0.livesLostPackage(enemy0);
+        firstPlayer.livesLostPackage(firstEnemy);
         // ability package doesnt throw errors
-        player0.abilityPackage(5, 10, "texture.png");
+        firstPlayer.abilityPackage(5, 10, "texture.png");
 
         // getters setters
-        Assert.assertFalse(player0.isRight());
-        Assert.assertFalse(player0.isMoving());
-        Assert.assertFalse(player0.isShoot());
-        Assert.assertEquals("player0", player0.getId());
-        Assert.assertEquals(1000, player0.getLives(), 0.1);
-        Assert.assertEquals(1000, player0.getTotalHealth(), 0.1);
+        Assert.assertFalse(firstPlayer.isRight());
+        Assert.assertFalse(firstPlayer.isMoving());
+        Assert.assertFalse(firstPlayer.isShoot());
+        Assert.assertEquals("player0", firstPlayer.getId());
+        Assert.assertEquals(1000, firstPlayer.getLives(), 0.1);
+        Assert.assertEquals(1000, firstPlayer.getTotalHealth(), 0.1);
 
         // jump doesnt work without pressing space
-        player0.jump(10, 9.8f);
+        firstPlayer.jump(10, 9.8f);
 
         // player doesnt move left without pressing the button
-        player0.moveLeft(1);
+        firstPlayer.moveLeft(1);
 
         // player doesnt move right without pressing the button
-        player0.moveRight(1);
+        firstPlayer.moveRight(1);
 
         // shoot
         // looking right
-        player0.moveRight(1);
-        player0.isRight = true;
-        player0.setPosX(6);
-        player0.setPosY(10);
-        enemy0.setPosX(-50);
-        float enemy0OldHP = enemy0.getLives();
-        player0.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(50);
-        player0.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        firstPlayer.moveRight(1);
+        firstPlayer.isRight = true;
+        firstPlayer.setPosX(6);
+        firstPlayer.setPosY(10);
+        firstEnemy.setPosX(-50);
+        float enemy0OldHP = firstEnemy.getLives();
+        firstPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(50);
+        firstPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
         // looking left
-        player0.isRight = false;
-        player0.moveLeft(1);
-        player0.setPosX(5);
-        enemy0.setPosX(6);
-        enemy0OldHP = enemy0.getLives();
-        player0.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(-10);
-        player0.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        firstPlayer.isRight = false;
+        firstPlayer.moveLeft(1);
+        firstPlayer.setPosX(5);
+        firstEnemy.setPosX(6);
+        enemy0OldHP = firstEnemy.getLives();
+        firstPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(-10);
+        firstPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
 
         // xSkill
-        enemy0.setLives(15);
-        player0.xSkill();
-        Assert.assertTrue(player0.xSkill);
-        player0.explosionTime = true;
-        player0.xSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.1);
+        firstEnemy.setLives(15);
+        firstPlayer.xSkill();
+        Assert.assertTrue(firstPlayer.xSkill);
+        firstPlayer.explosionTime = true;
+        firstPlayer.xSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
 
         // cSkill fixing the needed booleans since the time is not an option here
         // enemy on the left
-        enemy0.setLives(15);
-        player0.cSkill();
-        Assert.assertTrue(player0.cSkill);
-        player0.cDoesDmg = true;
-        player0.cSkill();
-        Assert.assertEquals(5, enemy0.getLives(), 0.1);
-        enemy0.setLives(5);
-        player0.cDidDmg = false;
-        player0.cSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.1);
+        firstEnemy.setLives(15);
+        firstPlayer.cSkill();
+        Assert.assertTrue(firstPlayer.cSkill);
+        firstPlayer.cDoesDmg = true;
+        firstPlayer.cSkill();
+        Assert.assertEquals(5, firstEnemy.getLives(), 0.1);
+        firstEnemy.setLives(5);
+        firstPlayer.cDidDmg = false;
+        firstPlayer.cSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
         // enemy on the right
-        player0.setPosX(5);
-        player0.isRight = true;
-        enemy0.setPosX(50);
-        enemy0.setLives(15);
-        player0.cDidDmg = false;
-        player0.cSkill();
-        Assert.assertEquals(5, enemy0.getLives(), 0.1);
-        enemy0.setLives(5);
-        player0.cDidDmg = false;
-        player0.cSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.1);
+        firstPlayer.setPosX(5);
+        firstPlayer.isRight = true;
+        firstEnemy.setPosX(50);
+        firstEnemy.setLives(15);
+        firstPlayer.cDidDmg = false;
+        firstPlayer.cSkill();
+        Assert.assertEquals(5, firstEnemy.getLives(), 0.1);
+        firstEnemy.setLives(5);
+        firstPlayer.cDidDmg = false;
+        firstPlayer.cSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
 
         // vSkill
-        player0.setLives(500);
-        player0.vSkill();
-        Assert.assertEquals(900, player0.getLives(), 0.1);
-        player0.vSkill = false;
-        player0.vSkill();
-        Assert.assertEquals(1000, player0.getLives(), 0.1);
+        firstPlayer.setLives(500);
+        firstPlayer.vSkill();
+        Assert.assertEquals(900, firstPlayer.getLives(), 0.1);
+        firstPlayer.vSkill = false;
+        firstPlayer.vSkill();
+        Assert.assertEquals(1000, firstPlayer.getLives(), 0.1);
 
         // update doesnt throw errors
-        player0.update(1, 9.8f);
+        firstPlayer.update(1, 9.8f);
 
         // update upon death
-        player0.setLives(0);
-        player0.update(1, 9.8f);
+        firstPlayer.setLives(0);
+        firstPlayer.update(1, 9.8f);
     }
 
     @org.junit.Test
     public void testPlayer1() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Enemy0 enemy0 = new Enemy0(5, 10, map, 10, 100, entities, "enemy0", client);
-        Player1 player1 = new Player1(5, 10, map, 1000, 100, entities,
+        FirstEnemy firstEnemy = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy0", client);
+        SecondPlayer secondPlayer = new SecondPlayer(5, 10, map, 1000, 100, entities,
                 PlayerType.PLAYER0, client, "player1");
 
-        entities.add(player1);
-        entities.add(enemy0);
+        entities.add(secondPlayer);
+        entities.add(firstEnemy);
 
 
         // lives lost package doesnt throw errors
-        player1.livesLostPackage(enemy0);
+        secondPlayer.livesLostPackage(firstEnemy);
         // ability package doesnt throw errors
-        player1.abilityPackage(5, 10, "texture.png");
+        secondPlayer.abilityPackage(5, 10, "texture.png");
 
         // getters setters
-        Assert.assertFalse(player1.isRight());
-        Assert.assertFalse(player1.isMoving());
-        Assert.assertFalse(player1.isShoot());
-        Assert.assertEquals("player1", player1.getId());
-        Assert.assertEquals(1000, player1.getLives(), 0.1);
-        Assert.assertEquals(1000, player1.getTotalHealth(), 0.1);
+        Assert.assertFalse(secondPlayer.isRight());
+        Assert.assertFalse(secondPlayer.isMoving());
+        Assert.assertFalse(secondPlayer.isShoot());
+        Assert.assertEquals("player1", secondPlayer.getId());
+        Assert.assertEquals(1000, secondPlayer.getLives(), 0.1);
+        Assert.assertEquals(1000, secondPlayer.getTotalHealth(), 0.1);
 
         // jump doesnt work without pressing space
-        player1.jump(10, 9.8f);
+        secondPlayer.jump(10, 9.8f);
 
         // player doesnt move left without pressing the button
-        player1.moveLeft(1);
+        secondPlayer.moveLeft(1);
 
         // player doesnt move right without pressing the button
-        player1.moveRight(1);
+        secondPlayer.moveRight(1);
 
         // shoot
         // looking right
-        player1.isRight = true;
-        player1.moveRight(1);
-        player1.setPosX(6);
-        player1.setPosY(10);
-        enemy0.setPosX(-50);
-        float enemy0OldHP = enemy0.getLives();
-        player1.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(50);
-        player1.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        secondPlayer.isRight = true;
+        secondPlayer.moveRight(1);
+        secondPlayer.setPosX(6);
+        secondPlayer.setPosY(10);
+        firstEnemy.setPosX(-50);
+        float enemy0OldHP = firstEnemy.getLives();
+        secondPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(50);
+        secondPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
         // looking left
-        player1.isRight = false;
-        player1.moveLeft(1);
-        player1.setPosX(5);
-        enemy0.setPosX(6);
-        enemy0OldHP = enemy0.getLives();
-        player1.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(-10);
-        player1.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        secondPlayer.isRight = false;
+        secondPlayer.moveLeft(1);
+        secondPlayer.setPosX(5);
+        firstEnemy.setPosX(6);
+        enemy0OldHP = firstEnemy.getLives();
+        secondPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(-10);
+        secondPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
 
         // xSkill
         // enemy in range
-        float enemyHpBeforeX = enemy0.getLives();
-        player1.setPosX(5);
-        player1.setPosY(5);
-        enemy0.setPosX(10);
-        enemy0.setPosY(10);
-        player1.xSkill();
-        System.out.println(player1.entities);
-        Assert.assertEquals(enemyHpBeforeX - 0.4f, enemy0.getLives(), 0.1f);
+        float enemyHpBeforeX = firstEnemy.getLives();
+        secondPlayer.setPosX(5);
+        secondPlayer.setPosY(5);
+        firstEnemy.setPosX(10);
+        firstEnemy.setPosY(10);
+        secondPlayer.xSkill();
+        System.out.println(secondPlayer.entities);
+        Assert.assertEquals(enemyHpBeforeX - 0.4f, firstEnemy.getLives(), 0.1f);
         // kills upon reaching 0 hp
-        enemy0.setLives(0.1f);
-        player1.xSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.001f);
+        firstEnemy.setLives(0.1f);
+        secondPlayer.xSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.001f);
         // enemy too far, skill doesnt do dmg
-        enemy0.setLives(10);
-        enemy0.setPosX(100);
-        enemy0.setPosY(100);
-        player1.xSkill();
-        Assert.assertEquals(10, enemy0.getLives(), 0.001f);
+        firstEnemy.setLives(10);
+        firstEnemy.setPosX(100);
+        firstEnemy.setPosY(100);
+        secondPlayer.xSkill();
+        Assert.assertEquals(10, firstEnemy.getLives(), 0.001f);
 
 
         // cSkill fixing the needed booleans since the time is not an option here
-        player1.cSkill();
-        Assert.assertEquals(enemy0, player1.closestEnemy);
-        player1.cExploding = true;
-        enemy0.setLives(51);
-        player1.cSkill();
-        Assert.assertEquals(1, enemy0.getLives(), 0.01);
-        enemy0.setLives(5);
-        player1.cExploding = true;
-        player1.cSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.01);
+        secondPlayer.cSkill();
+        Assert.assertEquals(firstEnemy, secondPlayer.closestEnemy);
+        secondPlayer.cExploding = true;
+        firstEnemy.setLives(51);
+        secondPlayer.cSkill();
+        Assert.assertEquals(1, firstEnemy.getLives(), 0.01);
+        firstEnemy.setLives(5);
+        secondPlayer.cExploding = true;
+        secondPlayer.cSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.01);
         // cSkill picks new enemy
-        player1.cSkill = false;
-        Enemy0 enemy01 = new Enemy0(5, 10, map, 10, 100, entities, "enemy01", client);
-        entities.add(enemy01);
-        enemy0.setLives(10);
-        player1.setPosX(0);
-        player1.setPosY(0);
-        enemy0.setPosX(10);
-        enemy0.setPosY(10);
-        enemy01.setPosX(5);
-        enemy01.setPosY(5);
-        player1.cSkill();
-        player1.cExploding = true;
-        player1.cSkill();
-        Assert.assertEquals(0, enemy01.getLives(), 0.1);
+        secondPlayer.cSkill = false;
+        FirstEnemy firstEnemy01 = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy01", client);
+        entities.add(firstEnemy01);
+        firstEnemy.setLives(10);
+        secondPlayer.setPosX(0);
+        secondPlayer.setPosY(0);
+        firstEnemy.setPosX(10);
+        firstEnemy.setPosY(10);
+        firstEnemy01.setPosX(5);
+        firstEnemy01.setPosY(5);
+        secondPlayer.cSkill();
+        secondPlayer.cExploding = true;
+        secondPlayer.cSkill();
+        Assert.assertEquals(0, firstEnemy01.getLives(), 0.1);
         // update doesnt throw errors
-        player1.update(1, 9.8f);
+        secondPlayer.update(1, 9.8f);
 
         // update upon death
-        player1.setLives(0);
-        player1.update(1, 9.8f);
+        secondPlayer.setLives(0);
+        secondPlayer.update(1, 9.8f);
     }
 
     @org.junit.Test
     public void testPlayer2() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Enemy0 enemy0 = new Enemy0(5, 10, map, 10, 100, entities, "enemy0", client);
-        Player2 player2 = new Player2(5, 10, map, 1000, 100, entities,
+        FirstEnemy firstEnemy = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy0", client);
+        ThirdPlayer thirdPlayer = new ThirdPlayer(5, 10, map, 1000, 100, entities,
                 PlayerType.PLAYER0, client, "player2");
 
-        entities.add(player2);
-        entities.add(enemy0);
+        entities.add(thirdPlayer);
+        entities.add(firstEnemy);
 
 
         // lives lost package doesnt throw errors
-        player2.livesLostPackage(enemy0);
+        thirdPlayer.livesLostPackage(firstEnemy);
         // ability package doesnt throw errors
-        player2.abilityPackage(5, 10, "texture.png");
+        thirdPlayer.abilityPackage(5, 10, "texture.png");
 
         // getters setters
-        Assert.assertFalse(player2.isRight());
-        Assert.assertFalse(player2.isMoving());
-        Assert.assertFalse(player2.isShoot());
-        Assert.assertEquals("player2", player2.getId());
-        Assert.assertEquals(1000, player2.getLives(), 0.1);
-        Assert.assertEquals(1000, player2.getTotalHealth(), 0.1);
+        Assert.assertFalse(thirdPlayer.isRight());
+        Assert.assertFalse(thirdPlayer.isMoving());
+        Assert.assertFalse(thirdPlayer.isShoot());
+        Assert.assertEquals("player2", thirdPlayer.getId());
+        Assert.assertEquals(1000, thirdPlayer.getLives(), 0.1);
+        Assert.assertEquals(1000, thirdPlayer.getTotalHealth(), 0.1);
 
         // jump doesnt work without pressing space
-        player2.jump(10, 9.8f);
+        thirdPlayer.jump(10, 9.8f);
 
         // player doesnt move left without pressing the button
-        player2.moveLeft(1);
+        thirdPlayer.moveLeft(1);
 
         // player doesnt move right without pressing the button
-        player2.moveRight(1);
+        thirdPlayer.moveRight(1);
 
         // drone package creates correctly
-        player2.dronePackage(0, 0);
+        thirdPlayer.dronePackage(0, 0);
 
         // shoot
         // looking right
-        player2.isRight = true;
-        player2.moveRight(1);
-        player2.setPosX(6);
-        player2.setPosY(10);
-        enemy0.setPosX(-50);
-        float enemy0OldHP = enemy0.getLives();
-        player2.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(50);
-        player2.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        thirdPlayer.isRight = true;
+        thirdPlayer.moveRight(1);
+        thirdPlayer.setPosX(6);
+        thirdPlayer.setPosY(10);
+        firstEnemy.setPosX(-50);
+        float enemy0OldHP = firstEnemy.getLives();
+        thirdPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(50);
+        thirdPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
         // looking left
-        player2.isRight = false;
-        player2.moveLeft(1);
-        player2.setPosX(5);
-        enemy0.setPosX(6);
-        enemy0OldHP = enemy0.getLives();
-        player2.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(-10);
-        player2.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        thirdPlayer.isRight = false;
+        thirdPlayer.moveLeft(1);
+        thirdPlayer.setPosX(5);
+        firstEnemy.setPosX(6);
+        enemy0OldHP = firstEnemy.getLives();
+        thirdPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(-10);
+        thirdPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
 
         // xSkill
         // enemy in the up right
-        player2.droneX = 1;
-        player2.droneY = 1;
-        enemy0.setPosX(35);
-        enemy0.setPosY(35);
-        player2.xSkill();
-        Assert.assertEquals(enemy0, player2.closestEnemy);
-        Assert.assertEquals(6, player2.xSkillX, 0.1);
-        Assert.assertEquals(6, player2.xSkillY, 0.1);
-        player2.xSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.1);
+        thirdPlayer.droneX = 1;
+        thirdPlayer.droneY = 1;
+        firstEnemy.setPosX(35);
+        firstEnemy.setPosY(35);
+        thirdPlayer.xSkill();
+        Assert.assertEquals(firstEnemy, thirdPlayer.closestEnemy);
+        Assert.assertEquals(6, thirdPlayer.xSkillX, 0.1);
+        Assert.assertEquals(6, thirdPlayer.xSkillY, 0.1);
+        thirdPlayer.xSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
         // enemy in bottom left
-        enemy0.setLives(10);
-        player2.xSkill = false;
-        player2.xExplosion = false;
-        player2.xSkillX = 1;
-        player2.xSkillY = 1;
-        enemy0.setPosX(-34);
-        enemy0.setPosY(-34);
-        player2.xSkill();
-        Assert.assertEquals(enemy0, player2.closestEnemy);
-        Assert.assertEquals(-4, player2.xSkillX, 0.1);
-        Assert.assertEquals(-4, player2.xSkillY, 0.1);
-        player2.xSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.1);
+        firstEnemy.setLives(10);
+        thirdPlayer.xSkill = false;
+        thirdPlayer.xExplosion = false;
+        thirdPlayer.xSkillX = 1;
+        thirdPlayer.xSkillY = 1;
+        firstEnemy.setPosX(-34);
+        firstEnemy.setPosY(-34);
+        thirdPlayer.xSkill();
+        Assert.assertEquals(firstEnemy, thirdPlayer.closestEnemy);
+        Assert.assertEquals(-4, thirdPlayer.xSkillX, 0.1);
+        Assert.assertEquals(-4, thirdPlayer.xSkillY, 0.1);
+        thirdPlayer.xSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
 
         // cSkill
-        enemy0.setLives(35);
-        player2.droneX = 1;
-        player2.droneY = 1;
-        enemy0.setPosX(10);
-        enemy0.setPosY(10);
-        player2.cSkill();
-        Assert.assertEquals(35, enemy0.getLives(), 0.1);
-        player2.droneExplosion = true;
-        player2.cSkill();
-        Assert.assertEquals(5, enemy0.getLives(), 0.1);
-        player2.droneExplosion = true;
-        player2.cSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.1);
+        firstEnemy.setLives(35);
+        thirdPlayer.droneX = 1;
+        thirdPlayer.droneY = 1;
+        firstEnemy.setPosX(10);
+        firstEnemy.setPosY(10);
+        thirdPlayer.cSkill();
+        Assert.assertEquals(35, firstEnemy.getLives(), 0.1);
+        thirdPlayer.droneExplosion = true;
+        thirdPlayer.cSkill();
+        Assert.assertEquals(5, firstEnemy.getLives(), 0.1);
+        thirdPlayer.droneExplosion = true;
+        thirdPlayer.cSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
 
 
         // vSKill
-        player2.setLives(500);
-        player2.vSkill();
-        Assert.assertEquals(900, player2.getLives(), 0.1);
-        player2.vSkill = false;
-        player2.vSkill();
-        Assert.assertEquals(1000, player2.getLives(), 0.1);
+        thirdPlayer.setLives(500);
+        thirdPlayer.vSkill();
+        Assert.assertEquals(900, thirdPlayer.getLives(), 0.1);
+        thirdPlayer.vSkill = false;
+        thirdPlayer.vSkill();
+        Assert.assertEquals(1000, thirdPlayer.getLives(), 0.1);
 
         // drone just moves around player being close
-        player2.isRight = true;
-        player2.droneX = 21;
-        player2.droneY = 21;
-        player2.droneCanMove = true;
-        player2.setPosX(20);
-        player2.setPosY(0);
+        thirdPlayer.isRight = true;
+        thirdPlayer.droneX = 21;
+        thirdPlayer.droneY = 21;
+        thirdPlayer.droneCanMove = true;
+        thirdPlayer.setPosX(20);
+        thirdPlayer.setPosY(0);
         // player2 looking right
-        player2.dronePosition();
-        Assert.assertEquals(19, player2.droneX, 0.1);
-        player2.dronePosition();
-        Assert.assertEquals(17, player2.droneX, 0.1);
-        player2.droneX = 0;
-        player2.dronePosition();
-        Assert.assertEquals(0, player2.droneX, 0.1);
+        thirdPlayer.dronePosition();
+        Assert.assertEquals(19, thirdPlayer.droneX, 0.1);
+        thirdPlayer.dronePosition();
+        Assert.assertEquals(17, thirdPlayer.droneX, 0.1);
+        thirdPlayer.droneX = 0;
+        thirdPlayer.dronePosition();
+        Assert.assertEquals(0, thirdPlayer.droneX, 0.1);
         // player2 looking left
-        player2.isRight = false;
-        player2.droneX = 20;
-        player2.dronePosition();
-        Assert.assertEquals(22, player2.droneX, 0.1);
-        player2.droneX = 40;
-        player2.dronePosition();
-        Assert.assertEquals(40, player2.droneX, 0.1);
+        thirdPlayer.isRight = false;
+        thirdPlayer.droneX = 20;
+        thirdPlayer.dronePosition();
+        Assert.assertEquals(22, thirdPlayer.droneX, 0.1);
+        thirdPlayer.droneX = 40;
+        thirdPlayer.dronePosition();
+        Assert.assertEquals(40, thirdPlayer.droneX, 0.1);
 
         // drone is coming back after being far away
-        player2.droneCanMove = false;
-        player2.droneIsComingBack = true;
-        player2.droneX = -5;
-        player2.droneY = -5;
-        player2.dronePosition();
-        Assert.assertEquals(0, player2.droneX, 0.1);
-        Assert.assertEquals(0, player2.droneY, 0.1);
-        player2.droneX = 46;
-        player2.droneY = 31;
-        player2.dronePosition();
-        Assert.assertEquals(41, player2.droneX, 0.1);
-        Assert.assertEquals(26, player2.droneY, 0.1);
+        thirdPlayer.droneCanMove = false;
+        thirdPlayer.droneIsComingBack = true;
+        thirdPlayer.droneX = -5;
+        thirdPlayer.droneY = -5;
+        thirdPlayer.dronePosition();
+        Assert.assertEquals(0, thirdPlayer.droneX, 0.1);
+        Assert.assertEquals(0, thirdPlayer.droneY, 0.1);
+        thirdPlayer.droneX = 46;
+        thirdPlayer.droneY = 31;
+        thirdPlayer.dronePosition();
+        Assert.assertEquals(41, thirdPlayer.droneX, 0.1);
+        Assert.assertEquals(26, thirdPlayer.droneY, 0.1);
         // drone in bounds
-        player2.droneX = 40;
-        player2.droneY = 25;
-        player2.dronePosition();
-        Assert.assertTrue(player2.droneCanMove);
-        Assert.assertFalse(player2.droneIsComingBack);
+        thirdPlayer.droneX = 40;
+        thirdPlayer.droneY = 25;
+        thirdPlayer.dronePosition();
+        Assert.assertTrue(thirdPlayer.droneCanMove);
+        Assert.assertFalse(thirdPlayer.droneIsComingBack);
 
         // update doesnt throw errors
-        player2.update(1, 9.8f);
+        thirdPlayer.update(1, 9.8f);
 
         // update upon death
-        player2.setLives(0);
-        player2.update(1, 9.8f);
+        thirdPlayer.setLives(0);
+        thirdPlayer.update(1, 9.8f);
     }
 
 
     @org.junit.Test
     public void testPlayer3() {
         ArrayList<Entity> entities = new ArrayList<>();
-        Enemy0 enemy0 = new Enemy0(5, 10, map, 10, 100, entities, "enemy0", client);
-        Player3 player3 = new Player3(5, 10, map, 1000, 100, entities,
+        FirstEnemy firstEnemy = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy0", client);
+        FourthPlayer fourthPlayer = new FourthPlayer(5, 10, map, 1000, 100, entities,
                 PlayerType.PLAYER0, client, "player3");
 
-        entities.add(player3);
-        entities.add(enemy0);
+        entities.add(fourthPlayer);
+        entities.add(firstEnemy);
 
 
         // lives lost package doesnt throw errors
-        player3.livesLostPackage(enemy0);
+        fourthPlayer.livesLostPackage(firstEnemy);
         // ability package doesnt throw errors
-        player3.abilityPackage(5, 10, "texture.png");
+        fourthPlayer.abilityPackage(5, 10, "texture.png");
 
         // getters setters
-        Assert.assertFalse(player3.isRight());
-        Assert.assertFalse(player3.isMoving());
-        Assert.assertFalse(player3.isShoot());
-        Assert.assertEquals("player3", player3.getId());
-        Assert.assertEquals(1000, player3.getLives(), 0.1);
-        Assert.assertEquals(1000, player3.getTotalHealth(), 0.1);
+        Assert.assertFalse(fourthPlayer.isRight());
+        Assert.assertFalse(fourthPlayer.isMoving());
+        Assert.assertFalse(fourthPlayer.isShoot());
+        Assert.assertEquals("player3", fourthPlayer.getId());
+        Assert.assertEquals(1000, fourthPlayer.getLives(), 0.1);
+        Assert.assertEquals(1000, fourthPlayer.getTotalHealth(), 0.1);
 
         // jump doesnt work without pressing space
-        player3.jump(10, 9.8f);
+        fourthPlayer.jump(10, 9.8f);
 
         // player doesnt move left without pressing the button
-        player3.moveLeft(1);
+        fourthPlayer.moveLeft(1);
 
         // player doesnt move right without pressing the button
-        player3.moveRight(1);
+        fourthPlayer.moveRight(1);
 
         // shoot
         // looking right
-        player3.isRight = true;
-        player3.moveRight(1);
-        player3.setPosX(6);
-        player3.setPosY(10);
-        enemy0.setPosX(-50);
-        float enemy0OldHP = enemy0.getLives();
-        player3.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(50);
-        player3.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        fourthPlayer.isRight = true;
+        fourthPlayer.moveRight(1);
+        fourthPlayer.setPosX(6);
+        fourthPlayer.setPosY(10);
+        firstEnemy.setPosX(-50);
+        float enemy0OldHP = firstEnemy.getLives();
+        fourthPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(50);
+        fourthPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
         // looking left
-        player3.isRight = false;
-        player3.moveLeft(1);
-        player3.setPosX(5);
-        enemy0.setPosX(6);
-        enemy0OldHP = enemy0.getLives();
-        player3.shoot();
-        Assert.assertEquals(enemy0OldHP, enemy0.getLives(), 0.1);
-        enemy0.setPosX(-10);
-        player3.shoot();
-        Assert.assertNotEquals(enemy0OldHP, enemy0.getLives());
+        fourthPlayer.isRight = false;
+        fourthPlayer.moveLeft(1);
+        fourthPlayer.setPosX(5);
+        firstEnemy.setPosX(6);
+        enemy0OldHP = firstEnemy.getLives();
+        fourthPlayer.shoot();
+        Assert.assertEquals(enemy0OldHP, firstEnemy.getLives(), 0.1);
+        firstEnemy.setPosX(-10);
+        fourthPlayer.shoot();
+        Assert.assertNotEquals(enemy0OldHP, firstEnemy.getLives());
 
         // xSkill
-        player3.setPosX(0);
-        player3.setPosY(0);
-        player3.isRight = true;
-        player3.xSkill();
-        Assert.assertTrue(player3.xRight);
-        Assert.assertEquals(player3.getWidth(), player3.xSkillX, 0.1);
-        player3.xSkill = false;
-        player3.isRight = false;
-        player3.xRight = false;
-        player3.xSkill();
-        Assert.assertFalse(player3.xRight);
-        Assert.assertEquals(0, player3.xSkillX, 0.1);
-        enemy0.setPosX(0);
-        enemy0.setPosY(0);
-        player3.xExplosion = true;
-        player3.setLives(500);
-        player3.xSkill();
-        Assert.assertEquals(0, enemy0.getLives(), 0.1);
-        Assert.assertEquals(800, player3.getLives(), 0.1);
-        player3.xExplosion = true;
-        enemy0.setLives(20);
-        player3.xSkill();
-        Assert.assertEquals(5, enemy0.getLives(), 0.1);
+        fourthPlayer.setPosX(0);
+        fourthPlayer.setPosY(0);
+        fourthPlayer.isRight = true;
+        fourthPlayer.xSkill();
+        Assert.assertTrue(fourthPlayer.xRight);
+        Assert.assertEquals(fourthPlayer.getWidth(), fourthPlayer.xSkillX, 0.1);
+        fourthPlayer.xSkill = false;
+        fourthPlayer.isRight = false;
+        fourthPlayer.xRight = false;
+        fourthPlayer.xSkill();
+        Assert.assertFalse(fourthPlayer.xRight);
+        Assert.assertEquals(0, fourthPlayer.xSkillX, 0.1);
+        firstEnemy.setPosX(0);
+        firstEnemy.setPosY(0);
+        fourthPlayer.xExplosion = true;
+        fourthPlayer.setLives(500);
+        fourthPlayer.xSkill();
+        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
+        Assert.assertEquals(800, fourthPlayer.getLives(), 0.1);
+        fourthPlayer.xExplosion = true;
+        firstEnemy.setLives(20);
+        fourthPlayer.xSkill();
+        Assert.assertEquals(5, firstEnemy.getLives(), 0.1);
 
         // cSkill
-        player3.grounded = true;
-        player3.cSkill();
-        player3.setLives(100);
-        player3.cSkillIsReady = true;
-        player3.cSkill();
-        Assert.assertEquals(300, player3.getLives(), 0.1);
-        player3.setLives(900);
-        player3.cSkillIsReady = true;
-        player3.cSkill();
-        Assert.assertEquals(1000, player3.getLives(), 0.1);
+        fourthPlayer.grounded = true;
+        fourthPlayer.cSkill();
+        fourthPlayer.setLives(100);
+        fourthPlayer.cSkillIsReady = true;
+        fourthPlayer.cSkill();
+        Assert.assertEquals(300, fourthPlayer.getLives(), 0.1);
+        fourthPlayer.setLives(900);
+        fourthPlayer.cSkillIsReady = true;
+        fourthPlayer.cSkill();
+        Assert.assertEquals(1000, fourthPlayer.getLives(), 0.1);
 
         // vSkill
-        player3.setLives(500);
-        player3.vSkill();
-        Assert.assertEquals(800, player3.getLives(), 0.1);
-        player3.vSkill = false;
-        player3.vSkill();
-        Assert.assertEquals(1000, player3.getLives(), 0.1);
+        fourthPlayer.setLives(500);
+        fourthPlayer.vSkill();
+        Assert.assertEquals(800, fourthPlayer.getLives(), 0.1);
+        fourthPlayer.vSkill = false;
+        fourthPlayer.vSkill();
+        Assert.assertEquals(1000, fourthPlayer.getLives(), 0.1);
 
         // update doesnt throw errors
-        player3.update(1, 9.8f);
+        fourthPlayer.update(1, 9.8f);
 
         // update upon death
-        player3.setLives(0);
-        player3.update(1, 9.8f);
+        fourthPlayer.setLives(0);
+        fourthPlayer.update(1, 9.8f);
     }
 }

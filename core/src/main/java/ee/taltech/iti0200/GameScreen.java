@@ -17,7 +17,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.entities.Enemy0;
+import ee.taltech.iti0200.entities.FirstEnemy;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
@@ -66,17 +66,17 @@ public class GameScreen implements Screen {
         background = new Texture("menubackground.png");
 
         for (int i = 0; i < 4; i++) {
-            gameMap.addEntity(new Enemy0(1000, 600, gameMap, 10, 100, gameMap.getEntities(),
+            gameMap.addEntity(new FirstEnemy(1000, 600, gameMap, 10, 100, gameMap.getEntities(),
                     "" + i, client));
             playerIds.add("" + i);
         }
         for (int i = 4; i < 8; i++) {
-            gameMap.addEntity(new Enemy1(1000, 600, gameMap, 10, 1, gameMap.getEntities(),
+            gameMap.addEntity(new SecondEnemy(1000, 600, gameMap, 10, 1, gameMap.getEntities(),
                     "" + i, client));
             playerIds.add("" + i);
         }
         for (int i = 8; i < 12; i++) {
-            gameMap.addEntity(new Enemy2(1000, 600, gameMap, 5, 1, gameMap.getEntities(),
+            gameMap.addEntity(new ThirdEnemy(1000, 600, gameMap, 5, 1, gameMap.getEntities(),
                     "" + i, client));
             playerIds.add("" + i);
         }

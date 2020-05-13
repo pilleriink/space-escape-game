@@ -6,43 +6,41 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
+
 import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-
-public class Player0 extends Entity {
+public class SecondPlayer extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
-    private static final double C_DELAY = 0.02;
+    private static final double C_DELAY = 0.05;
     private static final double V_DELAY = 0.75;
     private static final double X_DELAY = 1;
 
     public ArrayList<Entity> entities;
 
-    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, vSkillTexture, cSkill1Left,
-            cSkill2Left, cSkill3Left;
+    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkillTexture;
     private NinePatch health;
-    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX,
-            xSkillY, gunX;
-    public boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
-            bombGrounded, explosionTime, cDoesDmg, cDidDmg;
+    public float totalHealth, shootingRange, lastX, lastXPos, lastYPos,
+            lastC, deltaTime, gunX, closestEnemyX, closestEnemyY, xSkillX, xSkillY;
+    public boolean isRight, shoot, moving, keyPressed, cSkill, xSkill, cPlanted, cExploding;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
+    public Entity closestEnemy;
     final Client client;
     String id, texture, gunfire;
 
-    public Player0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
-                   PlayerType playerType, Client client, String id) {
+    public SecondPlayer(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                        PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;
         this.texture = "character0/character0_running_left_0.png";
         this.gunfire = "no_gun.png";
+        this.gunX = getX();
 
         this.entities = entities;
         this.shootingRange = shootingRange;
@@ -52,16 +50,13 @@ public class Player0 extends Entity {
         this.lastXPos = getX();
         this.playerType = playerType;
         health = new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0);
+        closestEnemyX = 100000;
+        closestEnemyY = 100000;
 
-        this.cSkill1 = new Texture("PlayerAbilities/Player0/cSkill1.png");
-        this.cSkill2 = new Texture("PlayerAbilities/Player0/cSkill2.png");
-        this.cSkill3 = new Texture("PlayerAbilities/Player0/cSkill3.png");
-        this.cSkill1Left = new Texture("PlayerAbilities/Player0/cSkill1Left.png");
-        this.cSkill2Left = new Texture("PlayerAbilities/Player0/cSkill2Left.png");
-        this.cSkill3Left = new Texture("PlayerAbilities/Player0/cSkill3Left.png");
-        this.xSkill1 = new Texture("PlayerAbilities/Player0/xSkill1.png");
-        this.xSkill2 = new Texture("PlayerAbilities/Player0/xSkill2.png");
-        this.vSkillTexture = new Texture("PlayerAbilities/Player0/vSkillTexture.png");
+        this.cSkill1 = new Texture("PlayerAbilities/Player1/cSkill1.png");
+        this.cSkill2 = new Texture("PlayerAbilities/Player1/cSkill2.png");
+        this.cSkill3 = new Texture("PlayerAbilities/Player1/cSkill3.png");
+        this.xSkillTexture = new Texture("PlayerAbilities/Player1/xSkillTexture.png");
         cSkillRange = cSkill1.getWidth();
     }
 
@@ -184,28 +179,24 @@ public class Player0 extends Entity {
         if (!xSkill) {
             xSkill = true;
             lastX = deltaTime;
-            xSkillX = pos.x;
+            xSkillX = pos.x - (xSkillTexture.getWidth() / 2);
             xSkillY = pos.y;
         }
-        if (explosionTime) {
-            Map<Entity, Float> dead = new HashMap<>();
-            for (Entity entity : entities) {
-                if (entity.getX() + entity.getWidth() >= xSkillX - 200 && entity.getX() <= xSkillX
-                        + xSkill2.getWidth() + 200 && entity.getY() + entity.getHeight() >= xSkillY - 200
-                        && entity.getY() <= xSkillY + xSkill2.getHeight() + 200) {
-                    if (entity.getLives() >= 10) {
-                        dead.put(entity, entity.getLives() - 15);
-                    } else {
-                        dead.put(entity, (float) 0);
-
-                    }
+        for (Entity entity : entities) {
+            if (entity != this && entity.getX() + (entity.getWidth() / 2) >= xSkillX &&
+                    entity.getX() <= xSkillX + xSkillTexture.getWidth() - (entity.getWidth() / 2) &&
+                    entity.getY() + entity.getHeight() >= xSkillY &&
+                    entity.getY() <= xSkillY + xSkillTexture.getHeight()) {
+                if (entity.getLives() > 0.4f) {
+                    entity.setLives(entity.getLives() - 0.4f);
+                    livesLostPackage(entity);
+                } else {
+                    entity.setLives(0);
+                    setLives(Math.min(getLives() + 100, totalHealth));
+                    livesLostPackage(entity);
+                    livesLostPackage(this);
                 }
             }
-            for (Entity entity : dead.keySet()) {
-                entity.setLives(dead.get(entity));
-                livesLostPackage(entity);
-            }
-            explosionTime = false;
         }
     }
 
@@ -214,50 +205,43 @@ public class Player0 extends Entity {
         if (!cSkill) {
             cSkill = true;
             lastC = deltaTime;
-            cSkillX = pos.x;
-            cSkillY = pos.y;
-            cSkillWasRight = isRight;
-        }
-        if (cDoesDmg && !cDidDmg) {
-            cSkillX = pos.x;
-            cSkillY = pos.y;
-            // 24 - cSkill height
+            closestEnemy = entities.get(entities.size() - 1);
+            closestEnemyX = 100000;
+            closestEnemyY = 100000;
             for (Entity entity : entities) {
-                if (isRight && entity.getX() > pos.x
-                        && entity.getX() <= getX() + getWidth() + cSkillRange
-                        && getY() >= entity.getY()
-                        && getY() + 24 <= entity.getY() + entity.getHeight() + 24) {
-                    if (entity.getLives() >= 10) {
-                        entity.setLives(entity.getLives() - 10);
-                    } else {
-                        entity.setLives(0);
+                if (entity != this) {
+                    if (entity.getX() < closestEnemyX && entity.getY() < closestEnemyY) {
+                        closestEnemy = entity;
+                        closestEnemyX = entity.getX();
+                        closestEnemyY = entity.getY();
                     }
-                    livesLostPackage(entity);
-                } else if (!isRight && entity.getX() < pos.x
-                        && entity.getX() + entity.getWidth() >= getX() - cSkillRange
-                        && getY() >= entity.getY()
-                        && getY() + 24 <= entity.getY() + entity.getHeight() + 24) {
-                    if (entity.getLives() >= 10) {
-                        entity.setLives(entity.getLives() - 10);
-                    } else {
-                        entity.setLives(0);
-                    }
-                    livesLostPackage(entity);
                 }
             }
-            cDidDmg = true;
+            cPlanted = true;
+        }
+        if (cExploding) {
+            for (Entity entity : entities) {
+                if (entity != this) {
+                    if (closestEnemy.getX() - 5 <= entity.getX() + entity.getWidth() &&
+                            (closestEnemy.getX() + closestEnemy.getWidth() + 5) >= entity.getX() &&
+                            closestEnemy.getY() - 5 <= (entity.getY() + entity.getHeight())
+                            && (closestEnemy.getY() + closestEnemy.getHeight() + 5) >= entity.getY()) {
+                        if (entity.getLives() - 50 > 0) {
+                            entity.setLives(entity.getLives() - 50);
+                            livesLostPackage(entity);
+                        } else {
+                            entity.setLives(0);
+                            setLives(Math.min(getLives() + 100, totalHealth));
+                            livesLostPackage(entity);
+                            livesLostPackage(this);
+                        }
+                    }
+                }
+            }
+            cExploding = false;
+            cPlanted = false;
         }
     }
-
-    public void vSkill() {
-        if (!vSkill) {
-            vSkill = true;
-            lastV = deltaTime;
-            setLives(Math.min(getLives() + 400, totalHealth));
-            livesLostPackage(this);
-        }
-    }
-
 
     @Override
     public void update(float deltaTime, float gravity) {
@@ -265,7 +249,6 @@ public class Player0 extends Entity {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
-            clientWait();
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -276,17 +259,17 @@ public class Player0 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) shoot();
         if (Gdx.input.isKeyJustPressed(Input.Keys.X) || xSkill) xSkill();
         if (Gdx.input.isKeyJustPressed(Input.Keys.C) || cSkill) cSkill();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) vSkill();
         if (shootingTime > 5) {
             shoot = false;
         }
-        if (getX() != lastXPos) {
+        if (getX() != lastXPos || getY() != lastYPos) {
             movingTime += 1;
             if (movingTime > playerType.getRunningRight().size() - 1) {
                 movingTime = 0;
             }
             moving = true;
             lastXPos = getX();
+            lastYPos = getY();
         } else {
             moving = false;
             movingTime = 0;
@@ -298,21 +281,12 @@ public class Player0 extends Entity {
             move.y = getY();
             move.texture = texture;
             client.sendUDP(move);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
-
     }
 
     @Override
     public void render(SpriteBatch batch) {
-
         deltaTime += Gdx.graphics.getDeltaTime();
         if (keyPressed) {
             if (isRight) {
@@ -358,73 +332,32 @@ public class Player0 extends Entity {
             gun.x = gunX;
             gun.id = id;
             client.sendUDP(gun);
+            clientWait();
         }
 
-
         if (xSkill) {
-            if (deltaTime <= lastX + X_DELAY) {
-                if (!map.doesRectCollideMap(xSkillX, xSkillY - 2, xSkill1.getWidth(), xSkill1.getHeight())) {
-                    batch.draw(xSkill1, xSkillX, xSkillY -= 2);
-                } else {
-                    batch.draw(xSkill1, xSkillX, xSkillY);
-                }
-                abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player0/xSkill1.png");
-            } else if (deltaTime > lastX + X_DELAY && deltaTime <= lastX + X_DELAY * 2) {
-                if (!map.doesRectCollideMap(xSkillX, xSkillY - 2, xSkill2.getWidth(), xSkill2.getHeight())) {
-                    batch.draw(xSkill2, xSkillX, xSkillY -= 2);
-                } else {
-                    batch.draw(xSkill2, xSkillX, xSkillY);
-                }
-                abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player0/xSkill2.png");
-            } else if (deltaTime > lastX + X_DELAY * 2 && deltaTime <= lastX + 4) {
-                explosionTime = true;
-            } else if (deltaTime > lastX + 4) {
-                xSkill = false;
-            }
+            batch.draw(xSkillTexture, xSkillX, xSkillY);
+            abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player1/xSkillTexture.png");
+            if (deltaTime >= lastX + 4) xSkill = false;
         }
 
 
         if (cSkill) {
-            if (cSkillWasRight) {
-                if (deltaTime <= lastC + C_DELAY) {
-                    batch.draw(cSkill1, pos.x + 20, pos.y, 200, 24);
-                    abilityPackage(pos.x + 20, pos.y, "PlayerAbilities/Player0/cSkill1.png");
-                } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
-                    batch.draw(cSkill2, pos.x + 20, pos.y, 200, 24);
-                    abilityPackage(pos.x + 20, pos.y, "PlayerAbilities/Player0/cSkill2.png");
-                    cDoesDmg = true;
-                } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
-                    batch.draw(cSkill3, pos.x + 20, pos.y, 200, 24);
-                    abilityPackage(pos.x + 20, pos.y, "PlayerAbilities/Player0/cSkill3.png");
+            if (cPlanted) {
+                if (deltaTime <= lastC + 1) {
+                    batch.draw(cSkill3, closestEnemy.getX() + (closestEnemy.getWidth() / 2f), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
+                    abilityPackage(closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15), "PlayerAbilities/Player1/cSkill3.png");
+                } else if (deltaTime <= lastC + 2 && deltaTime > lastC + 1) {
+                    batch.draw(cSkill2, closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
+                    abilityPackage(closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15), "PlayerAbilities/Player1/cSkill2.png");
+                } else if (deltaTime <= lastC + 3 && deltaTime > lastC + 2) {
+                    batch.draw(cSkill1, closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15));
+                    abilityPackage(closestEnemy.getX() + (closestEnemy.getWidth() / 2), closestEnemy.getY() + (closestEnemy.getHeight() + 15), "PlayerAbilities/Player1/cSkill1.png");
                 } else if (deltaTime >= lastC + 3) {
-                    cSkill = false;
-                    cDoesDmg = false;
-                    cDidDmg = false;
-                }
-            } else {
-                if (deltaTime <= lastC + C_DELAY) {
-                    batch.draw(cSkill1Left, pos.x - 210, pos.y, 200, 24);
-                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill1Left.png");
-                } else if (deltaTime > lastC + C_DELAY && deltaTime <= lastC + C_DELAY * 2) {
-                    batch.draw(cSkill2Left, pos.x - 210, pos.y, 200, 24);
-                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill2Left.png");
-                    cDoesDmg = true;
-                } else if (deltaTime > lastC + C_DELAY * 2 && deltaTime <= lastC + C_DELAY * 3) {
-                    batch.draw(cSkill3Left, pos.x - 210, pos.y, 200, 24);
-                    abilityPackage(pos.x - 210, pos.y, "PlayerAbilities/Player0/cSkill3Left.png");
-                } else if (deltaTime >= lastC + 3) {
-                    cSkill = false;
-                    cDoesDmg = false;
-                    cDidDmg = false;
+                    cExploding = true;
                 }
             }
-        }
-        if (vSkill) {
-            if (deltaTime <= lastV + 0.25) {
-                batch.draw(vSkillTexture, pos.x, pos.y);
-            }
-            if (deltaTime >= lastV + 5) vSkill = false;
+            if (deltaTime >= lastC + 8) cSkill = false;
         }
     }
-
 }
