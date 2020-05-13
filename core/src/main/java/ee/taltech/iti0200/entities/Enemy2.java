@@ -38,6 +38,27 @@ public class Enemy2 extends Entity {
         this.totalHealth = getLives();
         this.sprint = true;
     }
+
+    public boolean isTooClose() {
+        return isTooClose;
+    }
+
+    public Boolean getSprint() {
+        return sprint;
+    }
+
+    public void setOldTargets(ArrayList<Entity> oldTargets) {
+        this.oldTargets = oldTargets;
+    }
+
+    public void setSprint(Boolean sprint) {
+        this.sprint = sprint;
+    }
+
+    public void setTarget(ArrayList<Entity> target) {
+        this.target = target;
+    }
+
     public String getId() {
         return id;
     }

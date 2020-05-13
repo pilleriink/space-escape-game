@@ -202,7 +202,6 @@ public class EntitiesTest {
         Enemy2 enemy2 = new Enemy2(5, 10, map, 10, 100, entities, "enemy2", client);
         entities.add(player0);
         entities.add(enemy2);
-        enemy2.entities = entities;
 
         Assert.assertEquals("enemy2", enemy2.getId());
         // is moving
@@ -227,14 +226,11 @@ public class EntitiesTest {
         enemy2.shoot();
         Assert.assertNotEquals(oldPlayerHP, player0.getLives(), 0.1);
 
-
-
-
-        enemy2.oldTargets.clear();
-        enemy2.target.clear();
+        enemy2.setOldTargets(new ArrayList<Entity>());
+        enemy2.setTarget(new ArrayList<Entity>());
         // Enemy follows player
         // player is far
-        enemy2.sprint = false;
+        enemy2.setSprint(false);
         // player top right
         player0.setPosX(200);
         player0.setPosY(200);
@@ -248,7 +244,7 @@ public class EntitiesTest {
         Assert.assertEquals(10, enemy2.getX(), 0.1);
         Assert.assertEquals(10, enemy2.getY(), 0.1);
         // player is close
-        enemy2.sprint = true;
+        enemy2.setSprint(true);
         // player top right
         player0.setPosX(20);
         player0.setPosY(20);
@@ -265,8 +261,8 @@ public class EntitiesTest {
         player0.setPosX(10);
         player0.setPosY(10);
         enemy2.follow(1f);
-        Assert.assertTrue(enemy2.isTooClose);
-        Assert.assertFalse(enemy2.sprint);
+        Assert.assertTrue(enemy2.isTooClose());
+        Assert.assertFalse(enemy2.getSprint());
 
 
 
@@ -276,7 +272,7 @@ public class EntitiesTest {
         enemy2.update(1, -9.8f);
         Assert.assertNotEquals(oldEnemyX, enemy2.getX());
         // update changes values without sprint
-        enemy2.sprint = false;
+        enemy2.setSprint(false);
         player0.setPosX(-100);
         enemy2.update(1, -9.8f);
         Assert.assertNotEquals(oldEnemyX, enemy2.getX());
@@ -291,8 +287,6 @@ public class EntitiesTest {
         // enemy chooses new target
         Player0 player01 = new Player0(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
         entities.add(player01);
-        enemy2.entities = entities;
-        enemy2.target = new ArrayList<>();
         enemy2.follow(1f);
     }
 
