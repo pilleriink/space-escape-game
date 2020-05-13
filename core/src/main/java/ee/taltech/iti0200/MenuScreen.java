@@ -10,14 +10,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.entities.Enemy0;
-import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
-import ee.taltech.iti0200.world.GameMap;
-import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 

@@ -6,7 +6,6 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.entities.*;
 import ee.taltech.iti0200.world.GameMap;
 import org.junit.Assert;
@@ -263,7 +262,6 @@ public class EntitiesTest {
         enemy2.follow(1f);
         Assert.assertTrue(enemy2.isTooClose());
         Assert.assertFalse(enemy2.getSprint());
-
 
 
         // update changes values with sprint
@@ -602,8 +600,6 @@ public class EntitiesTest {
         enemy0.setPosY(100);
         player1.xSkill();
         Assert.assertEquals(10, enemy0.getLives(), 0.001f);
-
-
 
 
         // cSkill fixing the needed booleans since the time is not an option here

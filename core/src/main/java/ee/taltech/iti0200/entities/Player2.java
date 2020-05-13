@@ -32,10 +32,11 @@ public class Player2 extends Entity {
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
     public Entity closestEnemy;
-    final Client client;
-    String id, texture, gunfire;
+    private final Client client;
+    private String id, texture, gunfire;
 
-    public Player2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
+    public Player2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                   PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;

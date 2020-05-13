@@ -42,18 +42,22 @@ public class WorldMapTest {
             @Override
             public void dispose() {
             }
+
             @Override
             public TileType getTileTypeByCoordinate(int layer, int col, int row) {
                 return TileType.WATER_FULL;
             }
+
             @Override
             public int getWidth() {
                 return 10;
             }
+
             @Override
             public int getHeight() {
                 return 5;
             }
+
             @Override
             public int getLayers() {
                 return 1;

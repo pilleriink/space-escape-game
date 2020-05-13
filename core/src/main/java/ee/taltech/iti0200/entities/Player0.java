@@ -27,7 +27,8 @@ public class Player0 extends Entity {
     private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill1, xSkill2, vSkillTexture, cSkill1Left,
             cSkill2Left, cSkill3Left;
     private NinePatch health;
-    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX;
+    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX,
+            xSkillY, gunX;
     public boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
             bombGrounded, explosionTime, cDoesDmg, cDidDmg;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
@@ -35,7 +36,8 @@ public class Player0 extends Entity {
     final Client client;
     String id, texture, gunfire;
 
-    public Player0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
+    public Player0(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                   PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;
@@ -136,7 +138,7 @@ public class Player0 extends Entity {
             moveX((float) (-SPEED * 1.5 * deltaTime));
             isRight = false;
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             moveX(-SPEED * deltaTime);
             isRight = false;
         }
@@ -148,7 +150,7 @@ public class Player0 extends Entity {
             moveX((float) (SPEED * 1.5 * deltaTime));
             isRight = true;
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             moveX(SPEED * deltaTime);
             isRight = true;
         }
@@ -190,7 +192,7 @@ public class Player0 extends Entity {
             for (Entity entity : entities) {
                 if (entity.getX() + entity.getWidth() >= xSkillX - 200 && entity.getX() <= xSkillX
                         + xSkill2.getWidth() + 200 && entity.getY() + entity.getHeight() >= xSkillY - 200
-                        && entity.getY() <= xSkillY + xSkill2.getHeight() + 200 ) {
+                        && entity.getY() <= xSkillY + xSkill2.getHeight() + 200) {
                     if (entity.getLives() >= 10) {
                         dead.put(entity, entity.getLives() - 15);
                     } else {
@@ -275,7 +277,9 @@ public class Player0 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.X) || xSkill) xSkill();
         if (Gdx.input.isKeyJustPressed(Input.Keys.C) || cSkill) cSkill();
         if (Gdx.input.isKeyJustPressed(Input.Keys.V)) vSkill();
-        if (shootingTime > 5) { shoot = false; }
+        if (shootingTime > 5) {
+            shoot = false;
+        }
         if (getX() != lastXPos) {
             movingTime += 1;
             if (movingTime > playerType.getRunningRight().size() - 1) {
@@ -318,8 +322,7 @@ public class Player0 extends Entity {
                 texture = playerType.getId() + "/" + playerType.getId() + "_jumping_up_left.png";
                 batch.draw(playerType.getLeftJumpingUp(), pos.x, pos.y, getWidth(), getHeight());
             }
-        }
-        else {
+        } else {
             if (!moving || !grounded) {
                 if (isRight) {
                     texture = playerType.getId() + "/" + playerType.getId() + "_running_right_0.png";
@@ -359,7 +362,7 @@ public class Player0 extends Entity {
 
 
         if (xSkill) {
-            if (deltaTime <= lastX + X_DELAY){
+            if (deltaTime <= lastX + X_DELAY) {
                 if (!map.doesRectCollideMap(xSkillX, xSkillY - 2, xSkill1.getWidth(), xSkill1.getHeight())) {
                     batch.draw(xSkill1, xSkillX, xSkillY -= 2);
                 } else {
@@ -373,10 +376,9 @@ public class Player0 extends Entity {
                     batch.draw(xSkill2, xSkillX, xSkillY);
                 }
                 abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player0/xSkill2.png");
-            } else if (deltaTime > lastX + X_DELAY * 2 && deltaTime <= lastX + 4 ) {
+            } else if (deltaTime > lastX + X_DELAY * 2 && deltaTime <= lastX + 4) {
                 explosionTime = true;
-            }
-            else if (deltaTime > lastX + 4) {
+            } else if (deltaTime > lastX + 4) {
                 xSkill = false;
             }
         }

@@ -5,7 +5,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
-import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
 
 import java.io.IOException;
@@ -78,9 +77,8 @@ public class GameServer {
         Log.set(Log.LEVEL_TRACE);
 
 
-
         server.addListener(new Listener() {
-            public void received (Connection connection, Object object) {
+            public void received(Connection connection, Object object) {
 
                 if (object instanceof Register) {
 
@@ -197,7 +195,8 @@ public class GameServer {
                 }
 
             }
-            public void disconnected (Connection c) {
+
+            public void disconnected(Connection c) {
                 if (players.containsKey(c)) {
                     Death death = new Death();
                     death.id = players.get(c).id;

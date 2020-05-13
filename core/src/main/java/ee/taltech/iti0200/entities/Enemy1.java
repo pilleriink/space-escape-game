@@ -16,16 +16,19 @@ public class Enemy1 extends Entity {
 
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
+    private static final double MOVING_SPEED = 0.75;
+    private static final int JUMPING_SPEED = 20;
     private int time, movingTime;
     private float movementTime, shootingRange, totalHealth;
     public ArrayList<Entity> entities;
     private boolean isRight;
     private EnemyType enemyType = EnemyType.ENEMY1;
     private Entity followed;
-    final Client client;
-    String id, texture, gunfire;
+    private final Client client;
+    private String id;
 
-    public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {
+    public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                  String id, Client client) {
         super(x, y, EntityType.ENEMY1, map, lives, id);
         this.id = id;
         this.client = client;
@@ -50,7 +53,7 @@ public class Enemy1 extends Entity {
     }
 
     public void jump() {
-        this.velocityY += JUMP_VELOCITY * getWeight() / 20;
+        this.velocityY += JUMP_VELOCITY * getWeight() / JUMPING_SPEED;
     }
 
     public void shoot() {
@@ -101,7 +104,7 @@ public class Enemy1 extends Entity {
             }
 
             if (followed.getY() < getY() - getHeight() * 2 || followed.getY() > getY() + getHeight() * 2
-                    || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500) {
+                    || followed.getX() < getX() - 500 || followed.getX() > getX() + 500) {
                 followed = null;
             }
 
@@ -140,10 +143,11 @@ public class Enemy1 extends Entity {
         follow(deltaTime);
         movementTime += Gdx.graphics.getDeltaTime();
         movingTime += 1;
-        if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
+        if (movingTime > enemyType.getMovingString().size() - 1) {
+            movingTime = 0;
+        }
         time += 1;
-        super.update(deltaTime, gravity); // applies the gravity
-        //move(deltaTime);
+        super.update(deltaTime, gravity);
         shoot();
     }
 
@@ -151,7 +155,7 @@ public class Enemy1 extends Entity {
     public void render(SpriteBatch batch) {
         batch.draw(new Texture(enemyType.getMovingString().get(movingTime)), pos.x, pos.y, getWidth(), getHeight());
         new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float)
-                (pos.x + 0.37 * getWidth()), pos.y + getHeight() + 10,
+                        (pos.x + 0.37 * getWidth()), pos.y + getHeight() + 10,
                 (getLives() / this.totalHealth) * getWidth() / 4, 3);
 
     }

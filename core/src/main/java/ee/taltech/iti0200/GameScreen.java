@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -30,17 +29,13 @@ import java.util.Random;
 
 public class GameScreen implements Screen {
     private SpaceEscape game;
-    final Client client;
-    SpriteBatch Batch;
-
-
-    // stage
+    private final Client client;
     public Stage stage;
     public float deltaTime, currentTime, xCoolDownPoint, cCoolDownPoint, vCoolDownPoint;
     public String timeStr = "0", xLabelText, cLabelText, vLabelText;
     public BitmapFont font;
     public Label.LabelStyle labelStyle;
-    public Label label, cLabel, vLabel, xLabel, zLabel;
+    public Label label, cLabel, vLabel, xLabel;
     public Image xSkill, cSkill, vSkill, zSkill;
     public Texture xSkillTexture, cSkillTexture, vSkillTexture, zSkillTexture, corpseTexture;
     public int xCooldownTime, cCooldownTime, vCooldownTime, shakeIntensityRange = 30, shakeIntensityBuffer = 15;
@@ -48,29 +43,7 @@ public class GameScreen implements Screen {
     public Random random;
     public double shakingTime = 0.15;
     public List<Entity> dead;
-
-
-
-
-
-    // cooldowns
-//    public float currentTime;
-//    public float xCooldownTime = 4;
-//    public float xCoolDownPoint = 0;
-//    public String xLabelText = "";
-//    public int cCooldownTime = 3;
-//    public float cCoolDownPoint;
-//    public String cLabelText = "";
-//    public int vCooldownTime = 5;
-//    public float vCoolDownPoint;
-//    public String vLabelText = "";
-//    public int zCooldownTime = 4;
-//    public float zCoolDownPoint;
-//    public String zLabelText = "";
-
-
     public OrthographicCamera camera;
-
     GameMap gameMap;
     List<Player> otherPlayers;
     List<String> playerIds;
@@ -93,26 +66,30 @@ public class GameScreen implements Screen {
         background = new Texture("menubackground.png");
 
         for (int i = 0; i < 4; i++) {
-            gameMap.addEntity(new Enemy0(1000, 600, gameMap, 10, 100, gameMap.getEntities(), "" + i, client));
+            gameMap.addEntity(new Enemy0(1000, 600, gameMap, 10, 100, gameMap.getEntities(),
+                    "" + i, client));
             playerIds.add("" + i);
         }
         for (int i = 4; i < 8; i++) {
-            gameMap.addEntity(new Enemy1(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
+            gameMap.addEntity(new Enemy1(1000, 600, gameMap, 10, 1, gameMap.getEntities(),
+                    "" + i, client));
             playerIds.add("" + i);
         }
         for (int i = 8; i < 12; i++) {
-            gameMap.addEntity(new Enemy2(1000, 600, gameMap, 5, 1, gameMap.getEntities(), "" + i, client));
+            gameMap.addEntity(new Enemy2(1000, 600, gameMap, 5, 1, gameMap.getEntities(),
+                    "" + i, client));
             playerIds.add("" + i);
         }
 
         this.client.addListener(new Listener() {
-            public void received (Connection connection, Object object) {
+            public void received(Connection connection, Object object) {
                 if (object instanceof Player) {
                     if (((Player) object).id.equals(gameMap.getPlayer().getId())) {
                         gameMap.getPlayer().setPosX(((Player) object).x);
                         gameMap.getPlayer().setPosY(((Player) object).y);
                     } else {
-                        OtherPlayer otherPlayer = new OtherPlayer(((Player) object).x, ((Player) object).y, gameMap, ((Player) object).lives, ((Player) object).id, getPlayerType(((Player) object).playerType));
+                        OtherPlayer otherPlayer = new OtherPlayer(((Player) object).x, ((Player) object).y, gameMap,
+                                ((Player) object).lives, ((Player) object).id, getPlayerType(((Player) object).playerType));
                         gameMap.addEntity(otherPlayer);
                     }
                 }
@@ -205,7 +182,8 @@ public class GameScreen implements Screen {
                     }
                 }
 
-            }});
+            }
+        });
 
 
         stage = new Stage(new ScreenViewport());
@@ -219,24 +197,14 @@ public class GameScreen implements Screen {
 
         corpseTexture = new Texture("corpse.png");
 
-        // --------------   DRAWING  ------------
-
-        // Screen size
         int screenCenterX = Gdx.graphics.getWidth() / 2;
         int screenCenterY = Gdx.graphics.getHeight() / 2;
 
-        // abilities
         initializePlayerType(playerType);
-
 
         zSkill = new Image(zSkillTexture);
         zSkill.setSize(75, 75);
         zSkill.setPosition(screenCenterX - 260, screenCenterY - 500);
-//        zLabel = new Label(zLabelText, labelStyleTwo);
-//        zLabel.setPosition(screenCenterX - 240, screenCenterY - 460);
-//        zLabel.addAction(Actions.alpha(0));
-//        zLabel.setFontScale(5f);
-
 
         xSkill = new Image(xSkillTexture);
         xSkill.setSize(75, 75);
@@ -254,7 +222,6 @@ public class GameScreen implements Screen {
         cLabel.addAction(Actions.alpha(0));
         cLabel.setFontScale(5f);
 
-
         vSkill = new Image(vSkillTexture);
         vSkill.setSize(75, 75);
         vSkill.setPosition(screenCenterX + 70, screenCenterY - 500);
@@ -266,7 +233,6 @@ public class GameScreen implements Screen {
         }
 
         stage.addActor(zSkill);
-//        stage.addActor(zLabel);
         stage.addActor(xSkill);
         stage.addActor(xLabel);
         stage.addActor(cSkill);
@@ -274,16 +240,10 @@ public class GameScreen implements Screen {
         stage.addActor(vSkill);
         if (!removeV) stage.addActor(vLabel);
 
-
-        // ------------------- FINISHED DRAWING -------------
-
-
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         random = new Random();
         dead = new ArrayList<>();
-
-
 
     }
 
@@ -384,8 +344,6 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(35 / 255f, 34 / 255f, 47 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
-        // current time
         deltaTime += Gdx.graphics.getDeltaTime();
         currentTime = System.currentTimeMillis();
 
@@ -393,27 +351,11 @@ public class GameScreen implements Screen {
         gameMap.update(Gdx.graphics.getDeltaTime());
         gameMap.render(camera, game.batch);
 
-
-        // stage
         stage.act(Gdx.graphics.getDeltaTime());
 
 
         timeStr = Double.toString(Math.round(deltaTime * 100.0) / 100.0);
         label.setText(timeStr);
-
-//        zLabelText = String.valueOf(Math.round(zCoolDownPoint + zCooldownTime - deltaTime));
-//        zLabel.setText(zLabelText);
-//        if (Integer.parseInt(zLabelText) < 0) {
-//            zLabel.addAction(Actions.alpha(0));
-//        }
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-//            if (deltaTime > zCoolDownPoint + zCooldownTime) {
-//                zLabel.addAction(Actions.alpha(1));
-//                zSkill.addAction(Actions.alpha(0));
-//                zSkill.addAction(Actions.fadeIn(5f));
-//                zCoolDownPoint = deltaTime;
-//            }
-//        }
 
         xLabelText = String.valueOf(Math.round(xCoolDownPoint + xCooldownTime - deltaTime));
         xLabel.setText(xLabelText);
@@ -475,16 +417,12 @@ public class GameScreen implements Screen {
         }
 
 
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
 
         stage.draw();
 
-
-
-        // CAMERA SHAKING OR STATIC
         if (gonnaShake) {
             if (bombShake) {
                 if (deltaTime >= xCoolDownPoint + 2) {
@@ -518,20 +456,6 @@ public class GameScreen implements Screen {
         }
         camera.update();
 
-
-
-//        // REMOVING THE DEAD
-//        for (Entity entity : gameMap.getEntities()) {
-//            if (entity.getLives() <= 0) dead.add(entity);
-//        }
-//        System.out.println(dead);
-//        for (Entity corpse : dead) {
-//            game.batch.draw(corpseTexture, corpse.getX(), corpse.getY());
-//        }
-//        for (Entity deadEntity : dead) {
-//            gameMap.removeEntity(deadEntity);
-//        }
-//        dead.clear();
     }
 
     @Override

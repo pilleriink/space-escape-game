@@ -30,19 +30,21 @@ public class Player3 extends Entity {
     private Texture gunLeft, gunRight, cSkill1, cSkillField, cSkillField0, cSkillField1, cSkillField2,
             cSkillReady, cSkill2, xSkillTexture, vSkillTexture;
     private NinePatch health;
-    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX, lastCTick;
+    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX,
+            xSkillY, gunX, lastCTick;
     public boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
             bombGrounded, explosionTime, reachedLimit, xExplosion, xStuck, xRight, cSkillIsReady, cSkillIsDown;
     private int shootingTime, movingTime, jumpingPower, cSkillRange, fieldIndex;
     private PlayerType playerType;
     private Map<Float, Float> xSkillCurve;
-    float xSkillCurveIndex;
+    private float xSkillCurveIndex;
     private Random random;
     private List<Texture> cSkillFieldList;
-    final Client client;
-    String id, texture, gunfire;
+    private final Client client;
+    private String id, texture, gunfire;
 
-    public Player3(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
+    public Player3(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                   PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;
@@ -384,26 +386,32 @@ public class Player3 extends Entity {
 
         if (xSkill) {
             if (xRight) {
-                if (!map.doesRectCollideMap(xSkillX + xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
+                if (!map.doesRectCollideMap(xSkillX + xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex),
+                        xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                        abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                        abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                                "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                    abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                    abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                            "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             } else {
-                if (!map.doesRectCollideMap(xSkillX - xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
+                if (!map.doesRectCollideMap(xSkillX - xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex),
+                        xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                        abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                        abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                                "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                    abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                    abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                            "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             }
             if (deltaTime >= lastX + 2 && deltaTime < lastX + 4) {
