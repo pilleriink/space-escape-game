@@ -4,16 +4,16 @@ apply plugin: "java"
 jar {
     manifest {
         attributes(
-                'Main-Class': "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
+                'Main-Class': "ee.taltech.iti0200.desktop.ServerMain"
         )
     }
 }
 
 sourceCompatibility = 1.7
 sourceSets.main.java.srcDirs = [ "src/" ]
-//sourceSets.main.resources.srcDirs = ["../core/assets"]
+sourceSets.main.resources.srcDirs = ["../core/assets"]
 
-project.ext.mainClassName = "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
+project.ext.mainClassName = "ee.taltech.iti0200.desktop.ServerMain"
 project.ext.assetsDir = new File("../core/assets")
 
 task run(dependsOn: classes, type: JavaExec) {
@@ -21,7 +21,7 @@ task run(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    ignoreExitValue = true as JavaExecSpec
 }
 
 task debug(dependsOn: classes, type: JavaExec) {
@@ -29,14 +29,14 @@ task debug(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    ignoreExitValue = true as JavaExecSpec
     debug = true
 }
 
 task dist(type: Jar) {
     manifest {
         attributes(
-                'Main-Class': "ee.taltech.ee.taltech.iti0200.desktop.ServerMain"
+                'Main-Class': "ee.taltech.iti0200.desktop.ServerMain"
         )
     }
     dependsOn configurations.runtimeClasspath
