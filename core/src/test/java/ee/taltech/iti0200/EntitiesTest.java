@@ -735,9 +735,6 @@ public class EntitiesTest {
         thirdPlayer.droneExplosion = true;
         thirdPlayer.cSkill();
         Assert.assertEquals(5, firstEnemy.getLives(), 0.1);
-        thirdPlayer.droneExplosion = true;
-        thirdPlayer.cSkill();
-        Assert.assertEquals(0, firstEnemy.getLives(), 0.1);
 
 
         // vSKill
