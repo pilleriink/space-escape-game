@@ -37,8 +37,7 @@ public class MenuScreen implements Screen {
         client = new Client();
         client.start();
         try {
-            client.connect(5000, "64.227.126.245", 5200);
-            //client.connect(5000, InetAddress.getLocalHost(), 5200);
+            client.connect(5000, "64.227.126.245", 5200, 5201);
         } catch (IOException e) {
             e.printStackTrace();
         }

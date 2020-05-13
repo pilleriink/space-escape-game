@@ -69,7 +69,7 @@ public class Enemy0 extends Entity {
                     LivesLost livesLost = new LivesLost();
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
-                    client.sendTCP(livesLost);
+                    client.sendUDP(livesLost);
 
                     synchronized (client) {
                         try {
@@ -115,7 +115,7 @@ public class Enemy0 extends Entity {
             moveEnemy.id = id;
             moveEnemy.x = getX();
             moveEnemy.y = getY();
-            client.sendTCP(moveEnemy);
+            client.sendUDP(moveEnemy);
 
             synchronized (client) {
                 try {

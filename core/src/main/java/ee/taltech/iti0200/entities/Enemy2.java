@@ -93,7 +93,7 @@ public class Enemy2 extends Entity {
                     LivesLost livesLost = new LivesLost();
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
-                    client.sendTCP(livesLost);
+                    client.sendUDP(livesLost);
                     if (oldTargets.size() == 2) {
                         oldTargets.clear();
                     }
@@ -124,53 +124,6 @@ public class Enemy2 extends Entity {
             sprint = followed.getType().equals(EntityType.PLAYER)
                     && followed.getY() >= getY() - 150 && followed.getY() <= getY() + 150
                     && followed.getX() >= getX() - 150 && followed.getX() <= getX() + 150;
-//            if (map.doesRectCollideMap(getX() + 2, getY() + 2, getWidth(), getHeight())) {
-//                setPosY(getY() + 1);
-//                setPosX(getX() + 1);
-//            }
-//            if (!map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight())) {
-//                moveY(1);
-//            }
-//            if (!map.doesRectCollideMap(getX() + 2, getY(), getWidth(), getHeight())) {
-//                moveX(1);
-//            }
-//            if (!map.doesRectCollideMap(getX() - 2, getY(), getWidth(), getHeight())) {
-//                moveX(-1);
-//            }
-//            if (!map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight())) {
-//                moveY(-1);
-//            }
-//            if (map.doesRectCollideMap(getX(), getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-//                if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()
-//                && !map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight())) {
-//
-//                    moveX(1);
-//                } else if (!map.doesRectCollideMap(getX() - 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-//                    moveX(-1);
-//                } else if (!map.doesRectCollideMap(getX() + 30, getY() + 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-//                    moveX(1);
-//                }
-//            }
-//            if (map.doesRectCollideMap(getX(), getY() - 2, getWidth(), getHeight()) && followed.getY() < getY()) {
-//                if (!map.doesRectCollideMap(getX() + 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-//
-//                    moveX(1);
-//                }
-//                if (!map.doesRectCollideMap(getX() - 30, getY() - 2, getWidth(), getHeight()) && followed.getY() > getY()) {
-//                    moveX(-1);
-//                }
-//            }
-//            if (map.doesRectCollideMap(getX() - 5, getY() + 5, getWidth(), getHeight())
-//                    || map.doesRectCollideMap(getX() + 5, getY() - 5, getWidth(), getHeight())) {
-//                setPosY(getY() - 1);
-//            }
-//            if (map.doesRectCollideMap(getX(), getY() + 10, getWidth(), getHeight())
-//                    || map.doesRectCollideMap(getX(), getY() -10, getWidth(), getHeight())) {
-//                setPosY(getY() - 1);
-//
-//            }
-//            entity.getX() + entity.getWidth() / 2f == getX() + getWidth() / 2f
-//                    && entity.getY() + getHeight() / 2f == getY() + getHeight() / 2f
             isTooClose =
                     followed.getX() + (followed.getWidth() / 2f) >= getX() - followed.getWidth() &&
                             followed.getX() + (followed.getWidth() / 2f) <= getX() + (followed.getWidth()) &&
@@ -202,18 +155,18 @@ public class Enemy2 extends Entity {
                     setPosY(getY() - 0.5f);
                 }
             }
-
-//            if (map.doesRectCollideMap(followed.getX(), followed.getY() - 2, followed.getWidth(), followed.getHeight())
-//                    || followed.getY() < getY() - getHeight() * 2
-//                    || followed.getX() < getX()  - 150 || followed.getX() > getX() + 150) {
-//                sprint = false;
-//            }
-
             MoveEnemy moveEnemy = new MoveEnemy();
             moveEnemy.id = id;
             moveEnemy.x = getX();
             moveEnemy.y = getY();
-            client.sendTCP(moveEnemy);
+            client.sendUDP(moveEnemy);
+            synchronized (client) {
+                try {
+                    client.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -225,15 +178,9 @@ public class Enemy2 extends Entity {
             client.sendTCP(death);
         }
         if (sprint = true) {
-//            gravity = 0;
             follow(deltaTime * 2);
-            //            super.update(deltaTime * 2, gravity); // applies the gravity
-            //move(deltaTime);
         } else {
-//        gravity = 0;
             follow(deltaTime);
-            //        super.update(deltaTime, gravity); // applies the gravity
-            //move(deltaTime);
         }
         movingTime += 1;
         if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
