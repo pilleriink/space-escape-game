@@ -376,7 +376,7 @@ public class FirstPlayer extends Entity {
                     batch.draw(xSkill2, xSkillX, xSkillY);
                 }
                 abilityPackage(xSkillX, xSkillY, "PlayerAbilities/Player0/xSkill2.png");
-            } else if (deltaTime > lastX + X_DELAY * 2 && deltaTime <= lastX + 4) {
+            } else if (deltaTime > lastX + X_DELAY * 2 && deltaTime <= lastX + X_DELAY * 2 + 0.1) {
                 explosionTime = true;
             } else if (deltaTime > lastX + 4) {
                 xSkill = false;

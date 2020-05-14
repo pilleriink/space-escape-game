@@ -264,9 +264,10 @@ public class FourthPlayer extends Entity {
         }
         if (cSkillIsReady) {
             for (Entity entity : entities) {
-                if (entity.getX() + (entity.getWidth() / 2) >= cSkillX &&
-                        entity.getX() <= cSkillX + cSkillField1.getWidth() - (entity.getWidth() / 2) &&
-                        entity.getY() >= cSkillY && (entity.getY() + entity.getHeight()) <= cSkillY + 30) {
+                if (entity.getX() + (entity.getWidth() / 2) >= cSkillX
+                        && entity.getX() <= cSkillX + cSkillField1.getWidth() - (entity.getWidth() / 2) &&
+                        entity.getY() >= cSkillY
+                        && (entity.getY() + entity.getHeight()) <= cSkillY + 30 + entity.getHeight()) {
                     cSkillToHeal.add(entity);
                 }
             }
@@ -414,7 +415,7 @@ public class FourthPlayer extends Entity {
                             "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             }
-            if (deltaTime >= lastX + 2 && deltaTime < lastX + 4) {
+            if (deltaTime >= lastX + 2 && deltaTime < lastX + 2.1) {
                 xExplosion = true;
             }
             if (deltaTime >= lastX + 4) {
@@ -430,19 +431,6 @@ public class FourthPlayer extends Entity {
             else if (deltaTime >= lastC + 4) cSkill = false;
         }
         if (cSkillIsDown) {
-            if (deltaTime >= lastCTick + C_TICK) {
-                lastCTick = deltaTime;
-                if (cSkillField == cSkillField0) {
-                cSkillField = cSkillField1;
-                fieldIndex = 1;
-                } else if (cSkillField == cSkillField1) {
-                cSkillField = cSkillField2;
-                fieldIndex = 2;
-                } else {
-                    cSkillField = cSkillField0;
-                    fieldIndex = 0;
-                }
-            }
             batch.draw(cSkillField, cSkillX, cSkillY);
             abilityPackage(cSkillX, cSkillY, "PlayerAbilities/Player3/cSkillField" + fieldIndex + ".png");
             if (deltaTime <= lastC + 1) {
