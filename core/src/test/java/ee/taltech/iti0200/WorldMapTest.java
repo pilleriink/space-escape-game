@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.entities.Enemy0;
+import ee.taltech.iti0200.entities.FirstEnemy;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TileType;
@@ -42,32 +42,36 @@ public class WorldMapTest {
             @Override
             public void dispose() {
             }
+
             @Override
             public TileType getTileTypeByCoordinate(int layer, int col, int row) {
                 return TileType.WATER_FULL;
             }
+
             @Override
             public int getWidth() {
                 return 10;
             }
+
             @Override
             public int getHeight() {
                 return 5;
             }
+
             @Override
             public int getLayers() {
                 return 1;
             }
         };
         ArrayList<Entity> entities = new ArrayList<>();
-        Player0 player0 = new Player0(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
-        Enemy0 enemy0 = new Enemy0(5, 10, map, 10, 100, entities, "enemy0", client);
-        entities.add(player0);
-        entities.add(enemy0);
-        enemy0.entities = entities;
+        FirstPlayer firstPlayer = new FirstPlayer(90, 10, map, 10, 100, entities, PlayerType.PLAYER0, client, "player0");
+        FirstEnemy firstEnemy = new FirstEnemy(5, 10, map, 10, 100, entities, "enemy0", client);
+        entities.add(firstPlayer);
+        entities.add(firstEnemy);
+        firstEnemy.entities = entities;
         testMap.entities = new ArrayList<>();
-        testMap.addEntity(player0);
-        testMap.addEntity(enemy0);
+        testMap.addEntity(firstPlayer);
+        testMap.addEntity(firstEnemy);
         testMap.addPlayer(PlayerType.PLAYER0, client, "player0");
         testMap.addPlayer(PlayerType.PLAYER1, client, "player1");
         testMap.addPlayer(PlayerType.PLAYER2, client, "player2");
@@ -78,7 +82,7 @@ public class WorldMapTest {
         testMap.update(1);
 
         Assert.assertFalse(testMap.doesRectCollideMap(1, 1, 10, 10));
-        Assert.assertEquals(player0, testMap.getPlayer());
+        Assert.assertEquals(firstPlayer, testMap.getPlayer());
         Assert.assertEquals(TileType.WATER_FULL, testMap.getTileTypeByLocation(1, 1, 1));
 
         // TileType tests

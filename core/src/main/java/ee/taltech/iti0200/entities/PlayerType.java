@@ -2,7 +2,6 @@ package ee.taltech.iti0200.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,25 +29,41 @@ public enum PlayerType {
         this.leftJumpingUp = new Texture(id + "/" + id + "_jumping_up_left.png");
     }
 
-    public ArrayList<String> getRight() { return right; }
+    public ArrayList<String> getRight() {
+        return right;
+    }
 
-    public ArrayList<String> getLeft() { return left; }
+    public ArrayList<String> getLeft() {
+        return left;
+    }
 
     public String getId() {
         return id;
     }
 
-    public ArrayList<Texture> getRunningRight() { return runningRight; }
+    public ArrayList<Texture> getRunningRight() {
+        return runningRight;
+    }
 
-    public ArrayList<Texture> getRunningLeft() { return runningLeft; }
+    public ArrayList<Texture> getRunningLeft() {
+        return runningLeft;
+    }
 
-    public Texture getStandingRight() { return standingRight; }
+    public Texture getStandingRight() {
+        return standingRight;
+    }
 
-    public Texture getStandingLeft() { return standingLeft; }
+    public Texture getStandingLeft() {
+        return standingLeft;
+    }
 
-    public Texture getRightJumpingUp() { return rightJumpingUp; }
+    public Texture getRightJumpingUp() {
+        return rightJumpingUp;
+    }
 
-    public Texture getLeftJumpingUp() { return leftJumpingUp; }
+    public Texture getLeftJumpingUp() {
+        return leftJumpingUp;
+    }
 
     public List<String> makeStringList(String id, String movement) {
         ArrayList<String> image = new ArrayList<>();

@@ -3,7 +3,6 @@ package ee.taltech.iti0200.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
@@ -12,11 +11,8 @@ import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-
-public class Player1 extends Entity {
+public class SecondPlayer extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
@@ -26,11 +22,10 @@ public class Player1 extends Entity {
 
     public ArrayList<Entity> entities;
 
-    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkill50, xSkill45, xSkill40, xSkill35, xSkill30,
-            xSkill25, xSkill20, xSkill15, xSkill10, xSkill05, xSkillTexture;
+    private Texture gunLeft, gunRight, cSkill1, cSkill2, cSkill3, xSkillTexture;
     private NinePatch health;
     public float totalHealth, shootingRange, lastX, lastXPos, lastYPos,
-            lastC, deltaTime,  gunX, closestEnemyX, closestEnemyY, xSkillX, xSkillY;
+            lastC, deltaTime, gunX, closestEnemyX, closestEnemyY, xSkillX, xSkillY;
     public boolean isRight, shoot, moving, keyPressed, cSkill, xSkill, cPlanted, cExploding;
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
@@ -38,7 +33,8 @@ public class Player1 extends Entity {
     final Client client;
     String id, texture, gunfire;
 
-    public Player1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
+    public SecondPlayer(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                        PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;
@@ -137,7 +133,7 @@ public class Player1 extends Entity {
             moveX((float) (-SPEED * 1.5 * deltaTime));
             isRight = false;
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+                && Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             moveX(-SPEED * deltaTime);
             isRight = false;
         }
@@ -149,7 +145,7 @@ public class Player1 extends Entity {
             moveX((float) (SPEED * 1.5 * deltaTime));
             isRight = true;
         } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
-                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+                && Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             moveX(SPEED * deltaTime);
             isRight = true;
         }
@@ -228,7 +224,8 @@ public class Player1 extends Entity {
                 if (entity != this) {
                     if (closestEnemy.getX() - 5 <= entity.getX() + entity.getWidth() &&
                             (closestEnemy.getX() + closestEnemy.getWidth() + 5) >= entity.getX() &&
-                            closestEnemy.getY() - 5 <= (entity.getY() + entity.getHeight()) && (closestEnemy.getY() + closestEnemy.getHeight() + 5) >= entity.getY()) {
+                            closestEnemy.getY() - 5 <= (entity.getY() + entity.getHeight())
+                            && (closestEnemy.getY() + closestEnemy.getHeight() + 5) >= entity.getY()) {
                         if (entity.getLives() - 50 > 0) {
                             entity.setLives(entity.getLives() - 50);
                             livesLostPackage(entity);
@@ -246,9 +243,6 @@ public class Player1 extends Entity {
         }
     }
 
-    // vSkill is a passive that heals every time Player1 kills an enemy
-
-
     @Override
     public void update(float deltaTime, float gravity) {
         if (lives < 1) {
@@ -265,7 +259,9 @@ public class Player1 extends Entity {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) shoot();
         if (Gdx.input.isKeyJustPressed(Input.Keys.X) || xSkill) xSkill();
         if (Gdx.input.isKeyJustPressed(Input.Keys.C) || cSkill) cSkill();
-        if (shootingTime > 5) { shoot = false; }
+        if (shootingTime > 5) {
+            shoot = false;
+        }
         if (getX() != lastXPos || getY() != lastYPos) {
             movingTime += 1;
             if (movingTime > playerType.getRunningRight().size() - 1) {
@@ -300,8 +296,7 @@ public class Player1 extends Entity {
                 texture = playerType.getId() + "/" + playerType.getId() + "_jumping_up_left.png";
                 batch.draw(playerType.getLeftJumpingUp(), pos.x, pos.y, getWidth(), getHeight());
             }
-        }
-        else {
+        } else {
             if (!moving || !grounded) {
                 if (isRight) {
                     texture = playerType.getId() + "/" + playerType.getId() + "_running_right_0.png";

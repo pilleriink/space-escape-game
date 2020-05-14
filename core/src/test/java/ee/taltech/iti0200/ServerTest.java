@@ -6,8 +6,6 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Listener;
-import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.server.GameServer;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.server.packets.*;
@@ -135,7 +133,7 @@ public class ServerTest {
         player.id = "id";
         player.x = X_AXIS;
         player.y = Y_AXIS;
-        player.lives= 10;
+        player.lives = 10;
         player.playerType = "playerType";
         Assert.assertEquals(X_AXIS, player.x, 0.1);
         Assert.assertEquals(Y_AXIS, player.y, 0.1);

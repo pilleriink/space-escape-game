@@ -10,11 +10,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.entities.Enemy0;
-import ee.taltech.iti0200.entities.Entity;
+import ee.taltech.iti0200.server.GameServer;
 import ee.taltech.iti0200.server.packets.*;
-import ee.taltech.iti0200.world.GameMap;
-import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -40,6 +37,12 @@ public class MenuScreen implements Screen {
             client.connect(5000, "64.227.126.245", 5200, 5201);
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                new GameServer();
+                client.connect(5000, InetAddress.getLocalHost(), 5200, 5201);
+            } catch (IOException i) {
+                i.printStackTrace();
+            }
         }
         client.getKryo().register(Register.class);
         client.getKryo().register(Move.class);

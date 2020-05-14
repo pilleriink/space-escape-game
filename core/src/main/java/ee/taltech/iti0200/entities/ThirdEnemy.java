@@ -11,7 +11,7 @@ import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
 
-public class Enemy2 extends Entity {
+public class ThirdEnemy extends Entity {
 
     private static int SPEED = 50;
     private static final int JUMP_VELOCITY = 5;
@@ -24,11 +24,12 @@ public class Enemy2 extends Entity {
     private boolean isRight, shoot;
     private Entity followed;
     private EnemyType enemyType = EnemyType.ENEMY2;
-    final Client client;
-    Boolean sprint;
+    private final Client client;
+    private Boolean sprint;
 
 
-    public Enemy2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {
+    public ThirdEnemy(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                      String id, Client client) {
         super(x, y, EntityType.ENEMY2, map, lives, id);
         this.id = id;
         this.client = client;
@@ -104,7 +105,6 @@ public class Enemy2 extends Entity {
     }
 
     public void follow(float deltaTime) {
-
         for (Entity player : entities) {
             if (player.getType().equals(EntityType.PLAYER) && oldTargets.isEmpty()
                     && target.isEmpty()) {
@@ -183,25 +183,31 @@ public class Enemy2 extends Entity {
             follow(deltaTime);
         }
         movingTime += 1;
-        if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
+        if (movingTime > enemyType.getMovingString().size() - 1) {
+            movingTime = 0;
+        }
         time += 1;
         shoot();
-        if (time > 2) { shoot = false; }
+        if (time > 2) {
+            shoot = false;
+        }
     }
 
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(new Texture(enemyType.getMovingString().get(movingTime)), pos.x, pos.y, getWidth(), getHeight());
-        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, pos.x, pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth(), 3);
+        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, pos.x,
+                pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth(), 3);
         if (shoot) {
             if (isRight) {
-                batch.draw(new Texture("gunfire.png"), pos.x + getWidth() + 2, pos.y + getHeight() / 3, 5, 5);
+                batch.draw(new Texture("gunfire.png"), pos.x + getWidth() + 2,
+                        pos.y + getHeight() / 3, 5, 5);
             } else {
-                batch.draw(new Texture("gunfireleft.png"), pos.x - 7, pos.y + getHeight() / 3, 5, 5);
+                batch.draw(new Texture("gunfireleft.png"), pos.x - 7, pos.y + getHeight() / 3,
+                        5, 5);
             }
         }
     }
-
 
 
 }

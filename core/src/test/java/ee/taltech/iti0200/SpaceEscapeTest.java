@@ -5,7 +5,6 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.esotericsoftware.kryonet.Client;
@@ -14,14 +13,9 @@ import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TileType;
 import org.junit.Assert;
 
-import java.util.ArrayList;
-
 import static org.mockito.Mockito.mock;
 
 public class SpaceEscapeTest {
-
-    public static final float X_AXIS = 2;
-    public static final float Y_AXIS = 1;
 
     HeadlessApplicationConfiguration conf;
     SpaceEscape escape;

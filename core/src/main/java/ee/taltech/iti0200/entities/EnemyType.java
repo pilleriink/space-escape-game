@@ -1,7 +1,5 @@
 package ee.taltech.iti0200.entities;
 
-import com.badlogic.gdx.graphics.Texture;
-
 import java.util.ArrayList;
 import java.util.List;
 

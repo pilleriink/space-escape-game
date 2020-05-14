@@ -13,7 +13,7 @@ public abstract class Entity {
     public boolean grounded = false;
     protected float lives, totalHealth;
     String id;
-    boolean isRight, moving, shoot;
+    private boolean isRight, moving, shoot;
 
     public Entity(float x, float y, EntityType type, GameMap map, float lives, String id) {
         this.pos = new Vector2(x, y);
@@ -87,7 +87,9 @@ public abstract class Entity {
         this.pos.y = posY;
     }
 
-    public float getLives() {return this.lives;}
+    public float getLives() {
+        return this.lives;
+    }
 
     public void setLives(float lives) {
         this.lives = lives;
@@ -113,9 +115,11 @@ public abstract class Entity {
     public int getWidth() {
         return type.getWidth();
     }
+
     public int getHeight() {
         return type.getHeight();
     }
+
     public float getWeight() {
         return type.getWeight();
     }

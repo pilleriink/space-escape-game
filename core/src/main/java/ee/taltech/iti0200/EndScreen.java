@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.esotericsoftware.kryonet.Client;
 
 public class EndScreen implements Screen {
 
@@ -17,7 +16,6 @@ public class EndScreen implements Screen {
     SpriteBatch batch;
     Texture spaceEscape, background, tryAgain, tryAgainHover, exitGame, exitGameHover;
     int positionX;
-    boolean isMP;
 
     public EndScreen(final SpaceEscape game) {
         this.game = game;

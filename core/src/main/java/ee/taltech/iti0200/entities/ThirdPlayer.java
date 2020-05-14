@@ -12,7 +12,7 @@ import ee.taltech.iti0200.world.GameMap;
 import java.util.ArrayList;
 
 
-public class Player2 extends Entity {
+public class ThirdPlayer extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
@@ -32,10 +32,11 @@ public class Player2 extends Entity {
     private int shootingTime, movingTime, jumpingPower, cSkillRange;
     private PlayerType playerType;
     public Entity closestEnemy;
-    final Client client;
-    String id, texture, gunfire;
+    private final Client client;
+    private String id, texture, gunfire;
 
-    public Player2(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
+    public ThirdPlayer(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                       PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;
@@ -247,7 +248,7 @@ public class Player2 extends Entity {
             cSkill = true;
             lastC = deltaTime;
         }
-        if (droneExplosion) {
+        if (droneExplosion && !droneIsComingBack) {
             for (int i = 0; i < entities.size(); i++) {
                 Entity entity = entities.get(i);
                 if (entity != this
@@ -430,7 +431,7 @@ public class Player2 extends Entity {
 
         if (cSkill) {
             if (deltaTime <= lastC + 2) droneCanMove = false;
-            if (deltaTime > lastC + 2) droneExplosion = true;
+            if (deltaTime > lastC + 2 && deltaTime <= lastC + 2.1) droneExplosion = true;
             if (deltaTime > lastC + 6) cSkill = false;
         }
         if (vSkill) {
