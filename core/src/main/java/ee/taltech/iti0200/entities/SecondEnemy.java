@@ -12,20 +12,23 @@ import ee.taltech.iti0200.world.GameMap;
 
 import java.util.ArrayList;
 
-public class Enemy1 extends Entity {
+public class SecondEnemy extends Entity {
 
     private static final int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
+    private static final double MOVING_SPEED = 0.75;
+    private static final int JUMPING_SPEED = 20;
     private int time, movingTime;
     private float movementTime, shootingRange, totalHealth;
-    private ArrayList<Entity> entities;
+    public ArrayList<Entity> entities;
     private boolean isRight;
     private EnemyType enemyType = EnemyType.ENEMY1;
     private Entity followed;
-    final Client client;
-    String id, texture, gunfire;
+    private final Client client;
+    private String id;
 
-    public Enemy1(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, String id, Client client) {
+    public SecondEnemy(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                       String id, Client client) {
         super(x, y, EntityType.ENEMY1, map, lives, id);
         this.id = id;
         this.client = client;
@@ -50,13 +53,13 @@ public class Enemy1 extends Entity {
     }
 
     public void jump() {
-        this.velocityY += JUMP_VELOCITY * getWeight() / 20;
+        this.velocityY += JUMP_VELOCITY * getWeight() / JUMPING_SPEED;
     }
 
     public void shoot() {
         for (Entity entity : entities) {
             if (entity.getLives() > 0 && entity.getType().equals(EntityType.PLAYER)) {
-                if (isRight
+                if (isRight && entity.getX() > getX()
                         && entity.getX() <= getX() + getWidth() + shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
@@ -65,8 +68,8 @@ public class Enemy1 extends Entity {
                     LivesLost livesLost = new LivesLost();
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
-                    client.sendTCP(livesLost);
-                } else if (!isRight
+                    client.sendUDP(livesLost);
+                } else if (!isRight && entity.getX() < getX()
                         && entity.getX() + entity.getWidth() >= getX() - shootingRange
                         && getY() + 0.3 * getHeight() >= entity.getY()
                         && getY() + 0.3 * getHeight() <= entity.getY() + entity.getHeight()) {
@@ -74,7 +77,7 @@ public class Enemy1 extends Entity {
                     LivesLost livesLost = new LivesLost();
                     livesLost.lives = entity.getLives();
                     livesLost.id = entity.getId();
-                    client.sendTCP(livesLost);
+                    client.sendUDP(livesLost);
                 }
             }
         }
@@ -101,7 +104,7 @@ public class Enemy1 extends Entity {
             }
 
             if (followed.getY() < getY() - getHeight() * 2 || followed.getY() > getY() + getHeight() * 2
-                    || followed.getX() < getX()  - 500 || followed.getX() > getX() + 500) {
+                    || followed.getX() < getX() - 500 || followed.getX() > getX() + 500) {
                 followed = null;
             }
 
@@ -109,7 +112,7 @@ public class Enemy1 extends Entity {
             moveEnemy.id = id;
             moveEnemy.x = getX();
             moveEnemy.y = getY();
-            client.sendTCP(moveEnemy);
+            client.sendUDP(moveEnemy);
 
             synchronized (client) {
                 try {
@@ -124,7 +127,7 @@ public class Enemy1 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
-        if (lives == 0) {
+        if (lives < 1) {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
@@ -140,17 +143,20 @@ public class Enemy1 extends Entity {
         follow(deltaTime);
         movementTime += Gdx.graphics.getDeltaTime();
         movingTime += 1;
-        if (movingTime > enemyType.getMovingString().size() - 1) { movingTime = 0; }
+        if (movingTime > enemyType.getMovingString().size() - 1) {
+            movingTime = 0;
+        }
         time += 1;
-        super.update(deltaTime, gravity); // applies the gravity
-        //move(deltaTime);
+        super.update(deltaTime, gravity);
         shoot();
     }
 
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(new Texture(enemyType.getMovingString().get(movingTime)), pos.x, pos.y, getWidth(), getHeight());
-        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float) (pos.x + 0.37 * getWidth()), pos.y + getHeight() + 10, (getLives() / this.totalHealth) * getWidth() / 4, 3);
+        new NinePatch(new Texture("healthbar.png"), 0, 0, 0, 0).draw(batch, (float)
+                        (pos.x + 0.37 * getWidth()), pos.y + getHeight() + 10,
+                (getLives() / this.totalHealth) * getWidth() / 4, 3);
 
     }
 }

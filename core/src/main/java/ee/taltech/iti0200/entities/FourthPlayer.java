@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 
-public class Player3 extends Entity {
+public class FourthPlayer extends Entity {
 
     private static int SPEED = 80;
     private static final int JUMP_VELOCITY = 5;
@@ -30,19 +30,21 @@ public class Player3 extends Entity {
     private Texture gunLeft, gunRight, cSkill1, cSkillField, cSkillField0, cSkillField1, cSkillField2,
             cSkillReady, cSkill2, xSkillTexture, vSkillTexture;
     private NinePatch health;
-    private float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX, xSkillY, gunX, lastCTick;
-    private boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
+    public float totalHealth, shootingRange, lastX, lastXPos, lastC, deltaTime, cSkillX, cSkillY, lastV, lastZ, xSkillX,
+            xSkillY, gunX, lastCTick;
+    public boolean isRight, shoot, moving, keyPressed, cSkill, cSkillWasRight, vSkill, vSkillSpeedUp, zSkill, xSkill,
             bombGrounded, explosionTime, reachedLimit, xExplosion, xStuck, xRight, cSkillIsReady, cSkillIsDown;
     private int shootingTime, movingTime, jumpingPower, cSkillRange, fieldIndex;
     private PlayerType playerType;
     private Map<Float, Float> xSkillCurve;
-    float xSkillCurveIndex;
+    private float xSkillCurveIndex;
     private Random random;
     private List<Texture> cSkillFieldList;
-    final Client client;
-    String id, texture, gunfire;
+    private final Client client;
+    private String id, texture, gunfire;
 
-    public Player3(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities, PlayerType playerType, Client client, String id) {
+    public FourthPlayer(float x, float y, GameMap map, float lives, float shootingRange, ArrayList<Entity> entities,
+                        PlayerType playerType, Client client, String id) {
         super(x, y, EntityType.PLAYER, map, lives, id);
         this.client = client;
         this.id = id;
@@ -99,14 +101,7 @@ public class Player3 extends Entity {
         random = new Random();
     }
 
-    public void abilityPackage(float x, float y, String texture) {
-        Ability ability = new Ability();
-        ability.x = x;
-        ability.y = y;
-        ability.texture = texture;
-        ability.id = id;
-        client.sendTCP(ability);
-
+    public void clientWait() {
         synchronized (client) {
             try {
                 client.wait(1);
@@ -116,19 +111,22 @@ public class Player3 extends Entity {
         }
     }
 
+    public void abilityPackage(float x, float y, String texture) {
+        Ability ability = new Ability();
+        ability.x = x;
+        ability.y = y;
+        ability.texture = texture;
+        ability.id = id;
+        client.sendUDP(ability);
+        clientWait();
+    }
+
     public void livesLostPackage(Entity entity) {
         LivesLost livesLost = new LivesLost();
         livesLost.id = entity.getId();
         livesLost.lives = entity.getLives();
-        client.sendTCP(livesLost);
-
-        synchronized (client) {
-            try {
-                client.wait(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        client.sendUDP(livesLost);
+        clientWait();
     }
 
     public boolean isRight() {
@@ -197,31 +195,29 @@ public class Player3 extends Entity {
 
     public void shoot() {
         for (Entity entity : entities) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-                shoot = true;
-                shootingTime = 0;
-                if (isRight && entity.getX() > pos.x
-                        && entity.getX() <= getX() + getWidth() + shootingRange
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    entity.setLives(entity.getLives() - 1);
-                    livesLostPackage(entity);
-                } else if (!isRight && entity.getX() < pos.x
-                        && entity.getX() + entity.getWidth() >= getX() - shootingRange
-                        && getY() + 0.5 * getHeight() >= entity.getY()
-                        && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
-                        && entity.getLives() > 0) {
-                    entity.setLives(entity.getLives() - 1);
-                    livesLostPackage(entity);
-                }
+            shoot = true;
+            shootingTime = 0;
+            if (isRight && entity.getX() > pos.x
+                    && entity.getX() <= getX() + getWidth() + shootingRange
+                    && getY() + 0.5 * getHeight() >= entity.getY()
+                    && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
+                    && entity.getLives() > 0) {
+                entity.setLives(entity.getLives() - 1);
+                livesLostPackage(entity);
+            } else if (!isRight && entity.getX() < pos.x
+                    && entity.getX() + entity.getWidth() >= getX() - shootingRange
+                    && getY() + 0.5 * getHeight() >= entity.getY()
+                    && getY() + 0.5 * getHeight() <= entity.getY() + entity.getHeight()
+                    && entity.getLives() > 0) {
+                entity.setLives(entity.getLives() - 1);
+                livesLostPackage(entity);
             }
         }
     }
 
 
     public void xSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X) && !xSkill) {
+        if (!xSkill) {
             xSkill = true;
             lastX = deltaTime;
             if (isRight)  {
@@ -234,11 +230,11 @@ public class Player3 extends Entity {
         }
         if (xExplosion) {
             for (Entity entity : entities) {
-                if (entity.getX() + entity.getWidth() >= xSkillX - 100 &&
+                if (entity.type != EntityType.PLAYER && entity.getX() + entity.getWidth() >= xSkillX - 100 &&
                         entity.getX() <= xSkillX + xSkillTexture.getWidth() + 100 &&
                         entity.getY() + entity.getHeight() >= xSkillY - 100 &&
                         entity.getY() <= xSkillY + xSkillTexture.getHeight() + 100 ) {
-                    if (entity.getLives() >= 10) {
+                    if (entity.getLives() >= 15) {
                         entity.setLives(entity.getLives() - 15);
                         livesLostPackage(entity);
                     } else {
@@ -260,7 +256,7 @@ public class Player3 extends Entity {
 
 
     public void cSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C) && !cSkill && grounded) {
+        if (!cSkill && grounded) {
             cSkill = true;
             lastC = deltaTime;
             cSkillX = pos.x - (cSkillField1.getWidth() / 2);
@@ -268,9 +264,10 @@ public class Player3 extends Entity {
         }
         if (cSkillIsReady) {
             for (Entity entity : entities) {
-                if (entity.getX() + (entity.getWidth() / 2) >= cSkillX &&
-                        entity.getX() <= cSkillX + cSkillField1.getWidth() - (entity.getWidth() / 2) &&
-                        entity.getY() >= cSkillY && (entity.getY() + entity.getHeight()) <= cSkillY + 30) {
+                if (entity.getX() + (entity.getWidth() / 2) >= cSkillX
+                        && entity.getX() <= cSkillX + cSkillField1.getWidth() - (entity.getWidth() / 2) &&
+                        entity.getY() >= cSkillY
+                        && (entity.getY() + entity.getHeight()) <= cSkillY + 30 + entity.getHeight()) {
                     cSkillToHeal.add(entity);
                 }
             }
@@ -285,7 +282,7 @@ public class Player3 extends Entity {
     }
 
     public void vSkill() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.V) && !vSkill) {
+        if (!vSkill) {
             vSkill = true;
             lastV = deltaTime;
             SPEED += 100;
@@ -298,18 +295,11 @@ public class Player3 extends Entity {
 
     @Override
     public void update(float deltaTime, float gravity) {
-        if (lives == 0) {
+        if (lives < 1) {
             Death death = new Death();
             death.id = id;
             client.sendTCP(death);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            clientWait();
         }
         shootingTime += 1;
         jump(deltaTime, gravity);
@@ -317,10 +307,10 @@ public class Player3 extends Entity {
             moveLeft(deltaTime);
             moveRight(deltaTime);
         }
-        shoot();
-        xSkill();
-        cSkill();
-        vSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) shoot();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X) || xSkill) xSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C) || cSkill) cSkill();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) vSkill();
         if (shootingTime > 5) { shoot = false; }
         if (getX() != lastXPos) {
             movingTime += 1;
@@ -339,15 +329,8 @@ public class Player3 extends Entity {
             move.x = getX();
             move.y = getY();
             move.texture = texture;
-            client.sendTCP(move);
-
-            synchronized (client) {
-                try {
-                    client.wait(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            client.sendUDP(move);
+            clientWait();
         }
     }
 
@@ -398,34 +381,41 @@ public class Player3 extends Entity {
             gun.gun = gunfire;
             gun.x = gunX;
             gun.id = id;
-            client.sendTCP(gun);
+            client.sendUDP(gun);
+            clientWait();
         }
 
         if (xSkill) {
             if (xRight) {
-                if (!map.doesRectCollideMap(xSkillX + xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
+                if (!map.doesRectCollideMap(xSkillX + xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex),
+                        xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                        abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                        abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                                "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                    abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                    abilityPackage(xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                            "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             } else {
-                if (!map.doesRectCollideMap(xSkillX - xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex), xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
+                if (!map.doesRectCollideMap(xSkillX - xSkillCurveIndex, xSkillY + xSkillCurve.get(xSkillCurveIndex),
+                        xSkillTexture.getWidth(), xSkillTexture.getHeight())) {
                     if (xSkillCurveIndex < 204 && deltaTime <= lastX + 2) {
                         batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                        abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                        abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                                "PlayerAbilities/Player3/xSkillTexture.png");
                         xSkillCurveIndex += 1;
                     }
                 } else if (deltaTime <= lastX + 2) {
                     batch.draw(xSkillTexture, -xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY);
-                    abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY, "PlayerAbilities/Player3/xSkillTexture.png");
+                    abilityPackage(-xSkillCurveIndex + xSkillX, xSkillCurve.get(xSkillCurveIndex) + xSkillY,
+                            "PlayerAbilities/Player3/xSkillTexture.png");
                 }
             }
-            if (deltaTime >= lastX + 2 && deltaTime < lastX + 4) {
+            if (deltaTime >= lastX + 2 && deltaTime < lastX + 2.1) {
                 xExplosion = true;
             }
             if (deltaTime >= lastX + 4) {
@@ -441,19 +431,6 @@ public class Player3 extends Entity {
             else if (deltaTime >= lastC + 4) cSkill = false;
         }
         if (cSkillIsDown) {
-            if (deltaTime >= lastCTick + C_TICK) {
-                lastCTick = deltaTime;
-                if (cSkillField == cSkillField0) {
-                cSkillField = cSkillField1;
-                fieldIndex = 1;
-                } else if (cSkillField == cSkillField1) {
-                cSkillField = cSkillField2;
-                fieldIndex = 2;
-                } else {
-                    cSkillField = cSkillField0;
-                    fieldIndex = 0;
-                }
-            }
             batch.draw(cSkillField, cSkillX, cSkillY);
             abilityPackage(cSkillX, cSkillY, "PlayerAbilities/Player3/cSkillField" + fieldIndex + ".png");
             if (deltaTime <= lastC + 1) {

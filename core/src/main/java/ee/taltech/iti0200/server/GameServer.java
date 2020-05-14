@@ -5,10 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
-import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
-import ee.taltech.iti0200.world.GameMap;
-import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,10 +45,20 @@ public class GameServer {
             enemy.y = enemyY.get(coordinates);
             enemies.add(enemy);
         }
+        for (int i = 8; i < 12; i++) {
+            Enemy enemy = new Enemy();
+            enemy.enemyType = "enemy2";
+            enemy.id = "" + i;
+            enemy.lives = 5;
+            int coordinates = (int) (Math.random() * (7));
+            enemy.x = enemyX.get(coordinates);
+            enemy.y = enemyY.get(coordinates);
+            enemies.add(enemy);
+        }
 
         server = new Server();
         server.start();
-        server.bind(5200);
+        server.bind(5200, 5201);
         Kryo kryoServer = server.getKryo();
         kryoServer.register(Register.class);
         kryoServer.register(Move.class);
@@ -69,8 +76,9 @@ public class GameServer {
 
         Log.set(Log.LEVEL_TRACE);
 
+
         server.addListener(new Listener() {
-            public void received (Connection connection, Object object) {
+            public void received(Connection connection, Object object) {
 
                 if (object instanceof Register) {
 
@@ -104,13 +112,13 @@ public class GameServer {
                             players.get(c).y = ((Move) object).y;
                         }
                     }
-                    server.sendToAllTCP(object);
+                    server.sendToAllUDP(object);
                 }
 
                 if (object instanceof Gun) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -118,7 +126,7 @@ public class GameServer {
                 if (object instanceof Ability) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -126,7 +134,7 @@ public class GameServer {
                 if (object instanceof Drone) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -134,7 +142,7 @@ public class GameServer {
                 if (object instanceof SmallDrone) {
                     for (Connection c : players.keySet()) {
                         if (!c.equals(connection)) {
-                            c.sendTCP(object);
+                            c.sendUDP(object);
                         }
                     }
                 }
@@ -153,7 +161,7 @@ public class GameServer {
                     if (connection.equals(firstConnection.get(0))) {
                         for (Connection c : players.keySet()) {
                             if (!c.equals(connection)) {
-                                c.sendTCP(object);
+                                c.sendUDP(object);
                             }
                         }
                     }
@@ -187,7 +195,8 @@ public class GameServer {
                 }
 
             }
-            public void disconnected (Connection c) {
+
+            public void disconnected(Connection c) {
                 if (players.containsKey(c)) {
                     Death death = new Death();
                     death.id = players.get(c).id;

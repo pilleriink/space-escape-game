@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -18,31 +17,25 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.entities.Enemy0;
+import ee.taltech.iti0200.entities.FirstEnemy;
 import ee.taltech.iti0200.entities.Entity;
 import ee.taltech.iti0200.server.packets.*;
 import ee.taltech.iti0200.world.GameMap;
 import ee.taltech.iti0200.world.TiledGameMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class GameScreen implements Screen {
     private SpaceEscape game;
-    final Client client;
-    SpriteBatch Batch;
-
-
-    // stage
+    private final Client client;
     public Stage stage;
     public float deltaTime, currentTime, xCoolDownPoint, cCoolDownPoint, vCoolDownPoint;
     public String timeStr = "0", xLabelText, cLabelText, vLabelText;
     public BitmapFont font;
     public Label.LabelStyle labelStyle;
-    public Label label, cLabel, vLabel, xLabel, zLabel;
+    public Label label, cLabel, vLabel, xLabel;
     public Image xSkill, cSkill, vSkill, zSkill;
     public Texture xSkillTexture, cSkillTexture, vSkillTexture, zSkillTexture, corpseTexture;
     public int xCooldownTime, cCooldownTime, vCooldownTime, shakeIntensityRange = 30, shakeIntensityBuffer = 15;
@@ -50,29 +43,7 @@ public class GameScreen implements Screen {
     public Random random;
     public double shakingTime = 0.15;
     public List<Entity> dead;
-
-
-
-
-
-    // cooldowns
-//    public float currentTime;
-//    public float xCooldownTime = 4;
-//    public float xCoolDownPoint = 0;
-//    public String xLabelText = "";
-//    public int cCooldownTime = 3;
-//    public float cCoolDownPoint;
-//    public String cLabelText = "";
-//    public int vCooldownTime = 5;
-//    public float vCoolDownPoint;
-//    public String vLabelText = "";
-//    public int zCooldownTime = 4;
-//    public float zCoolDownPoint;
-//    public String zLabelText = "";
-
-
     public OrthographicCamera camera;
-
     GameMap gameMap;
     List<Player> otherPlayers;
     List<String> playerIds;
@@ -95,29 +66,33 @@ public class GameScreen implements Screen {
         background = new Texture("menubackground.png");
 
         for (int i = 0; i < 4; i++) {
-            gameMap.addEntity(new Enemy0(1000, 600, gameMap, 10, 100, gameMap.getEntities(), "" + i, client));
+            gameMap.addEntity(new FirstEnemy(1000, 600, gameMap, 10, 100, gameMap.getEntities(),
+                    "" + i, client));
             playerIds.add("" + i);
         }
         for (int i = 4; i < 8; i++) {
-            gameMap.addEntity(new Enemy1(1000, 600, gameMap, 10, 1, gameMap.getEntities(), "" + i, client));
+            gameMap.addEntity(new SecondEnemy(1000, 600, gameMap, 10, 1, gameMap.getEntities(),
+                    "" + i, client));
+            playerIds.add("" + i);
+        }
+        for (int i = 8; i < 12; i++) {
+            gameMap.addEntity(new ThirdEnemy(1000, 600, gameMap, 5, 1, gameMap.getEntities(),
+                    "" + i, client));
             playerIds.add("" + i);
         }
 
-        //gameMap.addEntity(new Enemy1(2000, 700, gameMap, 50, 150, gameMap.getEntities(), "1", client));
-        //playerIds.add("1");
-
         this.client.addListener(new Listener() {
-            public void received (Connection connection, Object object) {
+            public void received(Connection connection, Object object) {
                 if (object instanceof Player) {
                     if (((Player) object).id.equals(gameMap.getPlayer().getId())) {
                         gameMap.getPlayer().setPosX(((Player) object).x);
                         gameMap.getPlayer().setPosY(((Player) object).y);
                     } else {
-                        OtherPlayer otherPlayer = new OtherPlayer(((Player) object).x, ((Player) object).y, gameMap, ((Player) object).lives, ((Player) object).id, getPlayerType(((Player) object).playerType));
+                        OtherPlayer otherPlayer = new OtherPlayer(((Player) object).x, ((Player) object).y, gameMap,
+                                ((Player) object).lives, ((Player) object).id, getPlayerType(((Player) object).playerType));
                         gameMap.addEntity(otherPlayer);
                     }
                 }
-
                 if (object instanceof Move) {
                     for (Entity entity : gameMap.getEntities()) {
                         if (entity instanceof OtherPlayer && entity.getId().equals(((Move) object).id)) {
@@ -170,7 +145,7 @@ public class GameScreen implements Screen {
                     for (Entity entity : gameMap.getEntities()) {
                         if (entity.getId().equals(((LivesLost) object).id)) {
                             entity.setLives(((LivesLost) object).lives);
-                            (entity).setLives(((LivesLost) object).lives);
+                            entity.setLives(((LivesLost) object).lives);
                         }
                     }
                 }
@@ -207,7 +182,8 @@ public class GameScreen implements Screen {
                     }
                 }
 
-            }});
+            }
+        });
 
 
         stage = new Stage(new ScreenViewport());
@@ -221,13 +197,73 @@ public class GameScreen implements Screen {
 
         corpseTexture = new Texture("corpse.png");
 
-        // --------------   DRAWING  ------------
-
-        // Screen size
         int screenCenterX = Gdx.graphics.getWidth() / 2;
         int screenCenterY = Gdx.graphics.getHeight() / 2;
 
-        // abilities
+        initializePlayerType(playerType);
+
+        zSkill = new Image(zSkillTexture);
+        zSkill.setSize(75, 75);
+        zSkill.setPosition(screenCenterX - 260, screenCenterY - 500);
+
+        xSkill = new Image(xSkillTexture);
+        xSkill.setSize(75, 75);
+        xSkill.setPosition(screenCenterX - 150, screenCenterY - 500);
+        xLabel = new Label(xLabelText, labelStyleTwo);
+        xLabel.setPosition(screenCenterX - 130, screenCenterY - 460);
+        xLabel.addAction(Actions.alpha(0));
+        xLabel.setFontScale(5f);
+
+        cSkill = new Image(cSkillTexture);
+        cSkill.setSize(75, 75);
+        cSkill.setPosition(screenCenterX - 40, screenCenterY - 500);
+        cLabel = new Label(cLabelText, labelStyleTwo);
+        cLabel.setPosition(screenCenterX - 20, screenCenterY - 460);
+        cLabel.addAction(Actions.alpha(0));
+        cLabel.setFontScale(5f);
+
+        vSkill = new Image(vSkillTexture);
+        vSkill.setSize(75, 75);
+        vSkill.setPosition(screenCenterX + 70, screenCenterY - 500);
+        if (!removeV) {
+            vLabel = new Label(vLabelText, labelStyleTwo);
+            vLabel.setPosition(screenCenterX + 90, screenCenterY - 460);
+            vLabel.addAction(Actions.alpha(0));
+            vLabel.setFontScale(5f);
+        }
+
+        stage.addActor(zSkill);
+        stage.addActor(xSkill);
+        stage.addActor(xLabel);
+        stage.addActor(cSkill);
+        stage.addActor(cLabel);
+        stage.addActor(vSkill);
+        if (!removeV) stage.addActor(vLabel);
+
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        random = new Random();
+        dead = new ArrayList<>();
+
+    }
+
+    public GameScreen(SpaceEscape escape, PlayerType playerType, Client client) {
+        // constructor for testing
+        this.client = client;
+        this.game = escape;
+        initializePlayerType(playerType);
+    }
+
+    public EnemyType getEnemyType(String id) {
+        switch (id) {
+            case "enemy0":
+                return EnemyType.ENEMY0;
+            default:
+                return EnemyType.ENEMY1;
+        }
+    }
+
+    public void initializePlayerType(PlayerType playerType) {
         if (playerType == PlayerType.PLAYER0) {
             zSkillTexture = new Texture("PlayerAbilities/Player0/zSkill.png");
             xSkillTexture = new Texture("PlayerAbilities/Player0/xSkill.png");
@@ -280,73 +316,6 @@ public class GameScreen implements Screen {
             bombShake = true;
             cHasToBeGrounded = true;
         }
-
-
-        zSkill = new Image(zSkillTexture);
-        zSkill.setSize(75, 75);
-        zSkill.setPosition(screenCenterX - 260, screenCenterY - 500);
-//        zLabel = new Label(zLabelText, labelStyleTwo);
-//        zLabel.setPosition(screenCenterX - 240, screenCenterY - 460);
-//        zLabel.addAction(Actions.alpha(0));
-//        zLabel.setFontScale(5f);
-
-
-        xSkill = new Image(xSkillTexture);
-        xSkill.setSize(75, 75);
-        xSkill.setPosition(screenCenterX - 150, screenCenterY - 500);
-        xLabel = new Label(xLabelText, labelStyleTwo);
-        xLabel.setPosition(screenCenterX - 130, screenCenterY - 460);
-        xLabel.addAction(Actions.alpha(0));
-        xLabel.setFontScale(5f);
-
-        cSkill = new Image(cSkillTexture);
-        cSkill.setSize(75, 75);
-        cSkill.setPosition(screenCenterX - 40, screenCenterY - 500);
-        cLabel = new Label(cLabelText, labelStyleTwo);
-        cLabel.setPosition(screenCenterX - 20, screenCenterY - 460);
-        cLabel.addAction(Actions.alpha(0));
-        cLabel.setFontScale(5f);
-
-
-        vSkill = new Image(vSkillTexture);
-        vSkill.setSize(75, 75);
-        vSkill.setPosition(screenCenterX + 70, screenCenterY - 500);
-        if (!removeV) {
-            vLabel = new Label(vLabelText, labelStyleTwo);
-            vLabel.setPosition(screenCenterX + 90, screenCenterY - 460);
-            vLabel.addAction(Actions.alpha(0));
-            vLabel.setFontScale(5f);
-        }
-
-        stage.addActor(zSkill);
-//        stage.addActor(zLabel);
-        stage.addActor(xSkill);
-        stage.addActor(xLabel);
-        stage.addActor(cSkill);
-        stage.addActor(cLabel);
-        stage.addActor(vSkill);
-        if (!removeV) stage.addActor(vLabel);
-
-
-        // ------------------- FINISHED DRAWING -------------
-
-
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        random = new Random();
-        dead = new ArrayList<>();
-
-
-
-    }
-
-    public EnemyType getEnemyType(String id) {
-        switch (id) {
-            case "enemy0":
-                return EnemyType.ENEMY0;
-            default:
-                return EnemyType.ENEMY1;
-        }
     }
 
     public PlayerType getPlayerType(String id) {
@@ -375,8 +344,6 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(35 / 255f, 34 / 255f, 47 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
-        // current time
         deltaTime += Gdx.graphics.getDeltaTime();
         currentTime = System.currentTimeMillis();
 
@@ -384,27 +351,11 @@ public class GameScreen implements Screen {
         gameMap.update(Gdx.graphics.getDeltaTime());
         gameMap.render(camera, game.batch);
 
-
-        // stage
         stage.act(Gdx.graphics.getDeltaTime());
 
 
         timeStr = Double.toString(Math.round(deltaTime * 100.0) / 100.0);
         label.setText(timeStr);
-
-//        zLabelText = String.valueOf(Math.round(zCoolDownPoint + zCooldownTime - deltaTime));
-//        zLabel.setText(zLabelText);
-//        if (Integer.parseInt(zLabelText) < 0) {
-//            zLabel.addAction(Actions.alpha(0));
-//        }
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-//            if (deltaTime > zCoolDownPoint + zCooldownTime) {
-//                zLabel.addAction(Actions.alpha(1));
-//                zSkill.addAction(Actions.alpha(0));
-//                zSkill.addAction(Actions.fadeIn(5f));
-//                zCoolDownPoint = deltaTime;
-//            }
-//        }
 
         xLabelText = String.valueOf(Math.round(xCoolDownPoint + xCooldownTime - deltaTime));
         xLabel.setText(xLabelText);
@@ -466,16 +417,12 @@ public class GameScreen implements Screen {
         }
 
 
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
 
         stage.draw();
 
-
-
-        // CAMERA SHAKING OR STATIC
         if (gonnaShake) {
             if (bombShake) {
                 if (deltaTime >= xCoolDownPoint + 2) {
@@ -509,20 +456,6 @@ public class GameScreen implements Screen {
         }
         camera.update();
 
-
-
-//        // REMOVING THE DEAD
-//        for (Entity entity : gameMap.getEntities()) {
-//            if (entity.getLives() <= 0) dead.add(entity);
-//        }
-//        System.out.println(dead);
-//        for (Entity corpse : dead) {
-//            game.batch.draw(corpseTexture, corpse.getX(), corpse.getY());
-//        }
-//        for (Entity deadEntity : dead) {
-//            gameMap.removeEntity(deadEntity);
-//        }
-//        dead.clear();
     }
 
     @Override

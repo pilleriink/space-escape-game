@@ -8,24 +8,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
 public class StartScreen implements Screen {
 
     private final SpaceEscape game;
-
-    private OrthographicCamera camera;
-    private SpriteBatch batch;
-    private Texture spaceEscape, background;
+    public OrthographicCamera camera;
+    public SpriteBatch batch;
+    public Texture spaceEscape, background, pressEnter;
 
     public StartScreen(final SpaceEscape game) {
         this.game = game;
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = game.batch;
 
         spaceEscape = new Texture("space_escape.png");
         background = new Texture("menubackground.png");
+        pressEnter = new Texture("press-enter.png");
         Gdx.input.setCursorCatched(true);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
@@ -46,6 +43,7 @@ public class StartScreen implements Screen {
 
         batch.draw(background, (float) (-0.5 * background.getWidth()), (float) (-0.5 * background.getHeight()));
         batch.draw(spaceEscape, (float) (-0.5 * spaceEscape.getWidth()), spaceEscape.getHeight() * 4);
+        batch.draw(pressEnter, (float) (-0.5 * pressEnter.getWidth()), -pressEnter.getHeight() * 6);
 
         batch.end();
 
@@ -53,7 +51,6 @@ public class StartScreen implements Screen {
             game.setScreen(new MenuScreen(game));
             dispose();
         }
-
 
     }
 

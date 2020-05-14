@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.esotericsoftware.kryonet.Client;
 
 public class EndScreen implements Screen {
 
@@ -17,13 +16,10 @@ public class EndScreen implements Screen {
     SpriteBatch batch;
     Texture spaceEscape, background, tryAgain, tryAgainHover, exitGame, exitGameHover;
     int positionX;
-    boolean isMP;
 
     public EndScreen(final SpaceEscape game) {
         this.game = game;
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = new SpriteBatch();
 
         spaceEscape = new Texture("game_over.png");
@@ -74,11 +70,10 @@ public class EndScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             if (positionX == 0) {
                 Gdx.app.exit();
-                dispose();
             } else {
                 game.setScreen(new MenuScreen(game));
-                dispose();
             }
+            dispose();
         }
 
 

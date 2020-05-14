@@ -9,7 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.entities.PlayerType;
+import ee.taltech.iti0200.entities.*;
+import ee.taltech.iti0200.server.GameServer;
 import ee.taltech.iti0200.server.packets.*;
 
 import java.io.IOException;
@@ -33,9 +34,15 @@ public class MenuScreen implements Screen {
         client = new Client();
         client.start();
         try {
-            client.connect(5000, "64.227.126.245", 5200);
+            client.connect(5000, "64.227.126.245", 5200, 5201);
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                new GameServer();
+                client.connect(5000, InetAddress.getLocalHost(), 5200, 5201);
+            } catch (IOException i) {
+                i.printStackTrace();
+            }
         }
         client.getKryo().register(Register.class);
         client.getKryo().register(Move.class);
@@ -52,7 +59,7 @@ public class MenuScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch = new SpriteBatch();
+        batch = game.batch;
 
         img0 = new Texture("character0.png");
         img1 = new Texture("character1.png");
@@ -80,11 +87,8 @@ public class MenuScreen implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX > 0) {
-            positionX--;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX < 3) {
-            positionX++;
-        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && positionX > 0) positionX--;
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && positionX < 3) positionX++;
 
 
         Gdx.gl.glClearColor(0, 0, 0, 1);

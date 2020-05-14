@@ -1,19 +1,16 @@
 package ee.taltech.iti0200.world;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
-import ee.taltech.iti0200.SpaceEscape;
 import ee.taltech.iti0200.entities.*;
-import ee.taltech.iti0200.entities.Player0;
+import ee.taltech.iti0200.entities.FirstPlayer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class GameMap {
 
-    protected ArrayList<Entity> entities;
+    public ArrayList<Entity> entities;
 
     public GameMap() {
         entities = new ArrayList<>();
@@ -30,13 +27,13 @@ public abstract class GameMap {
 
     public void addPlayer(PlayerType playerType, Client client, String id) {
         if (playerType == PlayerType.PLAYER0) {
-            entities.add(new Player0(800, 600, this, 500, 150, entities, playerType, client, id));
+            entities.add(new FirstPlayer(800, 600, this, 500, 150, entities, playerType, client, id));
         } else if (playerType == PlayerType.PLAYER1) {
-            entities.add(new Player1(800, 600, this, 500, 150, entities, playerType, client, id));
+            entities.add(new SecondPlayer(800, 600, this, 500, 150, entities, playerType, client, id));
         } else if (playerType == PlayerType.PLAYER2) {
-            entities.add(new Player2(800, 600, this, 500, 150, entities, playerType, client, id));
+            entities.add(new ThirdPlayer(800, 600, this, 500, 150, entities, playerType, client, id));
         } else if (playerType == PlayerType.PLAYER3) {
-            entities.add(new Player3(800, 600, this, 500, 150, entities, playerType, client, id));
+            entities.add(new FourthPlayer(800, 600, this, 500, 150, entities, playerType, client, id));
         }
     }
 
